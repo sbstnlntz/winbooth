@@ -1,181 +1,181 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\Desktop\\FotoboxApp\\",
+  "WorkspaceRootPath": "D:\\Desktop\\_\\FotoboxApp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\AdminMenuView.xaml||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\AdminMenuView.xaml||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\AdminMenuView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\AdminMenuView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\StartView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\StartView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\StartView.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\StartView.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\PinPadDialog.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\PinPadDialog.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\PinPadDialog.xaml||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\PinPadDialog.xaml||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\CameraView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\CameraView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\UserMenuView.xaml||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\UserMenuView.xaml||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\ViewModels\\StartViewModel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ViewModels\\StartViewModel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\UserMenuView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\UserMenuView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\CameraView.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\CameraView.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\CollageView.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\CollageView.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\MainWindow.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:MainWindow.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\CollageView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\CollageView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Services\\PrinterHelper.cs||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\PrinterHelper.cs||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Services\\CameraHelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\CameraHelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\PrinterSelectDialog.xaml||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\PrinterSelectDialog.xaml||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\PrinterSelectDialog.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\PrinterSelectDialog.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\CameraSelectDialog.xaml||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\CameraSelectDialog.xaml||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\CameraSelectDialog.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\CameraSelectDialog.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\App.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:App.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\App.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:App.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\MainWindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:MainWindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\FotoboxApp.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:FotoboxApp.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Services\\TemplateLoader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Services\\TemplateLoader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\TemplateLoader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Models\\TemplateDefinition.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Models\\TemplateDefinition.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Services\\TemplateExtractor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\TemplateExtractor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Models\\TemplateItem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Models\\TemplateItem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\LiveGalerieView.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\LiveGalerieView.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\GalerieNameDialog.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\GalerieNameDialog.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\DialogHostWindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\DialogHostWindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\DialogHostWindow.xaml||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\DialogHostWindow.xaml||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Utilities\\BoolToVisibilityConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Utilities\\BoolToVisibilityConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Utilities\\NullToVisibilityConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Utilities\\NullToVisibilityConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Utilities\\NullToBoolConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Utilities\\NullToBoolConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Utilities\\InverseBoolToVisibilityConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Utilities\\InverseBoolToVisibilityConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\AssemblyInfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:AssemblyInfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\GalerieNameDialog.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\GalerieNameDialog.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Utilities\\SelectedBorderBrushMultiConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Utilities\\SelectedBorderBrushMultiConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Utilities\\SelectedBorderMultiConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Utilities\\SelectedBorderMultiConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\LiveGalerieView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\LiveGalerieView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Utilities\\RelayCommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Utilities\\RelayCommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\TemplateSelectionWindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\TemplateSelectionWindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\TemplateSelectionWindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\FotoboxApp\\Views\\TemplateSelectionWindow.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\AdminMenuView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\AdminMenuView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\AdminMenuView.xaml||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\AdminMenuView.xaml||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\StartView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\StartView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\StartView.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\StartView.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\PinPadDialog.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\PinPadDialog.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\PinPadDialog.xaml||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\PinPadDialog.xaml||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\CameraView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\CameraView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\UserMenuView.xaml||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\UserMenuView.xaml||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\ViewModels\\StartViewModel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:ViewModels\\StartViewModel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\UserMenuView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\UserMenuView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\CameraView.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\CameraView.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\CollageView.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\CollageView.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\MainWindow.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:MainWindow.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\CollageView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\CollageView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Services\\PrinterHelper.cs||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\PrinterHelper.cs||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Services\\CameraHelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\CameraHelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\PrinterSelectDialog.xaml||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\PrinterSelectDialog.xaml||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\PrinterSelectDialog.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\PrinterSelectDialog.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\CameraSelectDialog.xaml||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\CameraSelectDialog.xaml||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\CameraSelectDialog.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\CameraSelectDialog.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\App.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:App.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\App.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:App.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\MainWindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:MainWindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\FotoboxApp.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:FotoboxApp.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Models\\TemplateDefinition.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Models\\TemplateDefinition.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Services\\TemplateExtractor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\TemplateExtractor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Models\\TemplateItem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Models\\TemplateItem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\LiveGalerieView.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\LiveGalerieView.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\GalerieNameDialog.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\GalerieNameDialog.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\DialogHostWindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\DialogHostWindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\DialogHostWindow.xaml||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\DialogHostWindow.xaml||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Utilities\\BoolToVisibilityConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Utilities\\BoolToVisibilityConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Utilities\\NullToVisibilityConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Utilities\\NullToVisibilityConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Utilities\\NullToBoolConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Utilities\\NullToBoolConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Utilities\\InverseBoolToVisibilityConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Utilities\\InverseBoolToVisibilityConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\AssemblyInfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:AssemblyInfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\GalerieNameDialog.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\GalerieNameDialog.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Utilities\\SelectedBorderBrushMultiConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Utilities\\SelectedBorderBrushMultiConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Utilities\\SelectedBorderMultiConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Utilities\\SelectedBorderMultiConverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\LiveGalerieView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\LiveGalerieView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Utilities\\RelayCommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Utilities\\RelayCommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Desktop\\_\\FotoboxApp\\Views\\TemplateSelectionWindow.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Views\\TemplateSelectionWindow.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     }
   ],
@@ -190,35 +190,24 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "MainWindow.xaml",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\MainWindow.xaml",
-              "RelativeDocumentMoniker": "MainWindow.xaml",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\MainWindow.xaml",
-              "RelativeToolTip": "MainWindow.xaml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-07-17T09:00:27.976Z"
+              "DocumentIndex": 2,
+              "Title": "AdminMenuView.xaml.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\AdminMenuView.xaml.cs",
+              "RelativeDocumentMoniker": "Views\\AdminMenuView.xaml.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\AdminMenuView.xaml.cs",
+              "RelativeToolTip": "Views\\AdminMenuView.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-17T10:34:33.376Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 10,
-              "Title": "CameraView.xaml",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\CameraView.xaml",
-              "RelativeDocumentMoniker": "Views\\CameraView.xaml",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\CameraView.xaml",
-              "RelativeToolTip": "Views\\CameraView.xaml",
-              "ViewState": "AgIAAEMAAAAAAAAAAAAAAG8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-07-17T09:31:04.434Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
               "Title": "StartViewModel.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\ViewModels\\StartViewModel.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\ViewModels\\StartViewModel.cs",
               "RelativeDocumentMoniker": "ViewModels\\StartViewModel.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\ViewModels\\StartViewModel.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\ViewModels\\StartViewModel.cs",
               "RelativeToolTip": "ViewModels\\StartViewModel.cs",
               "ViewState": "AgIAAMMAAAAAAAAAAAAkwPMAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -226,36 +215,73 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "AdminMenuView.xaml",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\AdminMenuView.xaml",
-              "RelativeDocumentMoniker": "Views\\AdminMenuView.xaml",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\AdminMenuView.xaml",
-              "RelativeToolTip": "Views\\AdminMenuView.xaml",
-              "ViewState": "AgIAAG0AAAAAAAAAAAAUwJcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-07-17T10:34:22.587Z",
+              "DocumentIndex": 1,
+              "Title": "TemplateSelectionWindow.xaml.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\TemplateSelectionWindow.xaml.cs",
+              "RelativeDocumentMoniker": "Views\\TemplateSelectionWindow.xaml.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\TemplateSelectionWindow.xaml.cs",
+              "RelativeToolTip": "Views\\TemplateSelectionWindow.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-17T09:09:16.535Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "AdminMenuView.xaml.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\AdminMenuView.xaml.cs",
-              "RelativeDocumentMoniker": "Views\\AdminMenuView.xaml.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\AdminMenuView.xaml.cs",
-              "RelativeToolTip": "Views\\AdminMenuView.xaml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADsAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "TemplateLoader.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Services\\TemplateLoader.cs",
+              "RelativeDocumentMoniker": "Services\\TemplateLoader.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Services\\TemplateLoader.cs",
+              "RelativeToolTip": "Services\\TemplateLoader.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAABOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-17T10:34:33.376Z"
+              "WhenOpened": "2025-07-17T10:17:13.328Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 3,
+              "Title": "AdminMenuView.xaml",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\AdminMenuView.xaml",
+              "RelativeDocumentMoniker": "Views\\AdminMenuView.xaml",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\AdminMenuView.xaml",
+              "RelativeToolTip": "Views\\AdminMenuView.xaml",
+              "ViewState": "AgIAABkAAAAAAAAAAAAUwJYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-07-17T10:34:22.587Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "CameraView.xaml",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\CameraView.xaml",
+              "RelativeDocumentMoniker": "Views\\CameraView.xaml",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\CameraView.xaml",
+              "RelativeToolTip": "Views\\CameraView.xaml",
+              "ViewState": "AgIAAEMAAAAAAAAAAAAAAG8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-07-17T09:31:04.434Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "MainWindow.xaml",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\MainWindow.xaml",
+              "RelativeToolTip": "MainWindow.xaml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-07-17T09:00:27.976Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
               "Title": "PinPadDialog.xaml",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\PinPadDialog.xaml",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\PinPadDialog.xaml",
               "RelativeDocumentMoniker": "Views\\PinPadDialog.xaml",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\PinPadDialog.xaml",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\PinPadDialog.xaml",
               "RelativeToolTip": "Views\\PinPadDialog.xaml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
@@ -263,11 +289,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "PinPadDialog.xaml.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\PinPadDialog.xaml.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\PinPadDialog.xaml.cs",
               "RelativeDocumentMoniker": "Views\\PinPadDialog.xaml.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\PinPadDialog.xaml.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\PinPadDialog.xaml.cs",
               "RelativeToolTip": "Views\\PinPadDialog.xaml.cs",
               "ViewState": "AgIAAAwAAAAAAAAAAAAAADEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -275,11 +301,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "StartView.xaml.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\StartView.xaml.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\StartView.xaml.cs",
               "RelativeDocumentMoniker": "Views\\StartView.xaml.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\StartView.xaml.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\StartView.xaml.cs",
               "RelativeToolTip": "Views\\StartView.xaml.cs",
               "ViewState": "AgIAAFcAAAAAAAAAAAAAAIUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -287,11 +313,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 8,
               "Title": "CameraView.xaml.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\CameraView.xaml.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\CameraView.xaml.cs",
               "RelativeDocumentMoniker": "Views\\CameraView.xaml.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\CameraView.xaml.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\CameraView.xaml.cs",
               "RelativeToolTip": "Views\\CameraView.xaml.cs",
               "ViewState": "AgIAAPoAAAAAAAAAAAAkwBkBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -299,11 +325,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "StartView.xaml",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\StartView.xaml",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\StartView.xaml",
               "RelativeDocumentMoniker": "Views\\StartView.xaml",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\StartView.xaml",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\StartView.xaml",
               "RelativeToolTip": "Views\\StartView.xaml",
               "ViewState": "AgIAAHUAAAAAAAAAAAAiwJMAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
@@ -311,11 +337,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 17,
               "Title": "CameraHelper.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Services\\CameraHelper.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Services\\CameraHelper.cs",
               "RelativeDocumentMoniker": "Services\\CameraHelper.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Services\\CameraHelper.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Services\\CameraHelper.cs",
               "RelativeToolTip": "Services\\CameraHelper.cs",
               "ViewState": "AgIAAA4AAAAAAAAAAAAAwDgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -323,11 +349,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 18,
               "Title": "PrinterSelectDialog.xaml",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\PrinterSelectDialog.xaml",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\PrinterSelectDialog.xaml",
               "RelativeDocumentMoniker": "Views\\PrinterSelectDialog.xaml",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\PrinterSelectDialog.xaml",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\PrinterSelectDialog.xaml",
               "RelativeToolTip": "Views\\PrinterSelectDialog.xaml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
@@ -335,11 +361,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 11,
               "Title": "UserMenuView.xaml.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\UserMenuView.xaml.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\UserMenuView.xaml.cs",
               "RelativeDocumentMoniker": "Views\\UserMenuView.xaml.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\UserMenuView.xaml.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\UserMenuView.xaml.cs",
               "RelativeToolTip": "Views\\UserMenuView.xaml.cs",
               "ViewState": "AgIAAHgAAAAAAAAAAAAkwKMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -347,11 +373,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 21,
               "Title": "CameraSelectDialog.xaml.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\CameraSelectDialog.xaml.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\CameraSelectDialog.xaml.cs",
               "RelativeDocumentMoniker": "Views\\CameraSelectDialog.xaml.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\CameraSelectDialog.xaml.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\CameraSelectDialog.xaml.cs",
               "RelativeToolTip": "Views\\CameraSelectDialog.xaml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -359,11 +385,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
               "Title": "UserMenuView.xaml",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\UserMenuView.xaml",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\UserMenuView.xaml",
               "RelativeDocumentMoniker": "Views\\UserMenuView.xaml",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\UserMenuView.xaml",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\UserMenuView.xaml",
               "RelativeToolTip": "Views\\UserMenuView.xaml",
               "ViewState": "AgIAABwAAAAAAAAAAAAgwEAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
@@ -371,11 +397,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 13,
               "Title": "CollageView.xaml",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\CollageView.xaml",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\CollageView.xaml",
               "RelativeDocumentMoniker": "Views\\CollageView.xaml",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\CollageView.xaml",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\CollageView.xaml",
               "RelativeToolTip": "Views\\CollageView.xaml",
               "ViewState": "AgIAAAQAAAAAAAAAAADwv3EAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
@@ -383,11 +409,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 15,
               "Title": "CollageView.xaml.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\CollageView.xaml.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\CollageView.xaml.cs",
               "RelativeDocumentMoniker": "Views\\CollageView.xaml.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\CollageView.xaml.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\CollageView.xaml.cs",
               "RelativeToolTip": "Views\\CollageView.xaml.cs",
               "ViewState": "AgIAAOoAAAAAAAAAAAAcwA4BAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -395,11 +421,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 23,
               "Title": "App.xaml.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\App.xaml.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\App.xaml.cs",
               "RelativeDocumentMoniker": "App.xaml.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\App.xaml.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\App.xaml.cs",
               "RelativeToolTip": "App.xaml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -407,11 +433,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 16,
               "Title": "PrinterHelper.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Services\\PrinterHelper.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Services\\PrinterHelper.cs",
               "RelativeDocumentMoniker": "Services\\PrinterHelper.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Services\\PrinterHelper.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Services\\PrinterHelper.cs",
               "RelativeToolTip": "Services\\PrinterHelper.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -419,11 +445,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 19,
               "Title": "PrinterSelectDialog.xaml.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\PrinterSelectDialog.xaml.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\PrinterSelectDialog.xaml.cs",
               "RelativeDocumentMoniker": "Views\\PrinterSelectDialog.xaml.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\PrinterSelectDialog.xaml.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\PrinterSelectDialog.xaml.cs",
               "RelativeToolTip": "Views\\PrinterSelectDialog.xaml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -431,11 +457,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 20,
               "Title": "CameraSelectDialog.xaml",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\CameraSelectDialog.xaml",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\CameraSelectDialog.xaml",
               "RelativeDocumentMoniker": "Views\\CameraSelectDialog.xaml",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\CameraSelectDialog.xaml",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\CameraSelectDialog.xaml",
               "RelativeToolTip": "Views\\CameraSelectDialog.xaml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
@@ -443,11 +469,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 22,
               "Title": "App.xaml",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\App.xaml",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\App.xaml",
               "RelativeDocumentMoniker": "App.xaml",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\App.xaml",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\App.xaml",
               "RelativeToolTip": "App.xaml",
               "ViewState": "AgIAAFUAAAAAAAAAAAAiwIEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
@@ -455,11 +481,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 24,
               "Title": "MainWindow.xaml.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\MainWindow.xaml.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\MainWindow.xaml.cs",
               "RelativeDocumentMoniker": "MainWindow.xaml.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\MainWindow.xaml.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\MainWindow.xaml.cs",
               "RelativeToolTip": "MainWindow.xaml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -467,11 +493,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 25,
               "Title": "FotoboxApp.csproj",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\FotoboxApp.csproj",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\FotoboxApp.csproj",
               "RelativeDocumentMoniker": "FotoboxApp.csproj",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\FotoboxApp.csproj",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\FotoboxApp.csproj",
               "RelativeToolTip": "FotoboxApp.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
@@ -479,11 +505,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 30,
               "Title": "GalerieNameDialog.xaml",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\GalerieNameDialog.xaml",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\GalerieNameDialog.xaml",
               "RelativeDocumentMoniker": "Views\\GalerieNameDialog.xaml",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\GalerieNameDialog.xaml",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\GalerieNameDialog.xaml",
               "RelativeToolTip": "Views\\GalerieNameDialog.xaml",
               "ViewState": "AgIAAA8AAAAAAAAAAAAowDMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
@@ -491,11 +517,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 27,
               "Title": "TemplateExtractor.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Services\\TemplateExtractor.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Services\\TemplateExtractor.cs",
               "RelativeDocumentMoniker": "Services\\TemplateExtractor.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Services\\TemplateExtractor.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Services\\TemplateExtractor.cs",
               "RelativeToolTip": "Services\\TemplateExtractor.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -503,23 +529,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "TemplateLoader.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Services\\TemplateLoader.cs",
-              "RelativeDocumentMoniker": "Services\\TemplateLoader.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Services\\TemplateLoader.cs",
-              "RelativeToolTip": "Services\\TemplateLoader.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAABOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-17T10:17:13.328Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 26,
               "Title": "TemplateDefinition.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Models\\TemplateDefinition.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Models\\TemplateDefinition.cs",
               "RelativeDocumentMoniker": "Models\\TemplateDefinition.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Models\\TemplateDefinition.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Models\\TemplateDefinition.cs",
               "RelativeToolTip": "Models\\TemplateDefinition.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -527,11 +541,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 28,
               "Title": "TemplateItem.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Models\\TemplateItem.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Models\\TemplateItem.cs",
               "RelativeDocumentMoniker": "Models\\TemplateItem.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Models\\TemplateItem.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Models\\TemplateItem.cs",
               "RelativeToolTip": "Models\\TemplateItem.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -539,11 +553,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 29,
               "Title": "LiveGalerieView.xaml",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\LiveGalerieView.xaml",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\LiveGalerieView.xaml",
               "RelativeDocumentMoniker": "Views\\LiveGalerieView.xaml",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\LiveGalerieView.xaml",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\LiveGalerieView.xaml",
               "RelativeToolTip": "Views\\LiveGalerieView.xaml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
@@ -551,11 +565,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 31,
               "Title": "DialogHostWindow.xaml.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\DialogHostWindow.xaml.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\DialogHostWindow.xaml.cs",
               "RelativeDocumentMoniker": "Views\\DialogHostWindow.xaml.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\DialogHostWindow.xaml.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\DialogHostWindow.xaml.cs",
               "RelativeToolTip": "Views\\DialogHostWindow.xaml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -563,11 +577,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 32,
               "Title": "DialogHostWindow.xaml",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\DialogHostWindow.xaml",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\DialogHostWindow.xaml",
               "RelativeDocumentMoniker": "Views\\DialogHostWindow.xaml",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\DialogHostWindow.xaml",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\DialogHostWindow.xaml",
               "RelativeToolTip": "Views\\DialogHostWindow.xaml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
@@ -575,11 +589,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 38,
               "Title": "GalerieNameDialog.xaml.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\GalerieNameDialog.xaml.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\GalerieNameDialog.xaml.cs",
               "RelativeDocumentMoniker": "Views\\GalerieNameDialog.xaml.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\GalerieNameDialog.xaml.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\GalerieNameDialog.xaml.cs",
               "RelativeToolTip": "Views\\GalerieNameDialog.xaml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -587,11 +601,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 35,
               "Title": "NullToBoolConverter.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Utilities\\NullToBoolConverter.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Utilities\\NullToBoolConverter.cs",
               "RelativeDocumentMoniker": "Utilities\\NullToBoolConverter.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Utilities\\NullToBoolConverter.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Utilities\\NullToBoolConverter.cs",
               "RelativeToolTip": "Utilities\\NullToBoolConverter.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -599,11 +613,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 36,
               "Title": "InverseBoolToVisibilityConverter.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Utilities\\InverseBoolToVisibilityConverter.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Utilities\\InverseBoolToVisibilityConverter.cs",
               "RelativeDocumentMoniker": "Utilities\\InverseBoolToVisibilityConverter.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Utilities\\InverseBoolToVisibilityConverter.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Utilities\\InverseBoolToVisibilityConverter.cs",
               "RelativeToolTip": "Utilities\\InverseBoolToVisibilityConverter.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -611,11 +625,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 33,
               "Title": "BoolToVisibilityConverter.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Utilities\\BoolToVisibilityConverter.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Utilities\\BoolToVisibilityConverter.cs",
               "RelativeDocumentMoniker": "Utilities\\BoolToVisibilityConverter.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Utilities\\BoolToVisibilityConverter.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Utilities\\BoolToVisibilityConverter.cs",
               "RelativeToolTip": "Utilities\\BoolToVisibilityConverter.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -623,11 +637,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 34,
               "Title": "NullToVisibilityConverter.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Utilities\\NullToVisibilityConverter.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Utilities\\NullToVisibilityConverter.cs",
               "RelativeDocumentMoniker": "Utilities\\NullToVisibilityConverter.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Utilities\\NullToVisibilityConverter.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Utilities\\NullToVisibilityConverter.cs",
               "RelativeToolTip": "Utilities\\NullToVisibilityConverter.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -635,11 +649,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 37,
               "Title": "AssemblyInfo.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\AssemblyInfo.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\AssemblyInfo.cs",
               "RelativeDocumentMoniker": "AssemblyInfo.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\AssemblyInfo.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\AssemblyInfo.cs",
               "RelativeToolTip": "AssemblyInfo.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -647,11 +661,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 39,
               "Title": "SelectedBorderBrushMultiConverter.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Utilities\\SelectedBorderBrushMultiConverter.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Utilities\\SelectedBorderBrushMultiConverter.cs",
               "RelativeDocumentMoniker": "Utilities\\SelectedBorderBrushMultiConverter.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Utilities\\SelectedBorderBrushMultiConverter.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Utilities\\SelectedBorderBrushMultiConverter.cs",
               "RelativeToolTip": "Utilities\\SelectedBorderBrushMultiConverter.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -659,11 +673,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 40,
               "Title": "SelectedBorderMultiConverter.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Utilities\\SelectedBorderMultiConverter.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Utilities\\SelectedBorderMultiConverter.cs",
               "RelativeDocumentMoniker": "Utilities\\SelectedBorderMultiConverter.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Utilities\\SelectedBorderMultiConverter.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Utilities\\SelectedBorderMultiConverter.cs",
               "RelativeToolTip": "Utilities\\SelectedBorderMultiConverter.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -671,11 +685,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 42,
               "Title": "RelayCommand.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Utilities\\RelayCommand.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Utilities\\RelayCommand.cs",
               "RelativeDocumentMoniker": "Utilities\\RelayCommand.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Utilities\\RelayCommand.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Utilities\\RelayCommand.cs",
               "RelativeToolTip": "Utilities\\RelayCommand.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -683,11 +697,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 41,
               "Title": "LiveGalerieView.xaml.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\LiveGalerieView.xaml.cs",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\LiveGalerieView.xaml.cs",
               "RelativeDocumentMoniker": "Views\\LiveGalerieView.xaml.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\LiveGalerieView.xaml.cs",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\LiveGalerieView.xaml.cs",
               "RelativeToolTip": "Views\\LiveGalerieView.xaml.cs",
               "ViewState": "AgIAACEAAAAAAAAAAAAmwDIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -695,23 +709,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 42,
-              "Title": "TemplateSelectionWindow.xaml.cs",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\TemplateSelectionWindow.xaml.cs",
-              "RelativeDocumentMoniker": "Views\\TemplateSelectionWindow.xaml.cs",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\TemplateSelectionWindow.xaml.cs",
-              "RelativeToolTip": "Views\\TemplateSelectionWindow.xaml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-17T09:09:16.535Z"
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 43,
               "Title": "TemplateSelectionWindow.xaml",
-              "DocumentMoniker": "D:\\Desktop\\FotoboxApp\\Views\\TemplateSelectionWindow.xaml",
+              "DocumentMoniker": "D:\\Desktop\\_\\FotoboxApp\\Views\\TemplateSelectionWindow.xaml",
               "RelativeDocumentMoniker": "Views\\TemplateSelectionWindow.xaml",
-              "ToolTip": "D:\\Desktop\\FotoboxApp\\Views\\TemplateSelectionWindow.xaml",
+              "ToolTip": "D:\\Desktop\\_\\FotoboxApp\\Views\\TemplateSelectionWindow.xaml",
               "RelativeToolTip": "Views\\TemplateSelectionWindow.xaml",
               "ViewState": "AgIAACwAAAAAAAAAAAAowFAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
