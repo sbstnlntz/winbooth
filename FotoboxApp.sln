@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FotoboxApp", "FotoboxApp.csproj", "{83845908-4770-1086-5C5F-F9C5D730C1BA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{83845908-4770-1086-5C5F-F9C5D730C1BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83845908-4770-1086-5C5F-F9C5D730C1BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83845908-4770-1086-5C5F-F9C5D730C1BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83845908-4770-1086-5C5F-F9C5D730C1BA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DC4D74A9-66AD-44B9-8372-7CE96E1F8FFB}
+	EndGlobalSection
+EndGlobal

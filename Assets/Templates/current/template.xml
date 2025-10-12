@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Template Name="hochzeit-oelzweig_1_2" Width="1800" Height="1200" Dimensions="0" Resolution="300" BackgroundColor="#FFFFFFFF" print_2_per_page="False" PrintToSecondaryPrinter="False" LastSavedDate="04/23/2022 04:17:22" Id="ZAGsX6VEOvnPA60nmDOMORAQ7" IsLegacy="False" OriginalDevice="BUERO-TIM">
+  <Elements>
+    <Image Name="hochzeit-oelzweig_1_2" Opacity="100" ShadowEnabled="False" ShadowColor="#FF000000" ShadowDepth="10" ShadowRadius="20" ShadowDirection="-45" Width="1800" Height="1200" Top="0" Left="0" ImagePath="84i455867.png" KeepAspect="True" Thickness="0" StrokeColor="#FF000000" ZIndex="1" />
+    <Photo Name="Photo 1" Opacity="100" ShadowEnabled="False" ShadowColor="#FF000000" ShadowDepth="10" ShadowRadius="20" ShadowDirection="-45" Width="1474" Height="983" Top="90" Left="167" ImagePath="" KeepAspect="True" Thickness="0" StrokeColor="#FF000000" PhotoNumber="1" ZIndex="0" Rotation="2" />
+  </Elements>
+</Template>

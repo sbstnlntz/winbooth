@@ -1,0 +1,10 @@
+<Window x:Class="FotoboxApp.Views.CameraSelectDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Kamera auswahlen" Height="300" Width="400" WindowStartupLocation="CenterOwner">
+    <Grid>
+        <ListBox x:Name="ListBoxCameras" Margin="12,12,12,60" />
+        <Button Content="OK" Width="100" Height="34" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,12,12"
+                Click="Ok_Click" />
+    </Grid>
+</Window>

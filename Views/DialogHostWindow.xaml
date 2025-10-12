@@ -1,0 +1,10 @@
+<Window x:Class="FotoboxApp.Views.DialogHostWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="None" ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner"
+        Background="Transparent" AllowsTransparency="True" ShowInTaskbar="False" Topmost="True">
+    <Border Background="Transparent">
+        <ContentPresenter x:Name="HostContent"/>
+    </Border>
+</Window>

@@ -1,0 +1,51 @@
+<Window x:Class="FotoboxApp.Views.GalerieNameDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="ToolWindow"
+        ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
+        WindowStartupLocation="CenterOwner"
+        Title="Galerie-Name festlegen"
+        Background="{StaticResource FB_BackgroundBrush}">
+	<StackPanel Margin="24" Width="340">
+		<TextBlock Text="Galerie-Name eingeben:"
+                   FontSize="{StaticResource FB_FontSizeNormal}"
+                   FontWeight="Bold"
+                   Foreground="{StaticResource FB_AccentBrush}"
+                   Margin="0,0,0,2"
+                   FontFamily="{StaticResource FB_FontFamily}"/>
+
+		<TextBox x:Name="GalleryNameBox"
+                 Margin="0,14,0,0"
+                 FontSize="18"
+                 Height="38"
+                 VerticalContentAlignment="Center"
+                 Background="{StaticResource FB_BackgroundBrush}"
+                 Foreground="{StaticResource FB_AccentBrush}"
+                 BorderBrush="{StaticResource FB_AccentBrush}"
+                 BorderThickness="2"
+                 CaretBrush="{StaticResource FB_AccentBrush}"
+                 FontFamily="{StaticResource FB_FontFamily}"
+                 Padding="12,0"
+                 HorizontalAlignment="Stretch"/>
+
+		<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,22,0,0">
+			<Button Content="Abbrechen"
+                    Click="Cancel_Click"
+                    Width="100"
+                    Style="{StaticResource FB_ElegantButton}"
+                    Background="{StaticResource FB_BackgroundBrush}"
+                    Foreground="{StaticResource FB_AccentBrush}"
+                    BorderBrush="{StaticResource FB_AccentBrush}"
+                    BorderThickness="2"
+                    Margin="0,0,16,0"/>
+			<Button Content="OK"
+                    Click="OK_Click"
+                    Width="100"
+                    Style="{StaticResource FB_ElegantButton}"
+                    Background="{StaticResource FB_AccentBrush}"
+                    Foreground="{StaticResource FB_ButtonTextBrush}"
+                    BorderThickness="0"/>
+		</StackPanel>
+	</StackPanel>
+</Window>
