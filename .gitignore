@@ -1,0 +1,6 @@
+# .gitignore
+publish/
+*.exe
+*.zip
+*.msi
+
