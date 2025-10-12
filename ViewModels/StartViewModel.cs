@@ -106,6 +106,8 @@ namespace FotoboxApp.ViewModels
                 {
                     _galleryName = value;
                     OnPropertyChanged();
+                    // persist on change
+                    try { FotoboxApp.Services.SettingsService.SaveGalleryName(_galleryName); } catch { }
                 }
             }
         }
@@ -142,7 +144,7 @@ namespace FotoboxApp.ViewModels
         }
 
         /// <summary>
-        /// Liefert den Text für den Speichern-Button:
+        /// Liefert den Text fï¿½r den Speichern-Button:
         /// "NUR SPEICHERN" wenn Direktdruck aktiv ist, sonst "SPEICHERN".
         /// </summary>
         public string SaveButtonLabel => Direktdruck ? "NUR SPEICHERN" : "SPEICHERN";
@@ -178,6 +180,10 @@ namespace FotoboxApp.ViewModels
         // --- Konstruktor ---
         public StartViewModel()
         {
+            // Galerie-Name aus Einstellungen laden
+            try { _galleryName = FotoboxApp.Services.SettingsService.LoadGalleryName() ?? ""; } catch { }
+            OnPropertyChanged(nameof(GalleryName));
+
             // Templates laden
             string templatesRoot = Path.Combine(
                 System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyPictures),
@@ -254,3 +260,4 @@ namespace FotoboxApp.ViewModels
         }
     }
 }
+

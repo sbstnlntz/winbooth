@@ -8,6 +8,6 @@ namespace FotoboxApp.Models
         public string ZipPath { get; set; }
         public BitmapImage PreviewImage { get; set; }
 
-        public override string ToString() => string.Empty;
+        public override string ToString() => Name ?? base.ToString();
     }
 }

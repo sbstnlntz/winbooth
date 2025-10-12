@@ -27,6 +27,7 @@ namespace FotoboxApp.Views
         private readonly string _galleryName;
         private readonly bool _direktdruck;     // ← korrekt benannt
         private readonly StartViewModel _vm;
+        private readonly string _extractTarget;
 
         public CollageView(
             List<Bitmap> capturedPhotos,
@@ -55,6 +56,7 @@ namespace FotoboxApp.Views
                 Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(extractTarget);
             ZipFile.ExtractToDirectory(_zipPath, extractTarget);
+            _extractTarget = extractTarget;
 
             var xmlPath = Path.Combine(extractTarget, "template.xml");
             _templateDef = TemplateLoader.Load(xmlPath);
@@ -84,6 +86,16 @@ namespace FotoboxApp.Views
             // Buttons konfigurieren
             PrintButton.Visibility = _direktdruck ? Visibility.Visible : Visibility.Collapsed;
             SaveButton.Visibility = Visibility.Visible;
+            this.Unloaded += (s, e) => CleanupResources();
+        }
+
+        private void CleanupResources()
+        {
+            try { _finalBitmap?.Dispose(); _finalBitmap = null; } catch { }
+            try { foreach (var b in _currentPhotos) b?.Dispose(); } catch { }
+            try { foreach (var b in _originalPhotos) b?.Dispose(); } catch { }
+            try { _overlayBitmap?.Dispose(); } catch { }
+            try { if (!string.IsNullOrEmpty(_extractTarget) && Directory.Exists(_extractTarget)) Directory.Delete(_extractTarget, true); } catch { }
         }
 
         private void Reset_Click(object sender, RoutedEventArgs e)
@@ -97,7 +109,6 @@ namespace FotoboxApp.Views
             try
             {
                 SaveToGallery(_finalBitmap);
-                Utilities.StatManager.IncreaseTotalPhotoCount();
                 SendToPrinter(_finalBitmap);
             }
             catch (Exception ex)

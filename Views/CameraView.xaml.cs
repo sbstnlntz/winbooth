@@ -25,6 +25,8 @@ namespace FotoboxApp.Views
         private Mat _frame;
         private TemplateDefinition _templateDefinition;
         private Bitmap _overlayBitmap;
+        private string _extractTarget;
+        private string _sessionShotsDir;
 
         private int _currentPhotoIndex = 0;
         private readonly List<Bitmap> _capturedPhotos = new();
@@ -44,9 +46,17 @@ namespace FotoboxApp.Views
             _galleryName = SanitizeGalleryName(galleryName ?? "UnbenannteGalerie");
             _vm = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
 
+            // Session-Ordner für Einzelaufnahmen vorbereiten
+            var galleryDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "Fotobox", _galleryName);
+            _sessionShotsDir = Path.Combine(galleryDir, "shots", DateTime.Now.ToString("yyyyMMdd_HHmmss"));
+            try { Directory.CreateDirectory(_sessionShotsDir); } catch { }
+
             LoadTemplate(_zipPath);
             StartCamera();
             _ = StartCaptureSequence();
+
+            // Ensure cleanup on unload
+            this.Unloaded += (s, e) => CleanupResources();
         }
 
         private string SanitizeGalleryName(string name)
@@ -57,13 +67,13 @@ namespace FotoboxApp.Views
 
         private void LoadTemplate(string zipPath)
         {
-            string extractTarget = Path.Combine(Path.GetTempPath(), "Fotobox_Template", Guid.NewGuid().ToString("N"));
-            Directory.CreateDirectory(extractTarget);
-            ZipFile.ExtractToDirectory(zipPath, extractTarget);
+            _extractTarget = Path.Combine(Path.GetTempPath(), "Fotobox_Template", Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(_extractTarget);
+            ZipFile.ExtractToDirectory(zipPath, _extractTarget);
 
-            string xmlPath = Path.Combine(extractTarget, "template.xml");
+            string xmlPath = Path.Combine(_extractTarget, "template.xml");
             if (!File.Exists(xmlPath))
-                throw new FileNotFoundException("template.xml nicht gefunden in: " + extractTarget);
+                throw new FileNotFoundException("template.xml nicht gefunden in: " + _extractTarget);
             _templateDefinition = TemplateLoader.Load(xmlPath);
 
             _overlayBitmap = new Bitmap(_templateDefinition.OverlayPath);
@@ -103,7 +113,7 @@ namespace FotoboxApp.Views
                 _capture.Retrieve(_frame);
                 using var shot = _frame.ToImage<Bgr, byte>().ToBitmap();
 
-                // tempor�r hinzuf�gen
+                // tempor�r hinzuf�gen
                 _capturedPhotos.Add((Bitmap)shot.Clone());
                 AddPreviewImage(shot, _currentRegion);
 
@@ -134,8 +144,43 @@ namespace FotoboxApp.Views
             _capture.Dispose();
             _capture = null;
 
+            // Release overlay bitmap and temp folder
+            CleanupResources();
+
             var mw = (MainWindow)Application.Current.MainWindow;
             mw.MainFrame.Navigate(new CollageView(_capturedPhotos, _zipPath, _galleryName, _vm.Direktdruck, _vm));
+        }
+
+        private void CleanupResources()
+        {
+            try
+            {
+                _capture?.Stop();
+                _capture?.Dispose();
+                _capture = null;
+            }
+            catch { }
+            try
+            {
+                _frame?.Dispose();
+                _frame = null;
+            }
+            catch { }
+            try
+            {
+                _overlayBitmap?.Dispose();
+                _overlayBitmap = null;
+            }
+            catch { }
+            try
+            {
+                if (!string.IsNullOrEmpty(_extractTarget) && Directory.Exists(_extractTarget))
+                {
+                    Directory.Delete(_extractTarget, true);
+                    _extractTarget = null;
+                }
+            }
+            catch { }
         }
 
         private void InitRegionPreview()
@@ -167,14 +212,12 @@ namespace FotoboxApp.Views
 
             // zuletzt geschossenes Bild holen
             var lastBitmap = _capturedPhotos[^1];
-            var displayBitmap = new Bitmap(_currentRegion.Width, _currentRegion.Height);
+            using (var displayBitmap = new Bitmap(_currentRegion.Width, _currentRegion.Height))
             using (Graphics g = Graphics.FromImage(displayBitmap))
             {
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 g.DrawImage(lastBitmap, 0, 0, _currentRegion.Width, _currentRegion.Height);
-            }
-
-            var displayImage = ConvertToBitmapImage(displayBitmap);
+                var displayImage = ConvertToBitmapImage(displayBitmap);
 
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -183,6 +226,7 @@ namespace FotoboxApp.Views
             });
 
             return _reviewDecisionSource.Task;
+            }
         }
 
 
@@ -211,20 +255,35 @@ namespace FotoboxApp.Views
             {
                 ReviewOverlay.Visibility = Visibility.Collapsed;
             });
+            // Kamera-Callback wieder aktivieren, damit Livebild für nächsten Slot läuft
+            if (_capture != null)
+                _capture.ImageGrabbed += ProcessFrame;
+
+            // Letztes akzeptiertes Foto in der Session speichern
+            try
+            {
+                if (_capturedPhotos.Count > 0 && _currentRegion != null && !string.IsNullOrEmpty(_sessionShotsDir))
+                {
+                    var index = _currentPhotoIndex + 1; // 1-basiert für Dateiname
+                    var filename = Path.Combine(_sessionShotsDir, $"shot_{index:00}.jpg");
+                    using var toSave = new Bitmap(_capturedPhotos[^1]);
+                    toSave.Save(filename, System.Drawing.Imaging.ImageFormat.Jpeg);
+                }
+            }
+            catch { }
+
             _reviewDecisionSource?.SetResult(true);
         }
 
 
         private void AddPreviewImage(Bitmap bitmap, ImageRegion region)
         {
-            var resized = new Bitmap(_currentRegion.Width, _currentRegion.Height);
+            using (var resized = new Bitmap(_currentRegion.Width, _currentRegion.Height))
             using (Graphics g = Graphics.FromImage(resized))
             {
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 g.DrawImage(bitmap, 0, 0, _currentRegion.Width, _currentRegion.Height);
-            }
-
-            var img = new System.Windows.Controls.Image
+                var img = new System.Windows.Controls.Image
             {
                 Width = region.Width,
                 Height = region.Height,
@@ -237,6 +296,7 @@ namespace FotoboxApp.Views
             Canvas.SetTop(img, region.Y);
             TemplateCanvas.Children.Insert(0, img);  // wichtig!
             _previewOverlays.Add(img);
+            }
         }
 
         private Task FadeTextBlock(TextBlock textBlock, double from, double to, int durationMs)
@@ -304,7 +364,7 @@ namespace FotoboxApp.Views
 
             _capture.Retrieve(_frame);
             using var bmp = _frame.ToImage<Bgr, byte>().ToBitmap();
-            var resized = new Bitmap(bmp, _currentRegion.Width, _currentRegion.Height);
+            using var resized = new Bitmap(bmp, _currentRegion.Width, _currentRegion.Height);
             var img = ConvertToBitmapImage(resized);
 
             Application.Current.Dispatcher.Invoke(() =>

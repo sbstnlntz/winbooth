@@ -9,7 +9,7 @@
 		<conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 	</UserControl.Resources>
 
-	<Grid Margin="36,0">
+    <Grid Margin="36,0">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="2*"/>
 			<ColumnDefinition Width="1*"/>
@@ -48,19 +48,7 @@
 				</TextBlock>
 			</StackPanel>
 
-			<!-- Galerie-Name-Auswahl -->
-			<StackPanel Orientation="Horizontal" Margin="0,0,0,20" VerticalAlignment="Center">
-				<Button Content="Galerie-Name"
-                        Click="SetGalleryName_Click"
-                        Margin="0,0,18,0"
-                        FontSize="19"
-                        Padding="18,7"/>
-				<TextBlock Text="{Binding GalleryName, FallbackValue='Kein Name'}"
-                           Foreground="#B40000"
-                           FontSize="19"
-                           FontWeight="Bold"
-                           VerticalAlignment="Center"/>
-			</StackPanel>
+            <!-- Galerie-Name wird nicht mehr im Start-Menü angezeigt/gesetzt -->
 
 			<!-- Start & Galerie Buttons (groß, rund, nebeneinander) -->
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,16">
@@ -198,5 +186,65 @@
 				</Button>
 			</StackPanel>
 		</Grid>
-	</Grid>
+        
+        <!-- PIN Overlay: in-App statt externem Modal -->
+        <Grid x:Name="PinOverlay"
+              Grid.Column="0"
+              Grid.ColumnSpan="2"
+              Background="#88000000"
+              Visibility="Collapsed"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch"
+              Margin="-36,0"
+              Panel.ZIndex="1000">
+            <Grid.Resources>
+                <Style x:Key="PinKeyButton" TargetType="Button">
+                    <Setter Property="Width" Value="100"/>
+                    <Setter Property="Height" Value="100"/>
+                    <Setter Property="FontSize" Value="28"/>
+                    <Setter Property="Margin" Value="8"/>
+                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                </Style>
+                <Style x:Key="PinActionButton" TargetType="Button" BasedOn="{StaticResource PinKeyButton}">
+                    <Setter Property="Width" Value="120"/>
+                    <Setter Property="Height" Value="60"/>
+                    <Setter Property="FontSize" Value="22"/>
+                </Style>
+            </Grid.Resources>
+            <Border Background="White"
+                    CornerRadius="12"
+                    Padding="24"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                <StackPanel>
+                    <TextBlock Text="Bitte Code eingeben"
+                               FontSize="24"
+                               FontWeight="Bold"
+                               Margin="0,0,0,12"
+                               HorizontalAlignment="Center"/>
+                    <TextBlock x:Name="PinDisplay"
+                               Text=""
+                               FontSize="28"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,16"/>
+                    <UniformGrid Rows="4" Columns="3" HorizontalAlignment="Center">
+                        <Button Content="1" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
+                        <Button Content="2" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
+                        <Button Content="3" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
+                        <Button Content="4" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
+                        <Button Content="5" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
+                        <Button Content="6" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
+                        <Button Content="7" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
+                        <Button Content="8" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
+                        <Button Content="9" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
+                        <Button Content="⌫" Click="PinBack_Click" Style="{StaticResource PinKeyButton}"/>
+                        <Button Content="0" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
+                        <Button Content="OK" Click="PinOk_Click" Style="{StaticResource PinKeyButton}"/>
+                    </UniformGrid>
+                    <Button Content="Abbrechen" Click="PinCancel_Click" Margin="0,16,0,0" Style="{StaticResource PinActionButton}" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
 </UserControl>

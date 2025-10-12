@@ -11,6 +11,7 @@ namespace FotoboxApp.Views
     public partial class StartView : UserControl
     {
         private readonly StartViewModel _vm;
+        private string _enteredPin = string.Empty;
 
         public StartView(StartViewModel vm)
         {
@@ -26,19 +27,7 @@ namespace FotoboxApp.Views
             Application.Current.Shutdown();
         }
 
-        private void SetGalleryName_Click(object sender, RoutedEventArgs e)
-        {
-            var dialog = new GalerieNameDialog(_vm.GalleryName)
-            {
-                Owner = Window.GetWindow(this),
-                WindowStartupLocation = WindowStartupLocation.CenterOwner
-            };
-
-            if (dialog.ShowDialog() == true)
-            {
-                _vm.GalleryName = dialog.GalleryName;
-            }
-        }
+        // Galerie-Name wird nur im Admin-Menü geändert (Start-Menü zeigt/ändert ihn nicht mehr)
 
         private void ResetTotalPhotoCounter_Click(object sender, RoutedEventArgs e)
         {
@@ -105,27 +94,79 @@ namespace FotoboxApp.Views
 
         private void BtnAdmin_Click(object sender, RoutedEventArgs e)
         {
-            var pinDialog = new PinPadDialog
-            {
-                Owner = Window.GetWindow(this),
-                WindowStartupLocation = WindowStartupLocation.CenterOwner
-            };
-            bool? result = pinDialog.ShowDialog();
+            _enteredPin = string.Empty;
+            PinDisplay.Text = string.Empty;
+            PinOverlay.Visibility = Visibility.Visible;
+        }
 
-            if (result == true)
+        private void PinNumber_Click(object sender, RoutedEventArgs e)
+        {
+            if (_enteredPin.Length >= 4) return;
+            if (sender is Button btn && btn.Content != null)
             {
-                var window = Window.GetWindow(this) as MainWindow;
-                if (window == null)
+                var s = btn.Content.ToString();
+                if (!string.IsNullOrEmpty(s) && char.IsDigit(s[0]))
                 {
-                    MessageBox.Show("MainWindow nicht gefunden!", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
+                    _enteredPin += s[0];
+                    PinDisplay.Text = new string('•', _enteredPin.Length);
+                    if (_enteredPin.Length == 4)
+                    {
+                        // Automatisch bestätigen, kein zusätzlicher OK-Klick nötig
+                        PinOk_Click(null, null);
+                    }
                 }
-                if (pinDialog.EnteredPin == "1111")
-                    window.MainFrame.Navigate(new UserMenuView(window.MainViewModel));
-                else if (pinDialog.EnteredPin == "0410")
-                    window.MainFrame.Navigate(new AdminMenuView(window.MainViewModel));
-                else
-                    MessageBox.Show("Falscher Code!", "Zugriff verweigert", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void PinBack_Click(object sender, RoutedEventArgs e)
+        {
+            if (_enteredPin.Length > 0)
+            {
+                _enteredPin = _enteredPin.Substring(0, _enteredPin.Length - 1);
+                PinDisplay.Text = new string('•', _enteredPin.Length);
+            }
+        }
+
+        private void PinCancel_Click(object sender, RoutedEventArgs e)
+        {
+            _enteredPin = string.Empty;
+            PinDisplay.Text = string.Empty;
+            PinOverlay.Visibility = Visibility.Collapsed;
+        }
+
+        private void PinOk_Click(object sender, RoutedEventArgs e)
+        {
+            if (_enteredPin.Length != 4)
+            {
+                MessageBox.Show("Bitte 4 Ziffern eingeben!", "Hinweis", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var window = Window.GetWindow(this) as MainWindow;
+            if (window == null)
+            {
+                MessageBox.Show("MainWindow nicht gefunden!", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            var userPin = System.Environment.GetEnvironmentVariable("FOTOBOX_USER_PIN") ?? "1111";
+            var adminPin = System.Environment.GetEnvironmentVariable("FOTOBOX_ADMIN_PIN") ?? "0410";
+
+            if (_enteredPin == userPin)
+            {
+                PinOverlay.Visibility = Visibility.Collapsed;
+                window.MainFrame.Navigate(new UserMenuView(window.MainViewModel));
+            }
+            else if (_enteredPin == adminPin)
+            {
+                PinOverlay.Visibility = Visibility.Collapsed;
+                window.MainFrame.Navigate(new AdminMenuView(window.MainViewModel));
+            }
+            else
+            {
+                MessageBox.Show("Falscher Code!", "Zugriff verweigert", MessageBoxButton.OK, MessageBoxImage.Error);
+                _enteredPin = string.Empty;
+                PinDisplay.Text = string.Empty;
             }
         }
 

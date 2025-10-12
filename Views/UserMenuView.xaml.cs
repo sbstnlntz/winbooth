@@ -1,3 +1,5 @@
+using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using FotoboxApp.Models;
@@ -20,7 +22,6 @@ namespace FotoboxApp.Views
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            // Navigation zur¸ck zur StartView, mit demselben ViewModel!
             var window = Window.GetWindow(this) as MainWindow;
             if (window != null)
                 window.MainFrame.Navigate(new StartView(_mainViewModel));
@@ -39,7 +40,7 @@ namespace FotoboxApp.Views
                 if (_mainViewModel.SelectedTemplate2 != null &&
                     dialog.SelectedTemplate.ZipPath == _mainViewModel.SelectedTemplate2.ZipPath)
                 {
-                    MessageBox.Show("Dieses Design ist bereits im zweiten Slot ausgew‰hlt!", "Doppelte Auswahl", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Dieses Design ist bereits im zweiten Slot ausgew√§hlt!", "Doppelte Auswahl", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
                 _mainViewModel.SelectedTemplate1 = dialog.SelectedTemplate;
@@ -70,7 +71,7 @@ namespace FotoboxApp.Views
                 if (_mainViewModel.SelectedTemplate1 != null &&
                     dialog.SelectedTemplate.ZipPath == _mainViewModel.SelectedTemplate1.ZipPath)
                 {
-                    MessageBox.Show("Dieses Design ist bereits im ersten Slot ausgew‰hlt!", "Doppelte Auswahl", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Dieses Design ist bereits im ersten Slot ausgew√§hlt!", "Doppelte Auswahl", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
                 _mainViewModel.SelectedTemplate2 = dialog.SelectedTemplate;
@@ -97,8 +98,7 @@ namespace FotoboxApp.Views
                 return;
             }
 
-            // **Achte auf den richtigen Klassennamen:**
-            var dlg = new CameraSelectDialog(vm.AvailableCameras, vm.SelectedCameraName); // Der Dialog muss so heiﬂen!
+            var dlg = new CameraSelectDialog(vm.AvailableCameras, vm.SelectedCameraName);
             dlg.Owner = Window.GetWindow(this);
             dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
@@ -117,13 +117,27 @@ namespace FotoboxApp.Views
                 return;
             }
 
-            var dlg = new PrinterSelectDialog(vm.AvailablePrinters, vm.SelectedPrinterName); // Diesen Dialog musst du analog wie bei der Kamera anlegen!
+            var dlg = new PrinterSelectDialog(vm.AvailablePrinters, vm.SelectedPrinterName);
             if (dlg.ShowDialog() == true && !string.IsNullOrEmpty(dlg.SelectedPrinter))
             {
                 vm.SelectedPrinterName = dlg.SelectedPrinter;
             }
         }
 
+        private void ShutdownSystem_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show(
+                "Windows wird heruntergefahren. Fortfahren?",
+                "Fotobox ausschalten",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result != MessageBoxResult.Yes)
+                return;
+
+            if (TryShutdownWindows())
+                Application.Current.Shutdown();
+        }
 
         private void UpdateTemplateButtons()
         {
@@ -157,6 +171,26 @@ namespace FotoboxApp.Views
                 SelectedTemplatePreview2.Visibility = Visibility.Collapsed;
                 PlusIcon2.Visibility = Visibility.Visible;
                 DeleteTemplateBtn2.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private static bool TryShutdownWindows()
+        {
+            try
+            {
+                var psi = new ProcessStartInfo("shutdown", "/s /t 0")
+                {
+                    CreateNoWindow = true,
+                    UseShellExecute = false
+                };
+                Process.Start(psi);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"System-Shutdown fehlgeschlagen:\n{ex.Message}", "Fotobox ausschalten",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
             }
         }
     }
