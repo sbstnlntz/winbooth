@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using FotoboxApp.ViewModels;
@@ -108,7 +108,7 @@ namespace FotoboxApp.Views
                 if (!string.IsNullOrEmpty(s) && char.IsDigit(s[0]))
                 {
                     _enteredPin += s[0];
-                    PinDisplay.Text = new string('•', _enteredPin.Length);
+                    PinDisplay.Text = new string('*', _enteredPin.Length);
                     if (_enteredPin.Length == 4)
                     {
                         // Automatisch bestätigen, kein zusätzlicher OK-Klick nötig
@@ -123,7 +123,7 @@ namespace FotoboxApp.Views
             if (_enteredPin.Length > 0)
             {
                 _enteredPin = _enteredPin.Substring(0, _enteredPin.Length - 1);
-                PinDisplay.Text = new string('•', _enteredPin.Length);
+                PinDisplay.Text = new string('*', _enteredPin.Length);
             }
         }
 
@@ -172,3 +172,5 @@ namespace FotoboxApp.Views
 
     }
 }
+
+

@@ -4,3 +4,6 @@ publish/
 *.zip
 *.msi
 
+.vs/
+bin/
+obj/

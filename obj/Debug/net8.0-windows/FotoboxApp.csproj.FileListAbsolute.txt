@@ -75,7 +75,6 @@ D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\App.g.cs
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\GeneratedInternalTypeHelper.g.cs
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\FotoboxApp_MarkupCompile.cache
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\FotoboxApp_MarkupCompile.lref
-D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\App.baml
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\CollageView.baml
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\StartView.baml
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\UserMenuView.baml
@@ -91,3 +90,6 @@ D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\refint\FotoboxApp.dll
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\FotoboxApp.pdb
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\FotoboxApp.genruntimeconfig.cache
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\ref\FotoboxApp.dll
+D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\SplashScreenWindow.baml
+D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\SplashScreenWindow.g.cs
+D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\App.baml

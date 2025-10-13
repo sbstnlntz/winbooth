@@ -72,6 +72,11 @@ namespace FotoboxApp.ViewModels
             get => _selectedTemplate2;
             set
             {
+                if (!_allowTwoTemplates && value != null)
+                {
+                    return;
+                }
+
                 if (_selectedTemplate2 != value)
                 {
                     _selectedTemplate2 = value;
@@ -177,12 +182,45 @@ namespace FotoboxApp.ViewModels
             }
         }
 
+        private bool _allowTwoTemplates;
+        public bool AllowTwoTemplates
+        {
+            get => _allowTwoTemplates;
+            set
+            {
+                if (_allowTwoTemplates == value)
+                {
+                    return;
+                }
+
+                _allowTwoTemplates = value;
+                OnPropertyChanged();
+
+                if (!_allowTwoTemplates && _selectedTemplate2 != null)
+                {
+                    var removed = _selectedTemplate2;
+                    _selectedTemplate2 = null;
+                    OnPropertyChanged(nameof(SelectedTemplate2));
+
+                    if (ReferenceEquals(_activeTemplate, removed))
+                    {
+                        ActiveTemplate = _selectedTemplate1;
+                    }
+                }
+
+                try { SettingsService.SaveAllowTwoTemplates(_allowTwoTemplates); } catch { }
+            }
+        }
+
         // --- Konstruktor ---
         public StartViewModel()
         {
             // Galerie-Name aus Einstellungen laden
-            try { _galleryName = FotoboxApp.Services.SettingsService.LoadGalleryName() ?? ""; } catch { }
+            try { _galleryName = SettingsService.LoadGalleryName() ?? ""; } catch { }
             OnPropertyChanged(nameof(GalleryName));
+
+            try { _allowTwoTemplates = SettingsService.LoadAllowTwoTemplates(); } catch { _allowTwoTemplates = false; }
+            OnPropertyChanged(nameof(AllowTwoTemplates));
 
             // Templates laden
             string templatesRoot = Path.Combine(

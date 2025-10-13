@@ -69,7 +69,9 @@
                     <CheckBox Content="Verzögerung" FontSize="22"/>
 
                     <TextBlock Text="Foto Design" FontWeight="Bold" FontSize="22" Margin="0,22,0,10"/>
-                    <CheckBox Content="2 Designs" FontSize="16"/>
+                    <CheckBox Content="2 Designs"
+                              FontSize="16"
+                              IsChecked="{Binding AllowTwoTemplates, Mode=TwoWay}"/>
                     <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
                         <Grid Width="200" Height="120" Margin="0,0,24,0">
                             <Rectangle Stroke="Gray" StrokeThickness="2" StrokeDashArray="4,2" RadiusX="4" RadiusY="4"/>

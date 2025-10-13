@@ -7,6 +7,7 @@
 
     <UserControl.Resources>
         <local:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
+        <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <Style x:Key="UserActionButtonStyle" TargetType="Button" BasedOn="{StaticResource FB_ElegantButton}">
             <Setter Property="Height" Value="54"/>
             <Setter Property="Padding" Value="22,8"/>
@@ -126,7 +127,10 @@
                             </Grid>
                         </Grid>
                         <!-- Slot 2 -->
-                        <Grid Width="170" Height="120">
+                        <Grid x:Name="TemplateSlot2"
+                              Width="170"
+                              Height="120"
+                              Visibility="{Binding AllowTwoTemplates, Converter={StaticResource BoolToVisibilityConverter}}">
                             <Rectangle Stroke="#222" StrokeThickness="2" RadiusX="7" RadiusY="7"
                                        StrokeDashArray="4,3" Fill="White"/>
                             <Grid>

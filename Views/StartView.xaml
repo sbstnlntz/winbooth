@@ -5,189 +5,280 @@
     Background="White"
     MinWidth="1100" MinHeight="700">
 
-	<UserControl.Resources>
-		<conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-	</UserControl.Resources>
+    <UserControl.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+
+        <DropShadowEffect x:Key="BannerShadow"
+                          Color="#33000000"
+                          BlurRadius="22"
+                          ShadowDepth="6"
+                          Direction="270"/>
+
+        <DropShadowEffect x:Key="ButtonShadowPrimary"
+                          Color="#66000000"
+                          BlurRadius="24"
+                          ShadowDepth="9"
+                          Direction="270"/>
+
+        <DropShadowEffect x:Key="ButtonShadowSecondary"
+                          Color="#44000000"
+                          BlurRadius="20"
+                          ShadowDepth="7"
+                          Direction="270"/>
+    </UserControl.Resources>
 
     <Grid Margin="36,0">
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="2*"/>
-			<ColumnDefinition Width="1*"/>
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*"/>
-		</Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
 
-		<!-- Linke Seite -->
-		<StackPanel Grid.Column="0" VerticalAlignment="Stretch" Margin="0,36,36,36">
-			<!-- Titel -->
-			<Border Background="#C00" CornerRadius="3" Padding="14,0" Margin="0,0,0,32">
-				<TextBlock Text="SO FUNKTIONIERT DIE FOTOBOX"
+        <!-- Linke Seite -->
+        <Grid Grid.Column="0"
+              Margin="0,36,48,36">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Titel -->
+            <Border Grid.Row="0"
+                    Background="#C8102E"
+                    CornerRadius="6"
+                    Padding="20,12"
+                    Effect="{StaticResource BannerShadow}"
+                    Margin="0,0,0,36">
+                <TextBlock Text="SO FUNKTIONIERT DIE FOTOBOX"
                            Foreground="White"
                            FontSize="38"
-                           FontWeight="Bold"/>
-			</Border>
+                           FontWeight="Bold"
+                           TextAlignment="Center"
+                           HorizontalAlignment="Center"/>
+            </Border>
 
-			<!-- Steps -->
-			<StackPanel Margin="0,0,0,20">
-				<TextBlock FontSize="29" Foreground="Black" Margin="0,0,0,7">
-					<Run Text="1. Countdown starten"/>
-				</TextBlock>
-				<TextBlock FontSize="29" Foreground="Black" Margin="0,0,0,7">
-					<Run Text="2. "/>
-					<Underline>
-						<Run Text="oben"/>
-					</Underline>
-					<Run Text=" in die Kamera schauen"/>
-				</TextBlock>
-				<TextBlock FontSize="29" Foreground="Black" Margin="0,0,0,7">
-					<Run Text="3. warten, bis das Foto gemacht wurde"/>
-				</TextBlock>
-				<TextBlock FontSize="29" Foreground="Black" Margin="0,0,0,0">
-					<Run Text="4. Bild ggf. direkt ausdrucken"/>
-				</TextBlock>
-			</StackPanel>
+            <!-- Steps -->
+            <StackPanel Grid.Row="1"
+                        Margin="0,0,0,32">
+                <TextBlock FontSize="30" Foreground="#111" Margin="0,0,0,10" FontWeight="SemiBold">
+                    <Run Text="1. Countdown starten"/>
+                </TextBlock>
+                <TextBlock FontSize="30" Foreground="#111" Margin="0,0,0,10" FontWeight="SemiBold">
+                    <Run Text="2. "/>
+                    <Underline>
+                        <Run Text="oben"/>
+                    </Underline>
+                    <Run Text=" in die Kamera schauen"/>
+                </TextBlock>
+                <TextBlock FontSize="30" Foreground="#111" Margin="0,0,0,10" FontWeight="SemiBold">
+                    <Run Text="3. warten, bis das Foto gemacht wurde"/>
+                </TextBlock>
+                <TextBlock FontSize="30" Foreground="#111" Margin="0,0,0,0" FontWeight="SemiBold">
+                    <Run Text="4. Bild ggf. direkt ausdrucken"/>
+                </TextBlock>
+            </StackPanel>
 
-            <!-- Galerie-Name wird nicht mehr im Start-Menü angezeigt/gesetzt -->
+            <!-- Buttons -->
+            <StackPanel Grid.Row="2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Left"
+                        Margin="0,0,0,28">
+                <Button x:Name="BtnStart"
+                        Content="START"
+                        Width="160"
+                        Height="160"
+                        FontSize="30"
+                        FontWeight="Bold"
+                        Foreground="White"
+                        Cursor="Hand"
+                        Click="BtnStart_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Grid>
+                                <Ellipse Fill="#D61C1C"
+                                         Stroke="#7A0E0E"
+                                         StrokeThickness="3"
+                                         Effect="{StaticResource ButtonShadowPrimary}"/>
+                                <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button x:Name="BtnGallery"
+                        Content="GALERIE"
+                        Width="160"
+                        Height="160"
+                        FontSize="30"
+                        FontWeight="Bold"
+                        Foreground="#333333"
+                        Margin="32,0,0,0"
+                        Cursor="Hand"
+                        Click="BtnGallery_Click"
+                        Visibility="{Binding GalerieButton, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Grid>
+                                <Ellipse Fill="#D0D0D0"
+                                         Stroke="#939393"
+                                         StrokeThickness="3"
+                                         Effect="{StaticResource ButtonShadowSecondary}"/>
+                                <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </StackPanel>
 
-			<!-- Start & Galerie Buttons (groß, rund, nebeneinander) -->
-			<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,16">
-				<Button x:Name="BtnStart"
-						Content="START"
-						Width="140" Height="140"
-						FontSize="27"
-						FontWeight="Bold"
-						Margin="0,0,24,0"
-						Background="#B40000"
-						Foreground="White"
-						BorderBrush="#900"
-						BorderThickness="2"
-						Click="BtnStart_Click">
-					<Button.Template>
-						<ControlTemplate TargetType="Button">
-							<Grid>
-								<Ellipse Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="2"/>
-								<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-							</Grid>
-						</ControlTemplate>
-					</Button.Template>
-				</Button>
-				<Button x:Name="BtnGallery"
-						Content="GALERIE"
-						Width="140" Height="140"
-						FontSize="27"
-						FontWeight="Bold"
-						Background="#CCC"
-						Foreground="White"
-						BorderBrush="#888"
-						BorderThickness="2"
-						Click="BtnGallery_Click"
-						Visibility="{Binding GalerieButton, Converter={StaticResource BoolToVisibilityConverter}}">
-					<Button.Template>
-						<ControlTemplate TargetType="Button">
-							<Grid>
-								<Ellipse Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="2"/>
-								<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-							</Grid>
-						</ControlTemplate>
-					</Button.Template>
-				</Button>
-			</StackPanel>
+            <!-- Hinweis -->
+            <Border Grid.Row="3"
+                    Background="#F7F7F7"
+                    CornerRadius="6"
+                    Padding="18"
+                    HorizontalAlignment="Stretch">
+                <TextBlock FontSize="18"
+                           Foreground="#222"
+                           TextWrapping="Wrap"
+                           HorizontalAlignment="Left">
+                    <Run FontWeight="Bold" Text="Wichtige Hinweise: "/>
+                    <Run Text="Die Fotobox benoetigt immer genuegend Licht. Bitte beachte auch, dass die Bilder immer mit einer leichten Verzoegerung gemacht werden. "/>
+                    <Run Text="Idealerweise stehen mehrere Personen ruhig nebeneinander und schauen oben in die Kamera."/>
+                </TextBlock>
+            </Border>
+        </Grid>
 
+        <!-- Rechte Seite -->
+        <Grid Grid.Column="1"
+              Margin="0,36,0,36">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-			<!-- Hinweistext -->
-			<TextBlock
-				FontSize="17"
-				Foreground="#222"
-				Margin="0,0,0,0"
-				TextWrapping="Wrap"
-				Width="420"
-				TextAlignment="Left"
-				HorizontalAlignment="Left">
-				<Run FontWeight="Bold" Text="Wichtige Hinweise: "/>
-				<Run Text="Die Fotobox benötigt immer genügend Licht. "/>
-				<Run Text="Bitte beachte auch, dass die Bilder immer mit einer leichten Verzögerung gemacht werden. "/>
-				<Run Text="Idealerweise stehen mehrere Personen ruhig nebeneinander und schauen oben in die Kamera."/>
-			</TextBlock>
+            <!-- Admin Button -->
+            <Button x:Name="BtnAdmin"
+                    Grid.Row="0"
+                    Width="54"
+                    Height="54"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    Margin="0,0,0,24"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Cursor="Hand"
+                    Click="BtnAdmin_Click">
+                <Border Width="44"
+                        Height="44"
+                        CornerRadius="12"
+                        Background="#1A000000"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                    <TextBlock FontFamily="Segoe MDL2 Assets"
+                               Text="&#xE72E;"
+                               FontSize="28"
+                               Foreground="#444444"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                </Border>
+            </Button>
 
-		</StackPanel>
+            <!-- Template Auswahl -->
+            <Grid Grid.Row="1"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Bottom"
+                  Margin="0,0,0,12"
+                  Width="540">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-		<!-- Rechts: Admin-Button oben, Templates unten -->
-		<Grid Grid.Column="1">
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="Auto"/>
-			</Grid.RowDefinitions>
+                <TextBlock Grid.Row="0"
+                           Text="Foto Design"
+                           FontSize="26"
+                           FontWeight="Bold"
+                           Foreground="#111"
+                           HorizontalAlignment="Right"
+                           Margin="0,0,0,24"/>
 
-			<!-- Admin-Icon oben rechts, transparent/grau -->
-			<Button x:Name="BtnAdmin"
-				Grid.Row="0"
-				Content="Menü"
-				Width="80"
-				Height="40"
-				FontSize="20"
-				HorizontalAlignment="Right"
-				Margin="0,8,0,0"
-				VerticalAlignment="Top"
-				Click="BtnAdmin_Click"
-				Background="#F0F0F0"
-				BorderBrush="#CCCCCC"
-				BorderThickness="1"
-				Foreground="#222"
-				Opacity="1"/>
+                <StackPanel Grid.Row="1"
+                            Orientation="Vertical"
+                            HorizontalAlignment="Stretch">
+                    <Button Height="240"
+                            Margin="0,0,0,28"
+                            Padding="0"
+                            Background="Transparent"
+                            Cursor="Hand"
+                            Visibility="{Binding SelectedTemplate1, Converter={StaticResource NullToVisibilityConverter}}"
+                            Click="SelectTemplate1_Click">
+                        <Button.BorderThickness>
+                            <MultiBinding Converter="{StaticResource SelectedBorderMultiConverter}">
+                                <Binding Path="ActiveTemplate"/>
+                                <Binding Path="SelectedTemplate1"/>
+                            </MultiBinding>
+                        </Button.BorderThickness>
+                        <Button.BorderBrush>
+                            <MultiBinding Converter="{StaticResource SelectedBorderBrushMultiConverter}">
+                                <Binding Path="ActiveTemplate"/>
+                                <Binding Path="SelectedTemplate1"/>
+                            </MultiBinding>
+                        </Button.BorderBrush>
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border CornerRadius="16"
+                                        Background="White"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                    <Image Source="{Binding SelectedTemplate1.PreviewImage}"
+                                           Stretch="Uniform"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Margin="6"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
 
+                    <Button Height="240"
+                            Padding="0"
+                            Background="Transparent"
+                            Cursor="Hand"
+                            Visibility="{Binding SelectedTemplate2, Converter={StaticResource NullToVisibilityConverter}}"
+                            Click="SelectTemplate2_Click">
+                        <Button.BorderThickness>
+                            <MultiBinding Converter="{StaticResource SelectedBorderMultiConverter}">
+                                <Binding Path="ActiveTemplate"/>
+                                <Binding Path="SelectedTemplate2"/>
+                            </MultiBinding>
+                        </Button.BorderThickness>
+                        <Button.BorderBrush>
+                            <MultiBinding Converter="{StaticResource SelectedBorderBrushMultiConverter}">
+                                <Binding Path="ActiveTemplate"/>
+                                <Binding Path="SelectedTemplate2"/>
+                            </MultiBinding>
+                        </Button.BorderBrush>
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border CornerRadius="16"
+                                        Background="White"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                    <Image Source="{Binding SelectedTemplate2.PreviewImage}"
+                                           Stretch="Uniform"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Margin="6"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Grid>
 
-
-			<!-- Template Buttons (übereinander, rechts unten) -->
-			<StackPanel Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,12,22">
-				<TextBlock Text="FOTO-DESIGN" FontSize="23" FontWeight="Bold" Margin="0,0,0,18" Foreground="#444" HorizontalAlignment="Right"/>
-				<!-- Button 1 -->
-				<Button Width="180" Height="120" Margin="0,0,0,14"
-                        Style="{StaticResource TemplateSelectButtonStyle}"
-                        Click="SelectTemplate1_Click">
-					<Button.BorderThickness>
-						<MultiBinding Converter="{StaticResource SelectedBorderMultiConverter}">
-							<Binding Path="ActiveTemplate"/>
-							<Binding Path="SelectedTemplate1"/>
-						</MultiBinding>
-					</Button.BorderThickness>
-					<Button.BorderBrush>
-						<MultiBinding Converter="{StaticResource SelectedBorderBrushMultiConverter}">
-							<Binding Path="ActiveTemplate"/>
-							<Binding Path="SelectedTemplate1"/>
-						</MultiBinding>
-					</Button.BorderBrush>
-					<StackPanel>
-						<Image Source="{Binding SelectedTemplate1.PreviewImage}" Width="150" Height="90"/>
-						<TextBlock Text="{Binding SelectedTemplate1.Name}" FontSize="16" Foreground="#222" HorizontalAlignment="Center"/>
-					</StackPanel>
-				</Button>
-				<!-- Button 2 -->
-				<Button Width="180" Height="120"
-                        Style="{StaticResource TemplateSelectButtonStyle}"
-                        Click="SelectTemplate2_Click">
-					<Button.BorderThickness>
-						<MultiBinding Converter="{StaticResource SelectedBorderMultiConverter}">
-							<Binding Path="ActiveTemplate"/>
-							<Binding Path="SelectedTemplate2"/>
-						</MultiBinding>
-					</Button.BorderThickness>
-					<Button.BorderBrush>
-						<MultiBinding Converter="{StaticResource SelectedBorderBrushMultiConverter}">
-							<Binding Path="ActiveTemplate"/>
-							<Binding Path="SelectedTemplate2"/>
-						</MultiBinding>
-					</Button.BorderBrush>
-					<StackPanel>
-						<Image Source="{Binding SelectedTemplate2.PreviewImage}" Width="150" Height="90"/>
-						<TextBlock Text="{Binding SelectedTemplate2.Name}" FontSize="16" Foreground="#222" HorizontalAlignment="Center"/>
-					</StackPanel>
-				</Button>
-			</StackPanel>
-		</Grid>
-        
-        <!-- PIN Overlay: in-App statt externem Modal -->
+        <!-- PIN Overlay -->
         <Grid x:Name="PinOverlay"
               Grid.Column="0"
               Grid.ColumnSpan="2"
@@ -238,7 +329,7 @@
                         <Button Content="7" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
                         <Button Content="8" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
                         <Button Content="9" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
-                        <Button Content="⌫" Click="PinBack_Click" Style="{StaticResource PinKeyButton}"/>
+                        <Button Content="DEL" Click="PinBack_Click" Style="{StaticResource PinKeyButton}"/>
                         <Button Content="0" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
                         <Button Content="OK" Click="PinOk_Click" Style="{StaticResource PinKeyButton}"/>
                     </UniformGrid>

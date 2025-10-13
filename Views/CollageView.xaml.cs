@@ -181,14 +181,25 @@ namespace FotoboxApp.Views
             for (int i = 0; i < template.ImageRegions.Count; i++)
             {
                 var r = template.ImageRegions[i];
-                if (i < fotos.Count && fotos[i] != null)
+                if (i >= fotos.Count || fotos[i] == null)
+                    continue;
+
+                var targetX = (float)(r.X * scale);
+                var targetY = (float)(r.Y * scale);
+                var targetWidth = (float)(r.Width * scale);
+                var targetHeight = (float)(r.Height * scale);
+
+                if (Math.Abs(r.Rotation) > 0.001)
                 {
-                    var dest = new Rectangle(
-                        (int)(r.X * scale),
-                        (int)(r.Y * scale),
-                        (int)(r.Width * scale),
-                        (int)(r.Height * scale));
-                    g.DrawImage(fotos[i], dest);
+                    var state = g.Save();
+                    g.TranslateTransform(targetX + targetWidth / 2f, targetY + targetHeight / 2f);
+                    g.RotateTransform((float)r.Rotation);
+                    g.DrawImage(fotos[i], -targetWidth / 2f, -targetHeight / 2f, targetWidth, targetHeight);
+                    g.Restore(state);
+                }
+                else
+                {
+                    g.DrawImage(fotos[i], targetX, targetY, targetWidth, targetHeight);
                 }
             }
 

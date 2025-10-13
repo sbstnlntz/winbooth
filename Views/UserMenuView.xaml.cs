@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,6 +18,7 @@ namespace FotoboxApp.Views
             InitializeComponent();
             _mainViewModel = mainViewModel;
             DataContext = mainViewModel; // <<< WICHTIG!
+            _mainViewModel.PropertyChanged += MainViewModelOnPropertyChanged;
             UpdateTemplateButtons();
         }
 
@@ -60,6 +62,13 @@ namespace FotoboxApp.Views
 
         private void SelectTemplateBtn2_Click(object sender, RoutedEventArgs e)
         {
+            if (!_mainViewModel.AllowTwoTemplates)
+            {
+                MessageBox.Show("Im Admin-Menü ist nur ein Foto-Design freigeschaltet.", "Zweiter Slot deaktiviert",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
             var templates = _mainViewModel.Templates;
             var dialog = new TemplateSelectionWindow(templates)
             {
@@ -139,8 +148,25 @@ namespace FotoboxApp.Views
                 Application.Current.Shutdown();
         }
 
+        private void MainViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(StartViewModel.AllowTwoTemplates):
+                case nameof(StartViewModel.SelectedTemplate1):
+                case nameof(StartViewModel.SelectedTemplate2):
+                case nameof(StartViewModel.ActiveTemplate):
+                    Dispatcher.Invoke(UpdateTemplateButtons);
+                    break;
+            }
+        }
+
         private void UpdateTemplateButtons()
         {
+            TemplateSlot2.Visibility = _mainViewModel.AllowTwoTemplates ? Visibility.Visible : Visibility.Collapsed;
+            SelectTemplateBtn2.IsEnabled = _mainViewModel.AllowTwoTemplates;
+            DeleteTemplateBtn2.IsEnabled = _mainViewModel.AllowTwoTemplates;
+
             var selected1 = _mainViewModel.SelectedTemplate1;
             if (selected1 != null && selected1.PreviewImage != null)
             {
@@ -169,7 +195,7 @@ namespace FotoboxApp.Views
             {
                 SelectedTemplatePreview2.Source = null;
                 SelectedTemplatePreview2.Visibility = Visibility.Collapsed;
-                PlusIcon2.Visibility = Visibility.Visible;
+                PlusIcon2.Visibility = _mainViewModel.AllowTwoTemplates ? Visibility.Visible : Visibility.Collapsed;
                 DeleteTemplateBtn2.Visibility = Visibility.Collapsed;
             }
         }
@@ -195,3 +221,4 @@ namespace FotoboxApp.Views
         }
     }
 }
+

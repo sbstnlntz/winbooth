@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 D:\Desktop\_\FotoboxApp\App.xaml
-14290035229
+15-1130977456
 
-33-278837400
+34-886144454
 204-2033787972
-MainWindow.xaml;Themes\Styles.xaml;Views\AdminMenuView.xaml;Views\CameraSelectDialog.xaml;Views\CameraView.xaml;Views\CollageView.xaml;Views\DialogHostWindow.xaml;Views\GalerieNameDialog.xaml;Views\LiveGalerieView.xaml;Views\PinPadDialog.xaml;Views\PrinterSelectDialog.xaml;Views\StartView.xaml;Views\TemplateSelectionWindow.xaml;Views\UserMenuView.xaml;
+MainWindow.xaml;Themes\Styles.xaml;Views\AdminMenuView.xaml;Views\CameraSelectDialog.xaml;Views\CameraView.xaml;Views\CollageView.xaml;Views\DialogHostWindow.xaml;Views\GalerieNameDialog.xaml;Views\LiveGalerieView.xaml;Views\PinPadDialog.xaml;Views\PrinterSelectDialog.xaml;Views\SplashScreenWindow.xaml;Views\StartView.xaml;Views\TemplateSelectionWindow.xaml;Views\UserMenuView.xaml;
 
 False
 

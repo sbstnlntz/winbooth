@@ -7,6 +7,7 @@ using System.IO.Compression;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Emgu.CV;
 using Emgu.CV.Structure;
@@ -197,6 +198,8 @@ namespace FotoboxApp.Views
                 RegionPreviewImage.Height = region.Height;
                 Canvas.SetLeft(RegionPreviewImage, region.X);
                 Canvas.SetTop(RegionPreviewImage, region.Y);
+                RegionPreviewImage.RenderTransformOrigin = new System.Windows.Point(0.5, 0.5);
+                RegionPreviewImage.RenderTransform = new RotateTransform(region.Rotation);
                 RegionPreviewImage.Visibility = Visibility.Visible;
             });
         }
@@ -278,24 +281,27 @@ namespace FotoboxApp.Views
 
         private void AddPreviewImage(Bitmap bitmap, ImageRegion region)
         {
-            using (var resized = new Bitmap(_currentRegion.Width, _currentRegion.Height))
+            using (var resized = new Bitmap(region.Width, region.Height))
             using (Graphics g = Graphics.FromImage(resized))
             {
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                g.DrawImage(bitmap, 0, 0, _currentRegion.Width, _currentRegion.Height);
-                var img = new System.Windows.Controls.Image
-            {
-                Width = region.Width,
-                Height = region.Height,
-                Stretch = System.Windows.Media.Stretch.None,
-                Source = ConvertToBitmapImage(resized),
-                IsHitTestVisible = false
-            };
+                g.DrawImage(bitmap, 0, 0, region.Width, region.Height);
 
-            Canvas.SetLeft(img, region.X);
-            Canvas.SetTop(img, region.Y);
-            TemplateCanvas.Children.Insert(0, img);  // wichtig!
-            _previewOverlays.Add(img);
+                var img = new System.Windows.Controls.Image
+                {
+                    Width = region.Width,
+                    Height = region.Height,
+                    Stretch = Stretch.None,
+                    Source = ConvertToBitmapImage(resized),
+                    IsHitTestVisible = false,
+                    RenderTransformOrigin = new System.Windows.Point(0.5, 0.5),
+                    RenderTransform = new RotateTransform(region.Rotation)
+                };
+
+                Canvas.SetLeft(img, region.X);
+                Canvas.SetTop(img, region.Y);
+                TemplateCanvas.Children.Insert(0, img);  // wichtig!
+                _previewOverlays.Add(img);
             }
         }
 

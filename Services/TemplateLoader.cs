@@ -1,23 +1,26 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using FotoboxApp.Models;
 
-
-namespace FotoboxApp.Services {
-    public static class TemplateLoader {
-        public static TemplateDefinition Load(string xmlPath) {
+namespace FotoboxApp.Services
+{
+    public static class TemplateLoader
+    {
+        public static TemplateDefinition Load(string xmlPath)
+        {
             var xml = XDocument.Load(xmlPath);
             var root = xml.Root ?? throw new InvalidDataException("template.xml: Root fehlt");
 
             var elements = root.Element("Elements") ?? throw new InvalidDataException("template.xml: <Elements> fehlt");
             var overlayElement = elements.Elements("Image").FirstOrDefault();
             if (overlayElement == null)
-                throw new InvalidDataException("template.xml: Kein <Image> für Overlay gefunden");
+                throw new InvalidDataException("template.xml: Kein <Image> fuer Overlay gefunden");
 
-            int width = ParseIntAttr(root, "Width", "template.xml: Attribut Width fehlt/ungültig");
-            int height = ParseIntAttr(root, "Height", "template.xml: Attribut Height fehlt/ungültig");
+            int width = ParseIntAttr(root, "Width", "template.xml: Attribut Width fehlt/ungueltig");
+            int height = ParseIntAttr(root, "Height", "template.xml: Attribut Height fehlt/ungueltig");
 
             var overlayAttr = overlayElement.Attribute("ImagePath")?.Value;
             if (string.IsNullOrWhiteSpace(overlayAttr))
@@ -29,28 +32,46 @@ namespace FotoboxApp.Services {
             var regions = new List<ImageRegion>();
             foreach (var photo in elements.Elements("Photo"))
             {
-                regions.Add(new ImageRegion {
-                    X = ParseIntAttr(photo, "Left", "template.xml: Photo.Left fehlt/ungültig"),
-                    Y = ParseIntAttr(photo, "Top", "template.xml: Photo.Top fehlt/ungültig"),
-                    Width = ParseIntAttr(photo, "Width", "template.xml: Photo.Width fehlt/ungültig"),
-                    Height = ParseIntAttr(photo, "Height", "template.xml: Photo.Height fehlt/ungültig"),
+                regions.Add(new ImageRegion
+                {
+                    X = ParseIntAttr(photo, "Left", "template.xml: Photo.Left fehlt/ungueltig"),
+                    Y = ParseIntAttr(photo, "Top", "template.xml: Photo.Top fehlt/ungueltig"),
+                    Width = ParseIntAttr(photo, "Width", "template.xml: Photo.Width fehlt/ungueltig"),
+                    Height = ParseIntAttr(photo, "Height", "template.xml: Photo.Height fehlt/ungueltig"),
+                    Rotation = ParseDoubleAttr(photo, "Rotation", 0.0),
                 });
             }
 
-            return new TemplateDefinition {
+            return new TemplateDefinition
+            {
                 Width = width,
                 Height = height,
                 OverlayPath = overlayPath,
-                ImageRegions = regions
+                ImageRegions = regions,
             };
         }
 
-        private static int ParseIntAttr(XElement e, string name, string error)
+        private static int ParseIntAttr(XElement element, string name, string errorMessage)
         {
-            var s = e.Attribute(name)?.Value;
-            if (!int.TryParse(s, out var v))
-                throw new InvalidDataException(error);
-            return v;
+            var raw = element.Attribute(name)?.Value;
+            if (!int.TryParse(raw, out var value))
+                throw new InvalidDataException(errorMessage);
+            return value;
+        }
+
+        private static double ParseDoubleAttr(XElement element, string name, double defaultValue)
+        {
+            var raw = element.Attribute(name)?.Value;
+            if (string.IsNullOrWhiteSpace(raw))
+                return defaultValue;
+
+            if (double.TryParse(raw, NumberStyles.Float, CultureInfo.InvariantCulture, out var value))
+                return value;
+
+            if (double.TryParse(raw, NumberStyles.Float, CultureInfo.CurrentCulture, out value))
+                return value;
+
+            return defaultValue;
         }
     }
 }
