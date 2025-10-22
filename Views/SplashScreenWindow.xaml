@@ -73,7 +73,7 @@
                                Text="{Binding ElementName=LoadingProgressBar, Path=Value, StringFormat={}{0:0} %}"
                                FontFamily="{DynamicResource FB_FontFamily}"
                                FontSize="{DynamicResource FB_FontSizeSmall}"
-                               Foreground="{DynamicResource FB_WhiteBrush}"
+                               Foreground="{DynamicResource FB_TextBrush}"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"
                                FontWeight="Bold"/>

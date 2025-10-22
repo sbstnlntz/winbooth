@@ -6,14 +6,49 @@
 
 	<UserControl.Resources>
 		<conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-		<Style x:Key="OverlayButton" TargetType="Button">
-			<Setter Property="Background" Value="#CCFFFFFF"/>
-			<Setter Property="BorderBrush" Value="Transparent"/>
+		<Style x:Key="FilterButtonStyle" TargetType="Button">
+			<Setter Property="Background" Value="#33000000"/>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="BorderBrush" Value="#44FFFFFF"/>
+			<Setter Property="BorderThickness" Value="1"/>
 			<Setter Property="Padding" Value="10"/>
-			<Setter Property="Margin" Value="5"/>
-			<Setter Property="FontSize" Value="18"/>
-			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="Margin" Value="4"/>
+			<Setter Property="FontSize" Value="16"/>
 			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border Background="{TemplateBinding Background}"
+								BorderBrush="{TemplateBinding BorderBrush}"
+								BorderThickness="{TemplateBinding BorderThickness}"
+								CornerRadius="12"
+								Padding="{TemplateBinding Padding}">
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		<Style x:Key="ActionButtonStyle" TargetType="Button">
+			<Setter Property="Background" Value="#FF2A2A2A"/>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="BorderBrush" Value="Transparent"/>
+			<Setter Property="Padding" Value="16,12"/>
+			<Setter Property="Margin" Value="6"/>
+			<Setter Property="FontSize" Value="20"/>
+			<Setter Property="FontWeight" Value="SemiBold"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="Button">
+						<Border Background="{TemplateBinding Background}"
+								CornerRadius="18"
+								Padding="{TemplateBinding Padding}">
+							<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+						</Border>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
 		</Style>
 	</UserControl.Resources>
 
@@ -25,89 +60,107 @@
                VerticalAlignment="Center"/>
 
 		<!-- 2) FILTER-OVERLAY (nur so groß wie nötig!) -->
-		<Border Background="#CCFFFFFF"
-                CornerRadius="10"
-                Padding="8"
+		<Border Background="#F0151515"
+                CornerRadius="16"
+                Padding="12"
                 Margin="16"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Panel.ZIndex="1"
                 Visibility="{Binding FotoFilter, Converter={StaticResource BoolToVisibilityConverter}}">
+			<Border.Effect>
+				<DropShadowEffect Color="#22000000"
+								  BlurRadius="32"
+								  ShadowDepth="0"
+								  Opacity="0.7"/>
+			</Border.Effect>
 			<StackPanel>
-				<Button Click="FilterOriginal_Click" Style="{StaticResource OverlayButton}">
+				<Button Click="FilterOriginal_Click" Style="{StaticResource FilterButtonStyle}">
 					<StackPanel>
 						<Image x:Name="PreviewOriginal" Width="80" Height="40"/>
-						<TextBlock Text="FARBE" HorizontalAlignment="Center"/>
+						<TextBlock Text="FARBE" HorizontalAlignment="Center" Margin="0,6,0,0" Foreground="#F0F0F0"/>
+						<Rectangle x:Name="BorderOriginal" Height="4" Margin="0,6,0,0" Fill="Transparent"/>
 					</StackPanel>
 				</Button>
-				<Button Click="FilterSW_Click" Style="{StaticResource OverlayButton}">
+				<Button Click="FilterSW_Click" Style="{StaticResource FilterButtonStyle}">
 					<StackPanel>
 						<Image x:Name="PreviewSW" Width="80" Height="40"/>
-						<TextBlock Text="S/W" HorizontalAlignment="Center"/>
+						<TextBlock Text="S/W" HorizontalAlignment="Center" Margin="0,6,0,0" Foreground="#F0F0F0"/>
+						<Rectangle x:Name="BorderSW" Height="4" Margin="0,6,0,0" Fill="Transparent"/>
 					</StackPanel>
 				</Button>
-				<Button Click="FilterSepia_Click" Style="{StaticResource OverlayButton}">
+				<Button Click="FilterSepia_Click" Style="{StaticResource FilterButtonStyle}">
 					<StackPanel>
 						<Image x:Name="PreviewSepia" Width="80" Height="40"/>
-						<TextBlock Text="SEPIA" HorizontalAlignment="Center"/>
+						<TextBlock Text="SEPIA" HorizontalAlignment="Center" Margin="0,6,0,0" Foreground="#F0F0F0"/>
+						<Rectangle x:Name="BorderSepia" Height="4" Margin="0,6,0,0" Fill="Transparent"/>
 					</StackPanel>
 				</Button>
 			</StackPanel>
 		</Border>
 
 		<!-- 3) AKTIONS-OVERLAY AM UNTEREN RAND -->
-		<Border Background="#CCFFFFFF"
-                CornerRadius="16"
-                Padding="10"
+		<Border Background="#F0151515"
+                CornerRadius="24"
+                Padding="18,16"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Bottom"
                 Margin="0,0,0,20"
                 Panel.ZIndex="1">
+			<Border.Effect>
+				<DropShadowEffect Color="#22000000"
+								  BlurRadius="36"
+								  ShadowDepth="0"
+								  Opacity="0.75"/>
+			</Border.Effect>
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 				<Button x:Name="PrintButton"
                         Click="Print_Click"
-                        Style="{StaticResource OverlayButton}"
+                        Style="{StaticResource ActionButtonStyle}"
                         Visibility="{Binding Direktdruck, Converter={StaticResource BoolToVisibilityConverter}}">
 					<StackPanel Orientation="Horizontal">
 						<TextBlock Text="🖨️" FontSize="24" Margin="0,0,8,0"/>
-						<TextBlock Text="DRUCKEN UND SPEICHERN"/>
+						<TextBlock Text="DRUCKEN UND SPEICHERN" Foreground="White"/>
 					</StackPanel>
 				</Button>
 
 				<Button x:Name="SaveButton"
                         Click="Save_Click"
-                        Style="{StaticResource OverlayButton}">
+                        Style="{StaticResource ActionButtonStyle}"
+						Background="#FF0B8FCE">
 					<StackPanel Orientation="Horizontal">
 						<TextBlock Text="💾" FontSize="24" Margin="0,0,8,0"/>
-						<TextBlock Text="{Binding SaveButtonLabel}"/>
-					</StackPanel>
-				</Button>
-
-				<Button x:Name="GalleryButton"
-                        Click="Gallery_Click"
-                        Style="{StaticResource OverlayButton}">
-					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="🖼️" FontSize="24" Margin="0,0,8,0"/>
-						<TextBlock Text="ZUR GALERIE"/>
+						<TextBlock Text="{Binding SaveButtonLabel}" Foreground="White"/>
 					</StackPanel>
 				</Button>
 			</StackPanel>
 		</Border>
 
-		<!-- 4) NOTIFICATION-OVERLAY -->
-		<Border x:Name="NotificationOverlay"
-                Background="#AA000000"
-                CornerRadius="10"
-                Padding="20"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Visibility="Collapsed"
-                Panel.ZIndex="2">
-			<TextBlock Text="Wird gedruckt und in der Galerie gespeichert…"
-                       Foreground="White"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       TextAlignment="Center"/>
-		</Border>
+		<!-- 4) PROCESSING OVERLAY -->
+		<Grid x:Name="ProcessingOverlay"
+              Background="#99000000"
+              Visibility="Collapsed"
+              Panel.ZIndex="2">
+			<Border Background="#CC222222"
+                    CornerRadius="14"
+                    Padding="28"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+				<StackPanel>
+					<TextBlock Text="Bitte einen Moment Geduld"
+                               Foreground="White"
+                               FontSize="24"
+                               FontWeight="Bold"
+                               TextAlignment="Center"/>
+					<TextBlock x:Name="ProcessingOverlayText"
+                               Text="Bild wird verarbeitet…"
+                               Foreground="#F0F0F0"
+                               FontSize="18"
+                               Margin="0,10,0,0"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"/>
+				</StackPanel>
+			</Border>
+		</Grid>
 	</Grid>
 </UserControl>

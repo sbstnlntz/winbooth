@@ -21,25 +21,36 @@
 		</Viewbox>
 
 		<!-- Countdown -->
-		<TextBlock x:Name="CountdownText"
-				   Text="5"
-				   FontSize="160"
-				   FontWeight="Bold"
-				   Foreground="White"
-				   Background="Transparent"
-				   Opacity="0"
-				   TextAlignment="Center"
-				   VerticalAlignment="Center"
-				   HorizontalAlignment="Center"
-				   Visibility="Collapsed"
-				   FontFamily="{StaticResource FB_FontFamilyAccent}">
-			<TextBlock.Effect>
+		<Grid x:Name="CountdownRing"
+			  Width="260"
+			  Height="260"
+			  Visibility="Collapsed"
+			  HorizontalAlignment="Center"
+			  VerticalAlignment="Center">
+			<Grid.Effect>
 				<DropShadowEffect Color="Black"
-							  BlurRadius="20"
-							  ShadowDepth="0"
-							  Opacity="0.8"/>
-			</TextBlock.Effect>
-		</TextBlock>
+								  BlurRadius="30"
+								  ShadowDepth="0"
+								  Opacity="0.65"/>
+			</Grid.Effect>
+			<Ellipse Stroke="#33FFFFFF"
+					 StrokeThickness="12"
+					 Fill="#22000000"/>
+			<Path x:Name="CountdownArcPath"
+				  Stroke="#FF00C6FF"
+				  StrokeThickness="12"
+				  StrokeStartLineCap="Round"
+				  StrokeEndLineCap="Round"
+				  Fill="Transparent"/>
+			<TextBlock x:Name="CountdownNumber"
+					   Text="5"
+					   FontSize="96"
+					   FontWeight="Bold"
+					   Foreground="White"
+					   FontFamily="{StaticResource FB_FontFamilyAccent}"
+					   HorizontalAlignment="Center"
+					   VerticalAlignment="Center"/>
+		</Grid>
 
 		<!-- Flash-Effekt -->
 		<Border x:Name="FlashOverlay"
@@ -48,59 +59,74 @@
 				Visibility="Collapsed"/>
 
 		<!-- Review-Overlay -->
-		<!-- Review-Overlay -->
 		<Grid x:Name="ReviewOverlay"
-			  Background="Transparent"
+			  Background="#99000000"
 			  Visibility="Collapsed"
 			  HorizontalAlignment="Stretch"
 			  VerticalAlignment="Stretch"
 			  Panel.ZIndex="10">
 
-			<StackPanel HorizontalAlignment="Center"
-						VerticalAlignment="Bottom"
-						Margin="0,0,0,80">
+			<Border Background="#FF1C1C1C"
+					CornerRadius="26"
+					Padding="28,24"
+					Margin="0,0,0,100"
+					HorizontalAlignment="Center"
+					VerticalAlignment="Bottom">
+				<Border.Effect>
+					<DropShadowEffect Color="#22000000"
+									  BlurRadius="40"
+									  ShadowDepth="0"
+									  Opacity="0.8"/>
+				</Border.Effect>
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+					<Button Click="RepeatPhoto_Click"
+							Background="#FFAA1F1F"
+							Foreground="White"
+							FontSize="22"
+							FontWeight="Bold"
+							Padding="24,12"
+							Margin="0,0,20,0"
+							Cursor="Hand">
+						<Button.Template>
+							<ControlTemplate TargetType="Button">
+								<Border Background="{TemplateBinding Background}"
+										CornerRadius="20"
+										Padding="{TemplateBinding Padding}">
+									<ContentPresenter HorizontalAlignment="Center"
+													  VerticalAlignment="Center"/>
+								</Border>
+							</ControlTemplate>
+						</Button.Template>
+						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+							<TextBlock Text="🔁" FontSize="28" Margin="0,0,10,0"/>
+							<TextBlock Text="FOTO WIEDERHOLEN"/>
+						</StackPanel>
+					</Button>
 
-				<!-- Buttons mit Schatten, aber kein weißer Hintergrund -->
-				<Border Background="Transparent"
-						CornerRadius="20"
-						Padding="20,10">
-					<Border.Effect>
-						<DropShadowEffect Color="Black"
-										  BlurRadius="20"
-										  ShadowDepth="4"
-										  Opacity="0.5"/>
-					</Border.Effect>
-
-					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-						<Button Click="RepeatPhoto_Click"
-								Margin="0,0,20,0"
-								Padding="20,10"
-								FontSize="22"
-								FontWeight="Bold"
-								Background="Transparent"
-								BorderThickness="0"
-								Cursor="Hand">
-							<StackPanel Orientation="Horizontal">
-								<TextBlock Text="🔁" FontSize="28" Margin="0,0,10,0"/>
-								<TextBlock Text="FOTO WIEDERHOLEN" Foreground="Red"/>
-							</StackPanel>
-						</Button>
-
-						<Button Click="ContinuePhoto_Click"
-								Padding="20,10"
-								FontSize="22"
-								FontWeight="Bold"
-								Background="Transparent"
-								BorderThickness="0"
-								Cursor="Hand">
-							<StackPanel Orientation="Horizontal">
-								<TextBlock Text="✅" FontSize="28" Margin="0,0,10,0"/>
-								<TextBlock Text="WEITER" Foreground="Green"/>
-							</StackPanel>
-						</Button>
-					</StackPanel>
-				</Border>
-			</StackPanel>
+					<Button Click="ContinuePhoto_Click"
+							Background="#FF16B36B"
+							Foreground="White"
+							FontSize="22"
+							FontWeight="Bold"
+							Padding="24,12"
+							Cursor="Hand">
+						<Button.Template>
+							<ControlTemplate TargetType="Button">
+								<Border Background="{TemplateBinding Background}"
+										CornerRadius="20"
+										Padding="{TemplateBinding Padding}">
+									<ContentPresenter HorizontalAlignment="Center"
+													  VerticalAlignment="Center"/>
+								</Border>
+							</ControlTemplate>
+						</Button.Template>
+						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+							<TextBlock Text="✅" FontSize="28" Margin="0,0,10,0"/>
+							<TextBlock Text="WEITER"/>
+						</StackPanel>
+					</Button>
+				</StackPanel>
+			</Border>
 		</Grid>
 
 

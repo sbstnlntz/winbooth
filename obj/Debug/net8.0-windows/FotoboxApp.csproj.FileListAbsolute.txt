@@ -93,3 +93,7 @@ D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\ref\FotoboxApp.dll
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\SplashScreenWindow.baml
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\SplashScreenWindow.g.cs
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\App.baml
+D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\DeviceMultiSelectDialog.baml
+D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\DeviceMultiSelectDialog.g.cs
+D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\TemplateMultiSelectWindow.g.cs
+D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\TemplateMultiSelectWindow.baml

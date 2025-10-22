@@ -189,7 +189,7 @@
                   HorizontalAlignment="Right"
                   VerticalAlignment="Bottom"
                   Margin="0,0,0,12"
-                  Width="540">
+                  Width="440">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
@@ -230,12 +230,13 @@
                                 <Border CornerRadius="16"
                                         Background="White"
                                         BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}">
-                                    <Image Source="{Binding SelectedTemplate1.PreviewImage}"
-                                           Stretch="Uniform"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Margin="6"/>
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        ClipToBounds="True">
+                                    <Viewbox Stretch="Uniform">
+                                        <Image Source="{Binding SelectedTemplate1.PreviewImage}"
+                                               Width="420"
+                                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                                    </Viewbox>
                                 </Border>
                             </ControlTemplate>
                         </Button.Template>
@@ -264,12 +265,13 @@
                                 <Border CornerRadius="16"
                                         Background="White"
                                         BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}">
-                                    <Image Source="{Binding SelectedTemplate2.PreviewImage}"
-                                           Stretch="Uniform"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Margin="6"/>
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        ClipToBounds="True">
+                                    <Viewbox Stretch="Uniform">
+                                        <Image Source="{Binding SelectedTemplate2.PreviewImage}"
+                                               Width="420"
+                                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                                    </Viewbox>
                                 </Border>
                             </ControlTemplate>
                         </Button.Template>

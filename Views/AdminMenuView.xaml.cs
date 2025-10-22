@@ -52,6 +52,118 @@ namespace FotoboxApp.Views
             MessageBox.Show("Neues Design hinzugefügt.", "Admin", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
+        private void CameraSettingsAdmin_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is not StartViewModel vm)
+                return;
+
+            if (vm.AvailableCameras.Count == 0)
+            {
+                MessageBox.Show("Es wurden keine Kameras gefunden.", "Kamera-Auswahl",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var dialog = new DeviceMultiSelectDialog(
+                vm.AvailableCameras,
+                vm.AllowedCameraNames,
+                "Kameras freigeben")
+            {
+                Owner = Window.GetWindow(this),
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                vm.UpdateAllowedCameras(dialog.SelectedItems);
+            }
+        }
+
+        private void UsbSettingsAdmin_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is not StartViewModel vm)
+                return;
+
+            vm.RefreshUsbDrives();
+
+            if (vm.AvailableUsbDrives.Count == 0)
+            {
+                MessageBox.Show("Es wurden keine USB-Speicher erkannt.", "USB-Auswahl",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var dialog = new CameraSelectDialog(vm.AvailableUsbDrives, vm.SelectedUsbDrivePath)
+            {
+                Owner = Window.GetWindow(this),
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+
+            if (dialog.ShowDialog() == true && !string.IsNullOrEmpty(dialog.SelectedCamera))
+            {
+                vm.SelectedUsbDrivePath = dialog.SelectedCamera;
+            }
+        }
+
+        private void PrinterSettingsAdmin_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is not StartViewModel vm)
+                return;
+
+            if (vm.AvailablePrinters.Count == 0)
+            {
+                MessageBox.Show("Es wurden keine Drucker gefunden.", "Drucker-Auswahl",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var dialog = new DeviceMultiSelectDialog(
+                vm.AvailablePrinters,
+                vm.AllowedPrinterNames,
+                "Drucker freigeben")
+            {
+                Owner = Window.GetWindow(this),
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                vm.UpdateAllowedPrinters(dialog.SelectedItems);
+            }
+        }
+
+        private void ConfigureTemplates_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is not StartViewModel vm)
+                return;
+
+            if (vm.Templates.Count == 0)
+            {
+                MessageBox.Show("Es wurden keine Designs gefunden.", "Design-Auswahl",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var dialog = new TemplateMultiSelectWindow(vm.Templates, vm.AllowedTemplateNames)
+            {
+                Owner = Window.GetWindow(this),
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                vm.UpdateAllowedTemplates(dialog.SelectedTemplateNames);
+            }
+        }
+
+        private void ToggleCameraRotation_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is not StartViewModel vm)
+                return;
+
+            vm.CameraRotate180 = !vm.CameraRotate180;
+        }
+
         private void BackupNow_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is not StartViewModel vm) return;

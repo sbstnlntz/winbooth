@@ -1,4 +1,5 @@
-﻿using System;
+using System.Windows.Media;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Printing;
@@ -24,6 +25,15 @@ namespace FotoboxApp.Views
         private Bitmap _finalBitmap;
 
         private readonly string _zipPath;
+        private enum FilterMode
+        {
+            Original,
+            BlackWhite,
+            Sepia
+        }
+
+        private FilterMode _activeFilter = FilterMode.Original;
+
         private readonly string _galleryName;
         private readonly bool _direktdruck;     // ← korrekt benannt
         private readonly StartViewModel _vm;
@@ -82,6 +92,7 @@ namespace FotoboxApp.Views
                     _overlayBitmap,
                     _templateDef,
                     0.18));
+            SetActiveFilter(FilterMode.Original);
 
             // Buttons konfigurieren
             PrintButton.Visibility = _direktdruck ? Visibility.Visible : Visibility.Collapsed;
@@ -98,6 +109,27 @@ namespace FotoboxApp.Views
             try { if (!string.IsNullOrEmpty(_extractTarget) && Directory.Exists(_extractTarget)) Directory.Delete(_extractTarget, true); } catch { }
         }
 
+        private Task ApplyPostProcessDelayAsync()
+        {
+            var delay = Math.Max(0, _vm?.PostProcessDelayMilliseconds ?? 0);
+            return delay > 0
+                ? Task.Delay(delay)
+                : Task.CompletedTask;
+        }
+
+        private void ShowProcessingOverlay(string message)
+        {
+            ProcessingOverlayText.Text = string.IsNullOrWhiteSpace(message)
+                ? "Bild wird verarbeitet…"
+                : message;
+            ProcessingOverlay.Visibility = Visibility.Visible;
+        }
+
+        private void HideProcessingOverlay()
+        {
+            ProcessingOverlay.Visibility = Visibility.Collapsed;
+        }
+
         private void Reset_Click(object sender, RoutedEventArgs e)
         {
             (Application.Current.MainWindow as MainWindow)?
@@ -106,34 +138,50 @@ namespace FotoboxApp.Views
 
         private async void Print_Click(object sender, RoutedEventArgs e)
         {
+            ShowProcessingOverlay("Bild wird verarbeitet…");
+
+            var savedPath = SaveToGallery(_finalBitmap);
+            if (savedPath == null)
+            {
+                HideProcessingOverlay();
+                return;
+            }
+
+            _vm.HandleCollageSaved(savedPath);
+
             try
             {
-                SaveToGallery(_finalBitmap);
                 SendToPrinter(_finalBitmap);
             }
             catch (Exception ex)
             {
+                HideProcessingOverlay();
                 MessageBox.Show($"Fehler beim Drucken:\n{ex}", "Druckfehler",
                                 MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
 
-            NotificationOverlay.Visibility = Visibility.Visible;
-            await Task.Delay(3000);  // ← Task.Delay benötigt System.Threading.Tasks
+            await ApplyPostProcessDelayAsync();
 
             (Application.Current.MainWindow as MainWindow)?
                 .MainFrame.Navigate(new StartView(_vm));
         }
 
-        private void Save_Click(object sender, RoutedEventArgs e)
+        private async void Save_Click(object sender, RoutedEventArgs e)
         {
-            SaveToGallery(_finalBitmap);
-            (Application.Current.MainWindow as MainWindow)?
-                .MainFrame.Navigate(new StartView(_vm));
-        }
+            ShowProcessingOverlay("Bild wird verarbeitet…");
 
-        private void Gallery_Click(object sender, RoutedEventArgs e)
-        {
-            // Passe an, wenn du eine echte GalleryView hast
+            var savedPath = SaveToGallery(_finalBitmap);
+            if (savedPath == null)
+            {
+                HideProcessingOverlay();
+                return;
+            }
+
+            _vm.HandleCollageSaved(savedPath);
+
+            await ApplyPostProcessDelayAsync();
+
             (Application.Current.MainWindow as MainWindow)?
                 .MainFrame.Navigate(new StartView(_vm));
         }
@@ -144,18 +192,40 @@ namespace FotoboxApp.Views
         {
             _currentPhotos = _originalPhotos.Select(b => (Bitmap)b.Clone()).ToList();
             UpdateFinalBitmap();
+            SetActiveFilter(FilterMode.Original);
         }
 
         private void FilterSW_Click(object sender, RoutedEventArgs e)
         {
             _currentPhotos = _originalPhotos.Select(b => MakeBlackWhite((Bitmap)b.Clone())).ToList();
             UpdateFinalBitmap();
+            SetActiveFilter(FilterMode.BlackWhite);
         }
 
         private void FilterSepia_Click(object sender, RoutedEventArgs e)
         {
             _currentPhotos = _originalPhotos.Select(b => MakeSepia((Bitmap)b.Clone())).ToList();
             UpdateFinalBitmap();
+            SetActiveFilter(FilterMode.Sepia);
+        }
+
+        private void SetActiveFilter(FilterMode mode)
+        {
+            _activeFilter = mode;
+            Dispatcher.Invoke(() =>
+            {
+                BorderOriginal.Fill = mode == FilterMode.Original
+                    ? new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 0, 198, 255))
+                    : System.Windows.Media.Brushes.Transparent;
+
+                BorderSW.Fill = mode == FilterMode.BlackWhite
+                    ? new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 0, 198, 255))
+                    : System.Windows.Media.Brushes.Transparent;
+
+                BorderSepia.Fill = mode == FilterMode.Sepia
+                    ? new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 0, 198, 255))
+                    : System.Windows.Media.Brushes.Transparent;
+            });
         }
 
         private void UpdateFinalBitmap()
@@ -236,7 +306,7 @@ namespace FotoboxApp.Views
             return bmp;
         }
 
-        private void SaveToGallery(Bitmap bmp)
+        private string SaveToGallery(Bitmap bmp)
         {
             try
             {
@@ -246,13 +316,16 @@ namespace FotoboxApp.Views
                 Directory.CreateDirectory(folder);
 
                 var filename = $"{_galleryName}_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
-                bmp.Save(Path.Combine(folder, filename), System.Drawing.Imaging.ImageFormat.Jpeg);
+                var path = Path.Combine(folder, filename);
+                bmp.Save(path, System.Drawing.Imaging.ImageFormat.Jpeg);
                 Utilities.StatManager.IncreaseTotalPhotoCount();
+                return path;
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Fehler beim Speichern:\n{ex}", "Speicherfehler",
                                 MessageBoxButton.OK, MessageBoxImage.Error);
+                return null;
             }
         }
 
@@ -290,3 +363,5 @@ namespace FotoboxApp.Views
         }
     }
 }
+
+

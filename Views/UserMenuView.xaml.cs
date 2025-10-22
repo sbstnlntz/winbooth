@@ -18,6 +18,11 @@ namespace FotoboxApp.Views
             InitializeComponent();
             _mainViewModel = mainViewModel;
             DataContext = mainViewModel; // <<< WICHTIG!
+
+            _mainViewModel.Direktdruck = _mainViewModel.AllowDirektdruck;
+            _mainViewModel.GalerieButton = _mainViewModel.AllowGalerie;
+            _mainViewModel.FotoFilter = _mainViewModel.AllowFotoFilter;
+
             _mainViewModel.PropertyChanged += MainViewModelOnPropertyChanged;
             UpdateTemplateButtons();
         }
@@ -31,7 +36,12 @@ namespace FotoboxApp.Views
 
         private void SelectTemplateBtn1_Click(object sender, RoutedEventArgs e)
         {
-            var templates = _mainViewModel.Templates;
+            var templates = _mainViewModel.GetSelectableTemplates();
+            if (templates.Count == 0)
+            {
+                MessageBox.Show("Es sind keine Designs freigegeben. Bitte im Admin-Menü Designs auswählen.", "Design-Auswahl", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
             var dialog = new TemplateSelectionWindow(templates)
             {
                 Owner = Window.GetWindow(this),
@@ -60,6 +70,11 @@ namespace FotoboxApp.Views
             UpdateTemplateButtons();
         }
 
+        private void ToggleCameraRotationUser_Click(object sender, RoutedEventArgs e)
+        {
+            _mainViewModel.CameraRotate180 = !_mainViewModel.CameraRotate180;
+        }
+
         private void SelectTemplateBtn2_Click(object sender, RoutedEventArgs e)
         {
             if (!_mainViewModel.AllowTwoTemplates)
@@ -69,7 +84,12 @@ namespace FotoboxApp.Views
                 return;
             }
 
-            var templates = _mainViewModel.Templates;
+            var templates = _mainViewModel.GetSelectableTemplates();
+            if (templates.Count == 0)
+            {
+                MessageBox.Show("Es sind keine Designs freigegeben. Bitte im Admin-Menü Designs auswählen.", "Design-Auswahl", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
             var dialog = new TemplateSelectionWindow(templates)
             {
                 Owner = Window.GetWindow(this),
@@ -101,13 +121,15 @@ namespace FotoboxApp.Views
         private void CameraSettings_Click(object sender, RoutedEventArgs e)
         {
             var vm = _mainViewModel;
-            if (vm.AvailableCameras.Count == 0)
+            var selectable = vm.GetSelectableCameras();
+
+            if (selectable.Count == 0)
             {
                 MessageBox.Show("Keine Kameras gefunden!", "Kamera-Auswahl", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
-            var dlg = new CameraSelectDialog(vm.AvailableCameras, vm.SelectedCameraName);
+            var dlg = new CameraSelectDialog(selectable, vm.SelectedCameraName);
             dlg.Owner = Window.GetWindow(this);
             dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
@@ -117,16 +139,41 @@ namespace FotoboxApp.Views
             }
         }
 
+        private void UsbSettings_Click(object sender, RoutedEventArgs e)
+        {
+            var vm = _mainViewModel;
+            vm.RefreshUsbDrives();
+
+            if (vm.AvailableUsbDrives.Count == 0)
+            {
+                MessageBox.Show("Kein USB-Speicher gefunden!", "USB-Auswahl", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var dlg = new CameraSelectDialog(vm.AvailableUsbDrives, vm.SelectedUsbDrivePath)
+            {
+                Owner = Window.GetWindow(this),
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+
+            if (dlg.ShowDialog() == true && !string.IsNullOrEmpty(dlg.SelectedCamera))
+            {
+                vm.SelectedUsbDrivePath = dlg.SelectedCamera;
+            }
+        }
+
         private void PrinterSettings_Click(object sender, RoutedEventArgs e)
         {
             var vm = _mainViewModel;
-            if (vm.AvailablePrinters.Count == 0)
+            var selectable = vm.GetSelectablePrinters();
+
+            if (selectable.Count == 0)
             {
                 MessageBox.Show("Keine Drucker gefunden!", "Drucker-Auswahl", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
-            var dlg = new PrinterSelectDialog(vm.AvailablePrinters, vm.SelectedPrinterName);
+            var dlg = new PrinterSelectDialog(selectable, vm.SelectedPrinterName);
             if (dlg.ShowDialog() == true && !string.IsNullOrEmpty(dlg.SelectedPrinter))
             {
                 vm.SelectedPrinterName = dlg.SelectedPrinter;
@@ -221,4 +268,5 @@ namespace FotoboxApp.Views
         }
     }
 }
+
 

@@ -1,7 +1,7 @@
-<Window x:Class="FotoboxApp.Views.CameraSelectDialog"
+<Window x:Class="FotoboxApp.Views.DeviceMultiSelectDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Kamera auswählen"
+        Title="Geräte auswählen"
         Height="520"
         Width="500"
         WindowStartupLocation="CenterOwner"
@@ -15,13 +15,14 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Kamera auswählen"
+        <TextBlock x:Name="TitleLabel"
                    FontSize="26"
                    FontWeight="Bold"
-                   Margin="0,0,0,6"/>
+                   Margin="0,0,0,6"
+                   TextWrapping="Wrap"/>
 
         <TextBlock Grid.Row="1"
-                   Text="Tippe die Kamera an, die die Gäste verwenden sollen."
+                   Text="Tippe die Geräte an, die im User-Menü verfügbar sein sollen."
                    Foreground="#666"
                    Margin="0,0,0,18"
                    FontSize="16"
@@ -30,17 +31,17 @@
         <ListBox x:Name="ItemsList"
                  Grid.Row="2"
                  ItemsSource="{Binding Options}"
-                 SelectionMode="Single"
+                 SelectionMode="Extended"
                  BorderThickness="0"
                  Background="Transparent"
-                 ScrollViewer.VerticalScrollBarVisibility="Auto"
-                 SelectionChanged="ItemsList_SelectionChanged">
+                 ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListBox.Resources>
                 <Style TargetType="ListBoxItem">
                     <Setter Property="Padding" Value="0"/>
                     <Setter Property="Margin" Value="0,6"/>
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                     <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Focusable" Value="False"/>
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="ListBoxItem">
@@ -57,20 +58,20 @@
                             BorderBrush="#DDDDDD"
                             BorderThickness="1"
                             Padding="16,14">
-                        <RadioButton Content="{Binding Name}" GroupName="CameraOptions" FontSize="20" IsChecked="{Binding IsSelected, Mode=TwoWay}" VerticalAlignment="Center" Checked="DeviceRadio_Checked">
-                        <RadioButton.Style>
-                            <Style TargetType="RadioButton">
-                                <Setter Property="Foreground" Value="Black"/>
+                        <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay}" FontSize="20" VerticalAlignment="Center">
+                        <CheckBox.Style>
+                            <Style TargetType="CheckBox">
                                 <Setter Property="IsEnabled" Value="True"/>
+                                <Setter Property="Foreground" Value="Black"/>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Name}" Value="Keine Kameras gefunden">
+                                    <DataTrigger Binding="{Binding Name}" Value="Keine Geräte gefunden">
                                         <Setter Property="IsEnabled" Value="False"/>
                                         <Setter Property="Foreground" Value="#888"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
-                        </RadioButton.Style>
-                    </RadioButton>
+                        </CheckBox.Style>
+                    </CheckBox>
                     </Border>
                 </DataTemplate>
             </ListBox.ItemTemplate>
@@ -86,8 +87,9 @@
                     Margin="0,0,14,0"
                     FontSize="18"
                     Padding="12,4"
+                    IsCancel="True"
                     Click="Cancel_Click"/>
-            <Button Content="Übernehmen"
+            <Button Content="Speichern"
                     Width="160"
                     Height="46"
                     FontSize="18"

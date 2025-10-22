@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
 using System.IO.Compression;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -38,6 +39,18 @@ namespace FotoboxApp.Views
 
         private TaskCompletionSource<bool> _reviewDecisionSource;
         private bool _repeatLastPhoto = false;
+        private void ApplyCameraRotation(Bitmap bitmap)
+        {
+            if (bitmap == null)
+            {
+                return;
+            }
+
+            if (_vm.CameraRotate180)
+            {
+                bitmap.RotateFlip(RotateFlipType.Rotate180FlipNone);
+            }
+        }
 
         public CameraView(string zipPath, string galleryName, StartViewModel viewModel, bool startImmediately = false)
         {
@@ -112,9 +125,11 @@ namespace FotoboxApp.Views
 
                 _capture.Grab();
                 _capture.Retrieve(_frame);
-                using var shot = _frame.ToImage<Bgr, byte>().ToBitmap();
+                using var shotRaw = _frame.ToImage<Bgr, byte>().ToBitmap();
+                ApplyCameraRotation(shotRaw);
+                using var shot = (Bitmap)shotRaw.Clone();
 
-                // tempor�r hinzuf�gen
+                // temporär hinzufügen
                 _capturedPhotos.Add((Bitmap)shot.Clone());
                 AddPreviewImage(shot, _currentRegion);
 
@@ -305,45 +320,100 @@ namespace FotoboxApp.Views
             }
         }
 
-        private Task FadeTextBlock(TextBlock textBlock, double from, double to, int durationMs)
+        private void UpdateCountdownArc(double progress)
         {
-            var animation = new System.Windows.Media.Animation.DoubleAnimation
-            {
-                From = from,
-                To = to,
-                Duration = new Duration(TimeSpan.FromMilliseconds(durationMs)),
-                FillBehavior = System.Windows.Media.Animation.FillBehavior.HoldEnd
-            };
+            progress = Math.Max(0, Math.Min(1, progress));
 
-            var tcs = new TaskCompletionSource<bool>();
-            animation.Completed += (s, e) => tcs.SetResult(true);
-
-            Application.Current.Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(() =>
             {
-                textBlock.BeginAnimation(UIElement.OpacityProperty, animation);
+                var arc = CountdownArcPath;
+                if (arc == null)
+                {
+                    return;
+                }
+
+                var ringWidth = CountdownRing.ActualWidth > 0 ? CountdownRing.ActualWidth : CountdownRing.Width;
+                var ringHeight = CountdownRing.ActualHeight > 0 ? CountdownRing.ActualHeight : CountdownRing.Height;
+                var stroke = arc.StrokeThickness;
+                var radius = Math.Max(0, Math.Min(ringWidth, ringHeight) / 2 - stroke / 2);
+                var center = new System.Windows.Point(ringWidth / 2, ringHeight / 2);
+
+                if (progress <= 0)
+                {
+                    arc.Data = Geometry.Empty;
+                    return;
+                }
+
+                if (progress >= 1)
+                {
+                    arc.Data = new EllipseGeometry(center, radius, radius);
+                    return;
+                }
+
+                var angle = 360 * progress;
+                var angleRad = Math.PI / 180.0 * angle;
+                var start = new System.Windows.Point(center.X, center.Y - radius);
+                var end = new System.Windows.Point(
+                    center.X + radius * Math.Sin(angleRad),
+                    center.Y - radius * Math.Cos(angleRad));
+
+                var geometry = new StreamGeometry();
+                using (var ctx = geometry.Open())
+                {
+                    ctx.BeginFigure(start, false, false);
+                    ctx.ArcTo(
+                        end,
+                        new System.Windows.Size(radius, radius),
+                        0,
+                        angle > 180,
+                        SweepDirection.Clockwise,
+                        true,
+                        false);
+                }
+                geometry.Freeze();
+                arc.Data = geometry;
             });
-
-            return tcs.Task;
         }
 
+        private async Task AnimateCountdownStepAsync(double from, double to, int durationMs)
+        {
+            var sw = Stopwatch.StartNew();
+            while (sw.ElapsedMilliseconds < durationMs)
+            {
+                var t = sw.ElapsedMilliseconds / (double)durationMs;
+                var progress = from + (to - from) * t;
+                UpdateCountdownArc(progress);
+                await Task.Delay(16);
+            }
 
+            UpdateCountdownArc(to);
+        }
 
         private async Task RunCountdownAsync()
         {
-            int countdownSeconds = _vm.PreviewDurationSeconds;
+            var countdownSeconds = Math.Max(1, _vm.PreviewDurationSeconds);
 
-            CountdownText.Visibility = Visibility.Visible;
-
-            for (int i = countdownSeconds; i > 0; i--)
+            Dispatcher.Invoke(() =>
             {
-                CountdownText.Text = i.ToString();
-                await FadeTextBlock(CountdownText, 0, 1, 300); // Fade-In
-                await Task.Delay(400);                         // Sichtbar
-                await FadeTextBlock(CountdownText, 1, 0, 300); // Fade-Out
-                await Task.Delay(100);                         // kurze Pause
+                CountdownRing.Visibility = Visibility.Visible;
+                CountdownNumber.Text = countdownSeconds.ToString();
+                UpdateCountdownArc(1);
+            });
+
+            for (var i = countdownSeconds; i > 0; i--)
+            {
+                var current = i;
+                Dispatcher.Invoke(() => CountdownNumber.Text = current.ToString());
+                var from = (double)i / countdownSeconds;
+                var to = (double)(i - 1) / countdownSeconds;
+                await AnimateCountdownStepAsync(from, to, 1000);
             }
 
-            CountdownText.Visibility = Visibility.Collapsed;
+            Dispatcher.Invoke(() =>
+            {
+                CountdownRing.Visibility = Visibility.Collapsed;
+                CountdownArcPath.Data = Geometry.Empty;
+            });
         }
 
 
@@ -370,6 +440,7 @@ namespace FotoboxApp.Views
 
             _capture.Retrieve(_frame);
             using var bmp = _frame.ToImage<Bgr, byte>().ToBitmap();
+            ApplyCameraRotation(bmp);
             using var resized = new Bitmap(bmp, _currentRegion.Width, _currentRegion.Height);
             var img = ConvertToBitmapImage(resized);
 
