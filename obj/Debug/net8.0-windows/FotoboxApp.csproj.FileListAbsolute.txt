@@ -49,7 +49,6 @@ D:\Desktop\_\FotoboxApp\bin\Debug\net8.0-windows\runtimes\browser\lib\net8.0\Sys
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\FotoboxApp.csproj.AssemblyReference.cache
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\MainWindow.baml
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Themes\Styles.baml
-D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\AdminMenuView.baml
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\CameraSelectDialog.baml
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\CameraView.baml
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\DialogHostWindow.baml
@@ -75,8 +74,6 @@ D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\App.g.cs
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\GeneratedInternalTypeHelper.g.cs
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\FotoboxApp_MarkupCompile.cache
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\FotoboxApp_MarkupCompile.lref
-D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\CollageView.baml
-D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\StartView.baml
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\UserMenuView.baml
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\FotoboxApp.g.resources
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\FotoboxApp.GeneratedMSBuildEditorConfig.editorconfig
@@ -92,8 +89,13 @@ D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\FotoboxApp.genruntimeconfig.cac
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\ref\FotoboxApp.dll
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\SplashScreenWindow.baml
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\SplashScreenWindow.g.cs
-D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\App.baml
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\DeviceMultiSelectDialog.baml
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\DeviceMultiSelectDialog.g.cs
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\TemplateMultiSelectWindow.g.cs
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\TemplateMultiSelectWindow.baml
+D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\AdminGraphicsView.baml
+D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\AdminGraphicsView.g.cs
+D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\App.baml
+D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\AdminMenuView.baml
+D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\CollageView.baml
+D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\StartView.baml

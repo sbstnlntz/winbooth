@@ -1,9 +1,14 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Win32;
+using FotoboxApp.Models;
 using FotoboxApp.Services;
 using FotoboxApp.ViewModels;
 
@@ -11,6 +16,38 @@ namespace FotoboxApp.Views
 {
     public partial class AdminMenuView : UserControl
     {
+        public ObservableCollection<TemplateOption> TemplateOptions { get; } = new();
+
+        public sealed class TemplateOption : INotifyPropertyChanged
+        {
+            private bool _isAllowed;
+
+            public TemplateOption(TemplateItem template, bool isAllowed)
+            {
+                Template = template;
+                _isAllowed = isAllowed;
+            }
+
+            public TemplateItem Template { get; }
+
+            public bool IsAllowed
+            {
+                get => _isAllowed;
+                set
+                {
+                    if (_isAllowed == value)
+                        return;
+
+                    _isAllowed = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsAllowed)));
+                }
+            }
+
+            public string Name => Template?.Name ?? "Unbekanntes Design";
+
+            public event PropertyChangedEventHandler PropertyChanged;
+        }
+
         public AdminMenuView()
         {
             InitializeComponent();
@@ -44,12 +81,56 @@ namespace FotoboxApp.Views
 
         private void DeleteDesign_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Design entfernt.", "Admin", MessageBoxButton.OK, MessageBoxImage.Information);
+            ConfigureTemplates_Click(sender, e);
         }
 
         private void AddDesign_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Neues Design hinzugefügt.", "Admin", MessageBoxButton.OK, MessageBoxImage.Information);
+            ImportTemplatesViaDialog();
+        }
+
+        private void OpenGraphicsManager_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is not StartViewModel vm)
+                return;
+
+            if (Application.Current.MainWindow is MainWindow wnd)
+            {
+                wnd.MainFrame.Navigate(new AdminGraphicsView(vm));
+            }
+        }
+
+        private void SyncTemplateOptions(StartViewModel vm)
+        {
+            if (vm == null)
+                return;
+
+            var previousSelectionName = (TemplatesList?.SelectedItem as TemplateOption)?.Template?.Name;
+
+            var allowed = new HashSet<string>(
+                vm.AllowedTemplateNames ?? Array.Empty<string>(),
+                StringComparer.Ordinal);
+
+            TemplateOptions.Clear();
+            foreach (var template in vm.Templates)
+            {
+                TemplateOptions.Add(new TemplateOption(template, allowed.Contains(template.Name)));
+            }
+
+            if (TemplatesList == null || TemplateOptions.Count == 0)
+            {
+                return;
+            }
+
+            TemplateOption nextSelection = null;
+            if (!string.IsNullOrWhiteSpace(previousSelectionName))
+            {
+                nextSelection = TemplateOptions.FirstOrDefault(option =>
+                    option.Template != null &&
+                    string.Equals(option.Template.Name, previousSelectionName, StringComparison.Ordinal));
+            }
+
+            TemplatesList.SelectedItem = nextSelection ?? TemplateOptions.FirstOrDefault();
         }
 
         private void CameraSettingsAdmin_Click(object sender, RoutedEventArgs e)
@@ -137,23 +218,219 @@ namespace FotoboxApp.Views
             if (DataContext is not StartViewModel vm)
                 return;
 
-            if (vm.Templates.Count == 0)
+            vm.RefreshTemplatesFromDisk();
+            SyncTemplateOptions(vm);
+            if (NewEventOverlay != null)
+                NewEventOverlay.Visibility = Visibility.Collapsed;
+            if (BackupsOverlay != null)
+                BackupsOverlay.Visibility = Visibility.Collapsed;
+            TemplatesOverlay.Visibility = Visibility.Visible;
+            if (TemplatesList != null && TemplatesList.Items.Count > 0)
             {
-                MessageBox.Show("Es wurden keine Designs gefunden.", "Design-Auswahl",
+                TemplatesList.SelectedIndex = 0;
+            }
+        }
+
+        private void AddTemplatesOverlay_Click(object sender, RoutedEventArgs e)
+        {
+            ImportTemplatesViaDialog();
+        }
+
+        private void DeleteSelectedTemplate_Click(object sender, RoutedEventArgs e)
+        {
+            if (TemplatesList.SelectedItem is not TemplateOption option || option.Template == null)
+                return;
+
+            var template = option.Template;
+
+            var confirm = MessageBox.Show(
+                $"Soll das Design \"{template.Name}\" dauerhaft gelöscht werden?",
+                "Designs verwalten",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (confirm != MessageBoxResult.Yes)
+                return;
+
+            if (DataContext is not StartViewModel vm)
+                return;
+
+            if (!vm.TryDeleteTemplate(template, out var errorMessage))
+            {
+                MessageBox.Show(errorMessage ?? "Löschen fehlgeschlagen.", "Designs verwalten",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            MessageBox.Show($"Design \"{template.Name}\" wurde entfernt.", "Designs verwalten",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+
+            SyncTemplateOptions(vm);
+
+            if (TemplatesList != null && TemplatesList.Items.Count > 0)
+            {
+                TemplatesList.SelectedIndex = 0;
+            }
+        }
+
+        private void SaveTemplatesSelection_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is not StartViewModel vm)
+                return;
+
+            var selectedNames = TemplateOptions
+                .Where(o => o.IsAllowed && !string.IsNullOrWhiteSpace(o.Template?.Name))
+                .Select(o => o.Template.Name)
+                .Distinct(StringComparer.Ordinal)
+                .ToList();
+
+            if (selectedNames.Count == 0)
+            {
+                MessageBox.Show("Bitte mindestens ein Design auswählen.", "Designs verwalten",
                     MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
-            var dialog = new TemplateMultiSelectWindow(vm.Templates, vm.AllowedTemplateNames)
+            vm.UpdateAllowedTemplates(selectedNames);
+            SyncTemplateOptions(vm);
+            TemplatesOverlay.Visibility = Visibility.Collapsed;
+        }
+
+        private void CloseTemplatesOverlay_Click(object sender, RoutedEventArgs e)
+        {
+            TemplatesOverlay.Visibility = Visibility.Collapsed;
+        }
+
+        private void ImportTemplatesViaDialog()
+        {
+            if (DataContext is not StartViewModel vm)
+                return;
+
+            var fileDialog = new OpenFileDialog
             {
-                Owner = Window.GetWindow(this),
-                WindowStartupLocation = WindowStartupLocation.CenterOwner
+                Title = "Designs hinzufügen",
+                Filter = "Design-Pakete (*.zip)|*.zip",
+                Multiselect = true,
+                CheckFileExists = true
             };
 
-            if (dialog.ShowDialog() == true)
+            try
             {
-                vm.UpdateAllowedTemplates(dialog.SelectedTemplateNames);
+                var templatesRoot = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+                    "Fotobox",
+                    "templates");
+
+                if (Directory.Exists(templatesRoot))
+                {
+                    fileDialog.InitialDirectory = templatesRoot;
+                }
             }
+            catch { }
+
+            var owner = Window.GetWindow(this);
+            if (fileDialog.ShowDialog(owner) != true)
+            {
+                return;
+            }
+
+            var result = vm.ImportTemplatesFromFiles(fileDialog.FileNames);
+            SyncTemplateOptions(vm);
+            ShowTemplateImportResult(result);
+
+            if (TemplatesOverlay.Visibility == Visibility.Visible &&
+                TemplatesList != null &&
+                TemplatesList.Items.Count > 0)
+            {
+                TemplatesList.SelectedIndex = 0;
+            }
+        }
+
+        private static void ShowTemplateImportResult(StartViewModel.TemplateImportResult result)
+        {
+            var messages = new List<string>();
+
+            if (result.ImportedTemplates.Count > 0)
+            {
+                messages.Add(result.ImportedTemplates.Count == 1
+                    ? $"1 neues Design importiert: {result.ImportedTemplates[0]}"
+                    : $"{result.ImportedTemplates.Count} neue Designs importiert.");
+            }
+
+            if (result.UpdatedTemplates.Count > 0)
+            {
+                messages.Add(result.UpdatedTemplates.Count == 1
+                    ? $"1 vorhandenes Design aktualisiert: {result.UpdatedTemplates[0]}"
+                    : $"{result.UpdatedTemplates.Count} vorhandene Designs aktualisiert.");
+            }
+
+            if (result.InvalidFiles.Count > 0)
+            {
+                var invalidNames = result.InvalidFiles
+                    .Select(Path.GetFileName)
+                    .Where(n => !string.IsNullOrWhiteSpace(n))
+                    .ToList();
+
+                if (invalidNames.Count > 0)
+                {
+                    const int maxListEntries = 3;
+                    var displayNames = invalidNames.Take(maxListEntries).ToList();
+                    var remainder = invalidNames.Count - displayNames.Count;
+                    var summary = string.Join(", ", displayNames);
+                    if (remainder > 0)
+                    {
+                        summary += $" +{remainder}";
+                    }
+
+                    messages.Add(result.InvalidFiles.Count == 1
+                        ? $"1 Datei übersprungen (kein ZIP): {summary}"
+                        : $"{result.InvalidFiles.Count} Dateien übersprungen (kein ZIP): {summary}");
+                }
+                else
+                {
+                    messages.Add(result.InvalidFiles.Count == 1
+                        ? "1 Datei übersprungen (kein ZIP)."
+                        : $"{result.InvalidFiles.Count} Dateien übersprungen (kein ZIP).");
+                }
+            }
+
+            if (result.FailedFiles.Count > 0)
+            {
+                var failedNames = result.FailedFiles
+                    .Select(f => Path.GetFileName(f.File))
+                    .Where(n => !string.IsNullOrWhiteSpace(n))
+                    .ToList();
+
+                if (failedNames.Count > 0)
+                {
+                    const int maxListEntries = 3;
+                    var displayNames = failedNames.Take(maxListEntries).ToList();
+                    var remainder = failedNames.Count - displayNames.Count;
+                    var summary = string.Join(", ", displayNames);
+                    if (remainder > 0)
+                    {
+                        summary += $" +{remainder}";
+                    }
+
+                    messages.Add(result.FailedFiles.Count == 1
+                        ? $"1 Datei konnte nicht übernommen werden: {summary}"
+                        : $"{result.FailedFiles.Count} Dateien konnten nicht übernommen werden: {summary}");
+                }
+                else
+                {
+                    messages.Add(result.FailedFiles.Count == 1
+                        ? "1 Datei konnte nicht übernommen werden."
+                        : $"{result.FailedFiles.Count} Dateien konnten nicht übernommen werden.");
+                }
+            }
+
+            if (messages.Count == 0)
+            {
+                messages.Add("Es wurden keine gültigen Designs ausgewählt.");
+            }
+
+            var icon = result.FailedFiles.Count > 0 ? MessageBoxImage.Warning : MessageBoxImage.Information;
+            MessageBox.Show(string.Join(Environment.NewLine, messages), "Designs verwalten", MessageBoxButton.OK, icon);
         }
 
         private void ToggleCameraRotation_Click(object sender, RoutedEventArgs e)

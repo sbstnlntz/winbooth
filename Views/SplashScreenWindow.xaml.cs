@@ -1,6 +1,7 @@
 #nullable enable
 
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -24,7 +25,9 @@ public partial class SplashScreenWindow : Window
     public SplashScreenWindow()
     {
         InitializeComponent();
+
         Loaded += SplashScreenWindow_OnLoaded;
+        Closed += SplashScreenWindow_OnClosed;
     }
 
     public Task RunAutomaticProgressAsync(TimeSpan duration, CancellationToken cancellationToken = default)
@@ -128,12 +131,42 @@ public partial class SplashScreenWindow : Window
 
     private void SplashScreenWindow_OnLoaded(object sender, RoutedEventArgs e)
     {
+        AdjustWindowToWorkArea();
+        SystemParameters.StaticPropertyChanged += SystemParametersOnStaticPropertyChanged;
+
         var currentYear = DateTime.Now.Year;
         var copyright = currentYear > 2025
-            ? $"© 2025 - {currentYear} Sebastian Lentz"
-            : "© 2025 Sebastian Lentz";
+            ? $"\u00A9 2025 - {currentYear} Sebastian Lentz"
+            : "\u00A9 2025 Sebastian Lentz";
 
         FooterCopyrightText.Text = copyright;
         FooterVersionText.Text = $"Version {DisplayVersion}";
+    }
+
+    private void SplashScreenWindow_OnClosed(object? sender, EventArgs e)
+    {
+        SystemParameters.StaticPropertyChanged -= SystemParametersOnStaticPropertyChanged;
+    }
+
+    private void SystemParametersOnStaticPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(SystemParameters.WorkArea)
+            or nameof(SystemParameters.FullPrimaryScreenHeight)
+            or nameof(SystemParameters.FullPrimaryScreenWidth))
+        {
+            AdjustWindowToWorkArea();
+        }
+    }
+
+    private void AdjustWindowToWorkArea()
+    {
+        var workArea = SystemParameters.WorkArea;
+
+        MaxWidth = workArea.Width;
+        MaxHeight = workArea.Height;
+        Width = workArea.Width;
+        Height = workArea.Height;
+        Left = workArea.Left;
+        Top = workArea.Top;
     }
 }

@@ -1,31 +1,31 @@
 ﻿<Window x:Class="FotoboxApp.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System.Windows;assembly=PresentationFramework"
         Title="Fotobox"
         WindowStyle="None"
-        WindowState="Maximized"
-        ResizeMode="NoResize">
+        WindowState="Normal"
+        ResizeMode="NoResize"
+        MaxHeight="{x:Static sys:SystemParameters.MaximizedPrimaryScreenHeight}"
+        MaxWidth="{x:Static sys:SystemParameters.MaximizedPrimaryScreenWidth}">
 
 	<!-- 
          Wir definieren aus historischen Gründen zwei Spalten, 
          aber der Frame darin belegt BEIDE Spalten und füllt 
          so immer das ganze Fenster aus.
     -->
-	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto"/>
-			<ColumnDefinition Width="*"/>
-		</Grid.ColumnDefinitions>
-
-		<!-- 
-             Der zentrale Frame, in den wir CameraView, CollageView etc. 
-             rein navigieren. Er spannt sich über beide Spalten.
-        -->
-		<Frame x:Name="MainFrame"
-               Grid.Column="0"
-               Grid.ColumnSpan="2"
-               NavigationUIVisibility="Hidden"
-               HorizontalAlignment="Stretch"
-               VerticalAlignment="Stretch"/>
+	<Grid Background="{DynamicResource FB_BackgroundBrush}">
+        <Viewbox Stretch="Uniform" StretchDirection="Both">
+            <Grid Width="1280" Height="800" Background="{DynamicResource FB_BackgroundBrush}">
+                <!-- 
+                     Der zentrale Frame, in den wir CameraView, CollageView etc. 
+                     rein navigieren. Er füllt den gesamten designierten Bereich.
+                -->
+                <Frame x:Name="MainFrame"
+                       NavigationUIVisibility="Hidden"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"/>
+            </Grid>
+        </Viewbox>
 	</Grid>
 </Window>
