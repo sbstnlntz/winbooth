@@ -39,6 +39,11 @@ namespace FotoboxApp.Views
 
         private void BtnStart_Click(object sender, RoutedEventArgs e)
         {
+            if (_vm.ActiveTemplate == null)
+            {
+                _vm.ActiveTemplate = _vm.TemplateSlot1Template ?? _vm.TemplateSlot2Template;
+            }
+
             // Sicherstellen, dass ein Template gewählt wurde
             if (_vm.ActiveTemplate == null)
             {
@@ -72,9 +77,14 @@ namespace FotoboxApp.Views
         private void BtnGallery_Click(object sender, RoutedEventArgs e)
         {
             var window = Window.GetWindow(this) as MainWindow;
+            var templateZip = _vm.ActiveTemplate?.ZipPath
+                               ?? _vm.TemplateSlot1Template?.ZipPath
+                               ?? _vm.TemplateSlot2Template?.ZipPath
+                               ?? string.Empty;
+
             window?.MainFrame.Navigate(
                 new LiveGalerieView(
-                    _vm.ActiveTemplate?.ZipPath ?? "",
+                    templateZip,
                     _vm.GalleryName ?? ""
                 )
             );
@@ -84,11 +94,11 @@ namespace FotoboxApp.Views
 
         private void SelectTemplate1_Click(object sender, RoutedEventArgs e)
         {
-            _vm.ActiveTemplate = _vm.SelectedTemplate1;
+            _vm.ActiveTemplate = _vm.TemplateSlot1Template;
         }
         private void SelectTemplate2_Click(object sender, RoutedEventArgs e)
         {
-            _vm.ActiveTemplate = _vm.SelectedTemplate2;
+            _vm.ActiveTemplate = _vm.TemplateSlot2Template;
         }
 
 

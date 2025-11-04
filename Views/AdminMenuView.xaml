@@ -2,9 +2,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:utilities="clr-namespace:FotoboxApp.Utilities"
-             Background="White"
-             MinWidth="900"
-             MinHeight="620">
+             Background="White">
     <UserControl.Resources>
         <utilities:NullToBoolConverter x:Key="NullToBoolConverter"/>
         <Style x:Key="AdminActionButtonStyle" TargetType="Button" BasedOn="{StaticResource FB_ElegantButton}">
@@ -14,7 +12,8 @@
             <Setter Property="Margin" Value="0,0,16,0"/>
         </Style>
     </UserControl.Resources>
-    <Border BorderBrush="Black" BorderThickness="2" Margin="12" CornerRadius="4">
+    <Viewbox Stretch="Uniform" StretchDirection="Both">
+        <Border Width="1280" Height="800" BorderBrush="Black" BorderThickness="2" Margin="12" CornerRadius="4">
         <Grid Margin="32">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -95,6 +94,12 @@
                                    Margin="0,4,0,0"/>
                     </StackPanel>
 
+                    <Button Content="Grafiken bearbeiten"
+                            Style="{StaticResource AdminActionButtonStyle}"
+                            Width="260"
+                            Margin="0,12,0,16"
+                            Click="OpenGraphicsManager_Click"/>
+
                     <TextBlock Text="Foto Design" FontWeight="Bold" FontSize="22" Margin="0,22,0,10"/>
                     <CheckBox Content="2 Designs"
                               FontSize="16"
@@ -109,51 +114,47 @@
                                Foreground="#444"
                                Margin="0,6,0,0"
                                TextWrapping="Wrap"/>
-                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                        <Grid Width="200" Height="120" Margin="0,0,24,0">
-                            <Rectangle Stroke="Gray" StrokeThickness="2" StrokeDashArray="4,2" RadiusX="4" RadiusY="4"/>
-                            <Image Source="pack://application:,,,/Resources/preview1.png" Width="200" Height="120"/>
-                            <Button Click="DeleteDesign_Click"
-                                    Width="24" Height="24"
-                                    HorizontalAlignment="Right" VerticalAlignment="Top"
-                                    Background="Transparent" BorderThickness="0">
-                                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" FontSize="16"/>
-                            </Button>
-                        </Grid>
-                        <Grid Width="200" Height="120">
-                            <Rectangle Stroke="Gray" StrokeThickness="2" StrokeDashArray="4,2" RadiusX="4" RadiusY="4"/>
-                            <Button Click="AddDesign_Click" Background="Transparent" BorderThickness="0">
-                                <TextBlock Text="+" FontSize="32" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Button>
-                        </Grid>
-                    </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,22,0,0">
-                        <Button Click="NewEvent_Click" Style="{StaticResource AdminActionButtonStyle}">
+                    <StackPanel Margin="0,24,0,0" Width="280">
+                        <Button Click="NewEvent_Click"
+                                Style="{StaticResource AdminActionButtonStyle}"
+                                Width="280"
+                                Margin="0,0,0,12">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE145;" FontSize="18"/>
                                 <TextBlock Text="Neues Event anlegen" Margin="6,0,0,0"/>
                             </StackPanel>
                         </Button>
-                        <Button Click="OpenArchive_Click" Style="{StaticResource AdminActionButtonStyle}">
+                        <Button Click="OpenArchive_Click"
+                                Style="{StaticResource AdminActionButtonStyle}"
+                                Width="280"
+                                Margin="0,0,0,12">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE838;" FontSize="18"/>
                                 <TextBlock Text="Archiv öffnen" Margin="6,0,0,0"/>
                             </StackPanel>
                         </Button>
-                        <Button Click="BackupNow_Click" Style="{StaticResource AdminActionButtonStyle}" Margin="0,0,16,0">
+                        <Button Click="BackupNow_Click"
+                                Style="{StaticResource AdminActionButtonStyle}"
+                                Width="280"
+                                Margin="0,0,0,12">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE149;" FontSize="18"/>
                                 <TextBlock Text="Backup jetzt" Margin="6,0,0,0"/>
                             </StackPanel>
                         </Button>
-                        <Button Click="ShutdownApp_Click" Style="{StaticResource AdminActionButtonStyle}">
+                        <Button Click="ShutdownApp_Click"
+                                Style="{StaticResource AdminActionButtonStyle}"
+                                Width="280"
+                                Margin="0,0,0,12">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7E8;" FontSize="18"/>
                                 <TextBlock Text="App beenden" Margin="6,0,0,0"/>
                             </StackPanel>
                         </Button>
-                        <Button Click="ShutdownSystem_Click" Style="{StaticResource AdminActionButtonStyle}" Margin="0">
+                        <Button Click="ShutdownSystem_Click"
+                                Style="{StaticResource AdminActionButtonStyle}"
+                                Width="280">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7E7;" FontSize="18"/>
                                 <TextBlock Text="Fotobox ausschalten" Margin="6,0,0,0"/>
@@ -211,20 +212,19 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12" VerticalAlignment="Center">
                         <TextBlock Text="USB Speicher" FontWeight="Bold" FontSize="19" Width="120"/>
-                        <TextBlock Text="{Binding UsbDriveSummary}"
-                                   FontSize="19"
-                                   Margin="8,0,0,0"
-                                   Width="220"
-                                   TextWrapping="Wrap"/>
+                    <TextBlock Text="{Binding UsbDriveSummary}"
+                               FontSize="19"
+                               Margin="8,0,0,0"
+                               Width="220"
+                               TextWrapping="Wrap"/>
                         <Button Width="28"
                                 Height="28"
                                 ToolTip="USB-Speicher auswählen"
                                 Margin="6,0,0,0"
-                                Click="UsbSettingsAdmin_Click">
-                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE898;" FontSize="16"/>
+                               Click="UsbSettingsAdmin_Click">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE898;" FontSize="16"/>
                         </Button>
                     </StackPanel>
-  
 
                     <!-- Buchung & Fotos wie Info-Zeile -->
                     <StackPanel Orientation="Horizontal" Margin="0,24,0,0">
@@ -273,7 +273,182 @@
                     </StackPanel>
                 </Border>
             </Grid>
+
+            <!-- Overlay: Designs verwalten -->
+            <Grid x:Name="TemplatesOverlay" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2"
+                  Background="#88000000" Visibility="Collapsed">
+                <Border Background="White" CornerRadius="14" Padding="28"
+                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                        MinWidth="860" MinHeight="520">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="Designs verwalten"
+                                   FontSize="30"
+                                   FontWeight="Bold"
+                                   Foreground="#222"
+                                   Margin="0,0,0,18"/>
+
+                        <ListBox x:Name="TemplatesList" Padding="12,0,0,0"
+                                 Grid.Row="1"
+                                 ItemsSource="{Binding TemplateOptions, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 SelectionMode="Single"
+                                 HorizontalContentAlignment="Stretch"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Margin" Value="8"/>
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListBoxItem">
+                                                <Border x:Name="Container" Background="Transparent">
+                                                    <ContentPresenter />
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsSelected" Value="True">
+                                                        <Setter TargetName="Container" Property="Background" Value="#FFEFF6FF"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="Container" Property="Background" Value="#FFF8FBFF"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter TargetName="Container" Property="Opacity" Value="0.6"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border x:Name="Card"
+                                            CornerRadius="14"
+                                            BorderThickness="2"
+                                            Background="White"
+                                            BorderBrush="#CCCCCC"
+                                            Width="214"
+                                            MinHeight="236">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="White"/>
+                                                <Setter Property="BorderBrush" Value="#CCCCCC"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                        <Setter Property="Background" Value="#FFF7EB"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsAllowed}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="#FF8600"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <StackPanel>
+                                            <Grid Height="140" Background="#101010" ClipToBounds="True">
+                                                <Image Source="{Binding Template.PreviewImage}"
+                                                       Stretch="Uniform"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       Margin="8"/>
+                                                <TextBlock Text="Keine Vorschau"
+                                                           Foreground="#F0F0F0"
+                                                           FontSize="15"
+                                                           FontWeight="SemiBold"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Template.PreviewImage}" Value="{x:Null}">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Grid>
+                                            <StackPanel Margin="16,12,16,8">
+                                                <TextBlock Text="{Binding Template.Name}"
+                                                           FontSize="18"
+                                                           FontWeight="Bold"
+                                                           Foreground="#222"
+                                                           TextAlignment="Center"
+                                                           TextTrimming="CharacterEllipsis"/>
+                                            </StackPanel>
+                                            <CheckBox Content="In Auswahl anzeigen"
+                                                      Margin="0,0,0,16"
+                                                      FontSize="16"
+                                                      HorizontalAlignment="Center"
+                                                      Cursor="Hand"
+                                                      IsChecked="{Binding IsAllowed, Mode=TwoWay}"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <TextBlock Grid.Row="1"
+                                   Text="Es wurden noch keine Designs importiert."
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontSize="18"
+                                   Foreground="#666">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding TemplateOptions.Count, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="0">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
+                        <StackPanel Grid.Row="2"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    Margin="0,22,0,0">
+                            <Button Content="Auswahl übernehmen"
+                                    Width="220"
+                                    Style="{StaticResource AdminActionButtonStyle}"
+                                    Click="SaveTemplatesSelection_Click"/>
+                            <Button Content="Templates hinzufügen"
+                                    Width="220"
+                                    Margin="12,0,0,0"
+                                    Style="{StaticResource AdminActionButtonStyle}"
+                                    Click="AddTemplatesOverlay_Click"/>
+                            <Button Content="Ausgewähltes Template löschen"
+                                    Width="270"
+                                    Margin="12,0,0,0"
+                                    Style="{StaticResource AdminActionButtonStyle}"
+                                    Click="DeleteSelectedTemplate_Click"
+                                    IsEnabled="{Binding SelectedItem, ElementName=TemplatesList, Converter={StaticResource NullToBoolConverter}}"/>
+                            <Button Content="Schließen"
+                                    Width="160"
+                                    Margin="12,0,0,0"
+                                    Style="{StaticResource AdminActionButtonStyle}"
+                                    Click="CloseTemplatesOverlay_Click"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
         </Grid>
     </Border>
+    </Viewbox>
 </UserControl>
-

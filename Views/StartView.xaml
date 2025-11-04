@@ -2,32 +2,53 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:conv="clr-namespace:FotoboxApp.Converters"
-    Background="White"
-    MinWidth="1100" MinHeight="700">
+    Background="White">
 
     <UserControl.Resources>
         <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
-        <DropShadowEffect x:Key="BannerShadow"
-                          Color="#33000000"
-                          BlurRadius="22"
-                          ShadowDepth="6"
-                          Direction="270"/>
-
-        <DropShadowEffect x:Key="ButtonShadowPrimary"
-                          Color="#66000000"
-                          BlurRadius="24"
-                          ShadowDepth="9"
-                          Direction="270"/>
-
-        <DropShadowEffect x:Key="ButtonShadowSecondary"
-                          Color="#44000000"
-                          BlurRadius="20"
-                          ShadowDepth="7"
-                          Direction="270"/>
+        <Style x:Key="FlatRoundButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="260"/>
+            <Setter Property="Height" Value="260"/>
+            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonChrome"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="130">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ButtonChrome"
+                                        Property="Opacity"
+                                        Value="0.85"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="ButtonChrome"
+                                        Property="Opacity"
+                                        Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
-    <Grid Margin="36,0">
+    <Viewbox Stretch="Uniform"
+             StretchDirection="Both"
+             VerticalAlignment="Top"
+             HorizontalAlignment="Center">
+        <Grid Width="1280" Height="950" Margin="36,0,36,0" Background="#F3F3F3">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="1*"/>
@@ -35,123 +56,57 @@
 
         <!-- Linke Seite -->
         <Grid Grid.Column="0"
-              Margin="0,36,48,36">
+              Margin="0,50,48,0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- Titel -->
             <Border Grid.Row="0"
-                    Background="#C8102E"
-                    CornerRadius="6"
-                    Padding="20,12"
-                    Effect="{StaticResource BannerShadow}"
-                    Margin="0,0,0,36">
-                <TextBlock Text="SO FUNKTIONIERT DIE FOTOBOX"
-                           Foreground="White"
-                           FontSize="38"
-                           FontWeight="Bold"
-                           TextAlignment="Center"
-                           HorizontalAlignment="Center"/>
-            </Border>
+                    Height="400"
+                    CornerRadius="0"
+                    Background="{Binding StartInstructionBrush}"
+                    Margin="0,0,0,12"
+                    RenderOptions.BitmapScalingMode="HighQuality"
+                    VerticalAlignment="Top"
+                    />
 
-            <!-- Steps -->
             <StackPanel Grid.Row="1"
-                        Margin="0,0,0,32">
-                <TextBlock FontSize="30" Foreground="#111" Margin="0,0,0,10" FontWeight="SemiBold">
-                    <Run Text="1. Countdown starten"/>
-                </TextBlock>
-                <TextBlock FontSize="30" Foreground="#111" Margin="0,0,0,10" FontWeight="SemiBold">
-                    <Run Text="2. "/>
-                    <Underline>
-                        <Run Text="oben"/>
-                    </Underline>
-                    <Run Text=" in die Kamera schauen"/>
-                </TextBlock>
-                <TextBlock FontSize="30" Foreground="#111" Margin="0,0,0,10" FontWeight="SemiBold">
-                    <Run Text="3. warten, bis das Foto gemacht wurde"/>
-                </TextBlock>
-                <TextBlock FontSize="30" Foreground="#111" Margin="0,0,0,0" FontWeight="SemiBold">
-                    <Run Text="4. Bild ggf. direkt ausdrucken"/>
-                </TextBlock>
-            </StackPanel>
-
-            <!-- Buttons -->
-            <StackPanel Grid.Row="2"
                         Orientation="Horizontal"
                         HorizontalAlignment="Left"
-                        Margin="0,0,0,28">
+                        Margin="0,0,0,12">
                 <Button x:Name="BtnStart"
                         Content="START"
-                        Width="160"
-                        Height="160"
-                        FontSize="30"
-                        FontWeight="Bold"
+                        Style="{StaticResource FlatRoundButtonStyle}"
+                        Background="#D61C1C"
                         Foreground="White"
-                        Cursor="Hand"
-                        Click="BtnStart_Click">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Grid>
-                                <Ellipse Fill="#D61C1C"
-                                         Stroke="#7A0E0E"
-                                         StrokeThickness="3"
-                                         Effect="{StaticResource ButtonShadowPrimary}"/>
-                                <ContentPresenter HorizontalAlignment="Center"
-                                                  VerticalAlignment="Center"/>
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
+                        Click="BtnStart_Click"/>
                 <Button x:Name="BtnGallery"
                         Content="GALERIE"
-                        Width="160"
-                        Height="160"
-                        FontSize="30"
-                        FontWeight="Bold"
+                        Style="{StaticResource FlatRoundButtonStyle}"
+                        Background="#F3F3F3"
                         Foreground="#333333"
+                        BorderBrush="#D0D0D0"
+                        BorderThickness="2"
                         Margin="32,0,0,0"
-                        Cursor="Hand"
                         Click="BtnGallery_Click"
-                        Visibility="{Binding GalerieButton, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Grid>
-                                <Ellipse Fill="#D0D0D0"
-                                         Stroke="#939393"
-                                         StrokeThickness="3"
-                                         Effect="{StaticResource ButtonShadowSecondary}"/>
-                                <ContentPresenter HorizontalAlignment="Center"
-                                                  VerticalAlignment="Center"/>
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
+                        Visibility="{Binding GalerieButton, Converter={StaticResource BoolToVisibilityConverter}}"/>
             </StackPanel>
 
-            <!-- Hinweis -->
-            <Border Grid.Row="3"
-                    Background="#F7F7F7"
-                    CornerRadius="6"
-                    Padding="18"
-                    HorizontalAlignment="Stretch">
-                <TextBlock FontSize="18"
-                           Foreground="#222"
-                           TextWrapping="Wrap"
-                           HorizontalAlignment="Left">
-                    <Run FontWeight="Bold" Text="Wichtige Hinweise: "/>
-                    <Run Text="Die Fotobox benoetigt immer genuegend Licht. Bitte beachte auch, dass die Bilder immer mit einer leichten Verzoegerung gemacht werden. "/>
-                    <Run Text="Idealerweise stehen mehrere Personen ruhig nebeneinander und schauen oben in die Kamera."/>
-                </TextBlock>
-            </Border>
+            <Border Grid.Row="2"
+                    Height="200"
+                    CornerRadius="0"
+                    Background="{Binding WarningInfoBrush}"
+                    RenderOptions.BitmapScalingMode="HighQuality"
+                    Margin="0,0,0,0"
+                    VerticalAlignment="Bottom"
+                    />
         </Grid>
 
         <!-- Rechte Seite -->
         <Grid Grid.Column="1"
-              Margin="0,36,0,36">
+              Margin="0,50,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -207,11 +162,10 @@
                             Orientation="Vertical"
                             HorizontalAlignment="Stretch">
                     <Button Height="240"
-                            Margin="0,0,0,28"
+                            Margin="12,0,0,28"
                             Padding="0"
                             Background="Transparent"
                             Cursor="Hand"
-                            Visibility="{Binding SelectedTemplate1, Converter={StaticResource NullToVisibilityConverter}}"
                             Click="SelectTemplate1_Click">
                         <Button.BorderThickness>
                             <MultiBinding Converter="{StaticResource SelectedBorderMultiConverter}">
@@ -230,23 +184,43 @@
                                 <Border CornerRadius="16"
                                         Background="White"
                                         BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                        ClipToBounds="True">
-                                    <Viewbox Stretch="Uniform">
-                                        <Image Source="{Binding SelectedTemplate1.PreviewImage}"
-                                               Width="420"
-                                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                                    </Viewbox>
+                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                    <Grid>
+                                        <Viewbox Stretch="Uniform">
+                                            <Image Source="{Binding TemplateSlot1Preview}"
+                                                   Width="420"
+                                                   RenderOptions.BitmapScalingMode="HighQuality"
+                                                   Visibility="{Binding SelectedTemplate1, Converter={StaticResource NullToVisibilityConverter}}"/>
+                                        </Viewbox>
+                                        <TextBlock Text="Default"
+                                                   FontSize="28"
+                                                   FontWeight="Bold"
+                                                   Foreground="#444"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SelectedTemplate1}" Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
                                 </Border>
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
 
                     <Button Height="240"
+                            Margin="12,0,0,0"
                             Padding="0"
                             Background="Transparent"
                             Cursor="Hand"
-                            Visibility="{Binding SelectedTemplate2, Converter={StaticResource NullToVisibilityConverter}}"
+                            Visibility="{Binding AllowTwoTemplates, Converter={StaticResource BoolToVisibilityConverter}}"
                             Click="SelectTemplate2_Click">
                         <Button.BorderThickness>
                             <MultiBinding Converter="{StaticResource SelectedBorderMultiConverter}">
@@ -265,13 +239,32 @@
                                 <Border CornerRadius="16"
                                         Background="White"
                                         BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                        ClipToBounds="True">
-                                    <Viewbox Stretch="Uniform">
-                                        <Image Source="{Binding SelectedTemplate2.PreviewImage}"
-                                               Width="420"
-                                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                                    </Viewbox>
+                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                    <Grid>
+                                        <Viewbox Stretch="Uniform">
+                                            <Image Source="{Binding TemplateSlot2Preview}"
+                                                   Width="420"
+                                                   RenderOptions.BitmapScalingMode="HighQuality"
+                                                   Visibility="{Binding SelectedTemplate2, Converter={StaticResource NullToVisibilityConverter}}"/>
+                                        </Viewbox>
+                                        <TextBlock Text="Default"
+                                                   FontSize="28"
+                                                   FontWeight="Bold"
+                                                   Foreground="#444"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SelectedTemplate2}" Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
                                 </Border>
                             </ControlTemplate>
                         </Button.Template>
@@ -340,4 +333,5 @@
             </Border>
         </Grid>
     </Grid>
+    </Viewbox>
 </UserControl>

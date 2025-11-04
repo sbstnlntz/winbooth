@@ -2,11 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using FotoboxApp.Models;
 using FotoboxApp.Services;
@@ -21,6 +24,15 @@ namespace FotoboxApp.ViewModels
 
         public ObservableCollection<TemplateItem> Templates { get; } = new ObservableCollection<TemplateItem>();
 
+        public sealed class TemplateImportResult
+        {
+            public List<string> ImportedTemplates { get; } = new();
+            public List<string> UpdatedTemplates { get; } = new();
+            public List<string> InvalidFiles { get; } = new();
+            public List<(string File, string Error)> FailedFiles { get; } = new();
+            public bool HasChanges => ImportedTemplates.Count > 0 || UpdatedTemplates.Count > 0;
+        }
+
         // --- Kameras & Drucker ---
         public ObservableCollection<string> AvailableCameras { get; } = new ObservableCollection<string>();
         public ObservableCollection<string> AvailablePrinters { get; } = new ObservableCollection<string>();
@@ -30,6 +42,27 @@ namespace FotoboxApp.ViewModels
         private readonly List<string> _allowedPrinterNames = new();
         private readonly List<string> _allowedTemplateNames = new();
         private readonly object _usbSyncLock = new();
+
+        private static readonly string GraphicsAssetsFolder = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+            "Fotobox");
+        private static readonly string[] CustomGraphicExtensions = { ".png", ".jpg", ".jpeg" };
+
+        private static readonly Uri DefaultStartInstructionUri = new("pack://application:,,,/FotoboxApp;component/Assets/start_instructions.png", UriKind.Absolute);
+        private static readonly Uri DefaultWarningInfoUri = new("pack://application:,,,/FotoboxApp;component/Assets/warning_hint.png", UriKind.Absolute);
+        private static readonly BitmapImage DefaultTemplatePreviewImage = LoadBitmapImage(new Uri("pack://application:,,,/FotoboxApp;component/Assets/template_placeholder.png", UriKind.Absolute));
+        private const string CustomStartInstructionFilePrefix = "start_instruction_custom";
+        private const string CustomWarningInfoFilePrefix = "warning_hint_custom";
+        private const int GraphicsDefaultsVersion = 2025020601;
+        private static readonly string GraphicsVersionMarkerPath = Path.Combine(GraphicsAssetsFolder, "graphics_defaults.version");
+
+        private Brush _startInstructionBrush;
+        private string _startInstructionDescription = "Standardgrafik";
+        private bool _hasCustomStartInstruction;
+
+        private Brush _warningInfoBrush;
+        private string _warningInfoDescription = "Standardgrafik";
+        private bool _hasCustomWarningInfo;
 
         public IReadOnlyList<string> AllowedCameraNames => _allowedCameraNames;
         public IReadOnlyList<string> AllowedPrinterNames => _allowedPrinterNames;
@@ -41,6 +74,423 @@ namespace FotoboxApp.ViewModels
         public string CameraRotationSummary => _cameraRotate180 ? "Kamera: 180° gedreht" : "Kamera: normal";
         public double CameraRotationAngle => _cameraRotate180 ? 180d : 0d;
         public string UsbDriveSummary => FormatUsbSummary(_selectedUsbDrivePath);
+        public Brush StartInstructionBrush
+        {
+            get => _startInstructionBrush;
+            private set
+            {
+                if (Equals(_startInstructionBrush, value))
+                    return;
+
+                _startInstructionBrush = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string StartInstructionDescription
+        {
+            get => _startInstructionDescription;
+            private set
+            {
+                if (_startInstructionDescription == value)
+                    return;
+
+                _startInstructionDescription = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool HasCustomStartInstruction
+        {
+            get => _hasCustomStartInstruction;
+            private set
+            {
+                if (_hasCustomStartInstruction == value)
+                    return;
+
+                _hasCustomStartInstruction = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Brush WarningInfoBrush
+        {
+            get => _warningInfoBrush;
+            private set
+            {
+                if (Equals(_warningInfoBrush, value))
+                    return;
+
+                _warningInfoBrush = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string WarningInfoDescription
+        {
+            get => _warningInfoDescription;
+            private set
+            {
+                if (_warningInfoDescription == value)
+                    return;
+
+                _warningInfoDescription = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool HasCustomWarningInfo
+        {
+            get => _hasCustomWarningInfo;
+            private set
+            {
+                if (_hasCustomWarningInfo == value)
+                    return;
+
+                _hasCustomWarningInfo = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private static string GetTemplatesRootPath() =>
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "Fotobox", "templates");
+
+        private static BitmapImage LoadTemplatePreview(string zipFile)
+        {
+            try
+            {
+                using var archive = ZipFile.OpenRead(zipFile);
+                var entry = archive.GetEntry("preview.png");
+                if (entry == null)
+                {
+                    return null;
+                }
+
+                using var entryStream = entry.Open();
+                using var ms = new MemoryStream();
+                entryStream.CopyTo(ms);
+                ms.Position = 0;
+
+                var image = new BitmapImage();
+                image.BeginInit();
+                image.StreamSource = ms;
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.EndInit();
+                image.Freeze();
+                return image;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private void ReloadTemplatesFromDisk()
+        {
+            Templates.Clear();
+
+            var templatesRoot = GetTemplatesRootPath();
+            if (!Directory.Exists(templatesRoot))
+            {
+                OnPropertyChanged(nameof(TemplateSlot1Template));
+                OnPropertyChanged(nameof(TemplateSlot1Preview));
+                OnPropertyChanged(nameof(TemplateSlot2Template));
+                OnPropertyChanged(nameof(TemplateSlot2Preview));
+                return;
+            }
+
+            foreach (var zipFile in Directory.GetFiles(templatesRoot, "*.zip").OrderBy(Path.GetFileName))
+            {
+                Templates.Add(new TemplateItem
+                {
+                    Name = Path.GetFileNameWithoutExtension(zipFile),
+                    ZipPath = zipFile,
+                    PreviewImage = LoadTemplatePreview(zipFile)
+                });
+            }
+
+            OnPropertyChanged(nameof(TemplateSlot1Template));
+            OnPropertyChanged(nameof(TemplateSlot1Preview));
+            OnPropertyChanged(nameof(TemplateSlot2Template));
+            OnPropertyChanged(nameof(TemplateSlot2Preview));
+        }
+
+        public void RefreshTemplatesFromDisk()
+        {
+            EnsureDefaultGraphicsActive();
+            ReloadTemplatesFromDisk();
+            NormalizeAllowedTemplates();
+            EnsureSelectedTemplatesValid();
+        }
+
+        private static string GetCustomGraphicPath(string filePrefix, string extension) =>
+            Path.Combine(GraphicsAssetsFolder, $"{filePrefix}{extension}");
+
+        private static string FindExistingCustomGraphic(string filePrefix)
+        {
+            foreach (var extension in CustomGraphicExtensions)
+            {
+                var candidate = GetCustomGraphicPath(filePrefix, extension);
+                if (File.Exists(candidate))
+                    return candidate;
+            }
+
+            return null;
+        }
+
+        private static Brush CreateImageBrushFromFile(string path)
+        {
+            try
+            {
+                var image = new BitmapImage();
+                image.BeginInit();
+                image.UriSource = new Uri(path, UriKind.Absolute);
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                image.EndInit();
+                image.Freeze();
+
+                var brush = new ImageBrush(image)
+                {
+                    Stretch = Stretch.Uniform,
+                    AlignmentX = AlignmentX.Center,
+                    AlignmentY = AlignmentY.Top
+                };
+                brush.Freeze();
+                return brush;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static Brush CreateImageBrushFromUri(Uri uri)
+        {
+            try
+            {
+                var image = new BitmapImage();
+                image.BeginInit();
+                image.UriSource = uri;
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.EndInit();
+                image.Freeze();
+
+                var brush = new ImageBrush(image)
+                {
+                    Stretch = Stretch.Uniform,
+                    AlignmentX = AlignmentX.Center,
+                    AlignmentY = AlignmentY.Top
+                };
+                brush.Freeze();
+                return brush;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static BitmapImage LoadBitmapImage(Uri uri)
+        {
+            try
+            {
+                var image = new BitmapImage();
+                image.BeginInit();
+                image.UriSource = uri;
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                image.EndInit();
+                image.Freeze();
+                return image;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static Brush EnsureFrozenBrush(Brush brush)
+        {
+            if (brush is Freezable freezable && !freezable.IsFrozen)
+            {
+                freezable.Freeze();
+            }
+
+            return brush;
+        }
+
+        private (Brush Brush, string Description, bool HasCustom) LoadGraphicResource(Uri defaultUri, string filePrefix)
+        {
+            var customPath = FindExistingCustomGraphic(filePrefix);
+            if (!string.IsNullOrEmpty(customPath))
+            {
+                var brush = CreateImageBrushFromFile(customPath);
+                if (brush != null)
+                {
+                    var description = $"Benutzerdefiniert ({Path.GetExtension(customPath)?.Trim('.').ToUpperInvariant()})";
+                    return (EnsureFrozenBrush(brush), description, true);
+                }
+            }
+
+            var defaultBrush = CreateImageBrushFromUri(defaultUri);
+            if (defaultBrush != null)
+            {
+                return (EnsureFrozenBrush(defaultBrush), "Standardgrafik", false);
+            }
+
+            var fallback = new SolidColorBrush(Color.FromRgb(245, 245, 245));
+            return (EnsureFrozenBrush(fallback), "Standardgrafik", false);
+        }
+
+        private void RefreshStartInstructionGraphic()
+        {
+            var info = LoadGraphicResource(DefaultStartInstructionUri, CustomStartInstructionFilePrefix);
+            StartInstructionBrush = info.Brush;
+            StartInstructionDescription = info.Description;
+            HasCustomStartInstruction = info.HasCustom;
+        }
+
+        private void RefreshWarningInfoGraphic()
+        {
+            var info = LoadGraphicResource(DefaultWarningInfoUri, CustomWarningInfoFilePrefix);
+            WarningInfoBrush = info.Brush;
+            WarningInfoDescription = info.Description;
+            HasCustomWarningInfo = info.HasCustom;
+        }
+
+        private bool TryUpdateGraphicResource(string filePrefix, string sourceFilePath, out string errorMessage)
+        {
+            errorMessage = null;
+
+            if (string.IsNullOrWhiteSpace(sourceFilePath) || !File.Exists(sourceFilePath))
+            {
+                errorMessage = "Die ausgewählte Datei existiert nicht.";
+                return false;
+            }
+
+            var extension = Path.GetExtension(sourceFilePath)?.ToLowerInvariant();
+            if (extension == null || !CustomGraphicExtensions.Contains(extension))
+            {
+                errorMessage = "Bitte eine PNG- oder JPG-Datei wählen.";
+                return false;
+            }
+
+            try
+            {
+                if (!string.IsNullOrEmpty(GraphicsAssetsFolder))
+                {
+                    Directory.CreateDirectory(GraphicsAssetsFolder);
+                }
+
+                foreach (var ext in CustomGraphicExtensions)
+                {
+                    var candidate = GetCustomGraphicPath(filePrefix, ext);
+                    if (File.Exists(candidate))
+                    {
+                        File.Delete(candidate);
+                    }
+                }
+
+                var destination = GetCustomGraphicPath(filePrefix, extension);
+                File.Copy(sourceFilePath, destination, overwrite: true);
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Die Grafik konnte nicht übernommen werden: {ex.Message}";
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool TryResetGraphicResource(string filePrefix, out string errorMessage)
+        {
+            errorMessage = null;
+
+            try
+            {
+                foreach (var ext in CustomGraphicExtensions)
+                {
+                    var candidate = GetCustomGraphicPath(filePrefix, ext);
+                    if (File.Exists(candidate))
+                    {
+                        File.Delete(candidate);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Die benutzerdefinierte Grafik konnte nicht entfernt werden: {ex.Message}";
+                return false;
+            }
+
+            return true;
+        }
+
+        private void EnsureDefaultGraphicsActive()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(GraphicsAssetsFolder))
+                    return;
+
+                var appliedVersion = 0;
+                if (File.Exists(GraphicsVersionMarkerPath))
+                {
+                    var content = File.ReadAllText(GraphicsVersionMarkerPath).Trim();
+                    int.TryParse(content, NumberStyles.Integer, CultureInfo.InvariantCulture, out appliedVersion);
+                }
+
+                if (appliedVersion >= GraphicsDefaultsVersion)
+                    return;
+
+                Directory.CreateDirectory(GraphicsAssetsFolder);
+                TryResetGraphicResource(CustomStartInstructionFilePrefix, out _);
+                TryResetGraphicResource(CustomWarningInfoFilePrefix, out _);
+                File.WriteAllText(GraphicsVersionMarkerPath, GraphicsDefaultsVersion.ToString(CultureInfo.InvariantCulture));
+            }
+            catch
+            {
+                // Ignored: falls back to existing graphics without interrupting startup.
+            }
+        }
+
+        public bool TryUpdateStartInstructionGraphic(string sourceFilePath, out string errorMessage)
+        {
+            if (!TryUpdateGraphicResource(CustomStartInstructionFilePrefix, sourceFilePath, out errorMessage))
+                return false;
+
+            RefreshStartInstructionGraphic();
+            return true;
+        }
+
+        public bool TryResetStartInstructionGraphic(out string errorMessage)
+        {
+            if (!TryResetGraphicResource(CustomStartInstructionFilePrefix, out errorMessage))
+                return false;
+
+            RefreshStartInstructionGraphic();
+            return true;
+        }
+
+        public bool TryUpdateWarningInfoGraphic(string sourceFilePath, out string errorMessage)
+        {
+            if (!TryUpdateGraphicResource(CustomWarningInfoFilePrefix, sourceFilePath, out errorMessage))
+                return false;
+
+            RefreshWarningInfoGraphic();
+            return true;
+        }
+
+        public bool TryResetWarningInfoGraphic(out string errorMessage)
+        {
+            if (!TryResetGraphicResource(CustomWarningInfoFilePrefix, out errorMessage))
+                return false;
+
+            RefreshWarningInfoGraphic();
+            return true;
+        }
 
         private string _selectedCameraName;
         public string SelectedCameraName
@@ -103,6 +553,10 @@ namespace FotoboxApp.ViewModels
                 {
                     _selectedTemplate1 = value;
                     OnPropertyChanged();
+                    OnPropertyChanged(nameof(TemplateSlot1Template));
+                    OnPropertyChanged(nameof(TemplateSlot1Preview));
+                    OnPropertyChanged(nameof(TemplateSlot2Template));
+                    OnPropertyChanged(nameof(TemplateSlot2Preview));
                     if (ActiveTemplate == null && value != null)
                         ActiveTemplate = value;
                 }
@@ -124,11 +578,47 @@ namespace FotoboxApp.ViewModels
                 {
                     _selectedTemplate2 = value;
                     OnPropertyChanged();
+                    OnPropertyChanged(nameof(TemplateSlot2Template));
+                    OnPropertyChanged(nameof(TemplateSlot2Preview));
                     if (ActiveTemplate == null && value != null)
                         ActiveTemplate = value;
                 }
             }
         }
+
+        public TemplateItem TemplateSlot1Template
+        {
+            get
+            {
+                if (SelectedTemplate1 != null)
+                    return SelectedTemplate1;
+
+                var options = GetSelectableTemplates();
+                return options.FirstOrDefault();
+            }
+        }
+
+        public TemplateItem TemplateSlot2Template
+        {
+            get
+            {
+                if (!_allowTwoTemplates)
+                    return null;
+
+                if (SelectedTemplate2 != null)
+                    return SelectedTemplate2;
+
+                var options = GetSelectableTemplates();
+                if (options.Count == 0)
+                    return null;
+
+                var primary = TemplateSlot1Template;
+                return options.FirstOrDefault(t => !ReferenceEquals(t, primary));
+            }
+        }
+
+        public ImageSource TemplateSlot1Preview => (ImageSource)SelectedTemplate1?.PreviewImage;
+        public ImageSource TemplateSlot2Preview => (ImageSource)SelectedTemplate2?.PreviewImage;
 
         private TemplateItem _activeTemplate;
         public TemplateItem ActiveTemplate
@@ -250,6 +740,114 @@ namespace FotoboxApp.ViewModels
             EnsureSelectedTemplatesValid();
         }
 
+        public TemplateImportResult ImportTemplatesFromFiles(IEnumerable<string> filePaths)
+        {
+            var result = new TemplateImportResult();
+
+            if (filePaths == null)
+            {
+                return result;
+            }
+
+            var templatesRoot = GetTemplatesRootPath();
+            Directory.CreateDirectory(templatesRoot);
+
+            foreach (var filePath in filePaths)
+            {
+                if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
+                {
+                    if (!string.IsNullOrWhiteSpace(filePath))
+                    {
+                        result.InvalidFiles.Add(filePath);
+                    }
+                    continue;
+                }
+
+                if (!string.Equals(Path.GetExtension(filePath), ".zip", StringComparison.OrdinalIgnoreCase))
+                {
+                    result.InvalidFiles.Add(filePath);
+                    continue;
+                }
+
+                try
+                {
+                    var destName = Path.GetFileName(filePath);
+                    if (string.IsNullOrWhiteSpace(destName))
+                    {
+                        result.InvalidFiles.Add(filePath);
+                        continue;
+                    }
+
+                    var destPath = Path.Combine(templatesRoot, destName);
+                    var sourceFullPath = Path.GetFullPath(filePath);
+                    var destFullPath = Path.GetFullPath(destPath);
+
+                    if (string.Equals(sourceFullPath, destFullPath, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (File.Exists(destFullPath))
+                        {
+                            result.UpdatedTemplates.Add(Path.GetFileNameWithoutExtension(destName));
+                        }
+                        continue;
+                    }
+
+                    var wasExisting = File.Exists(destPath);
+                    File.Copy(filePath, destPath, true);
+
+                    if (wasExisting)
+                    {
+                        result.UpdatedTemplates.Add(Path.GetFileNameWithoutExtension(destName));
+                    }
+                    else
+                    {
+                        result.ImportedTemplates.Add(Path.GetFileNameWithoutExtension(destName));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    result.FailedFiles.Add((filePath, ex.Message));
+                }
+            }
+
+            RefreshTemplatesFromDisk();
+            try { SettingsService.SaveAllowedTemplates(_allowedTemplateNames); } catch { }
+
+            return result;
+        }
+
+        public bool TryDeleteTemplate(TemplateItem template, out string errorMessage)
+        {
+            errorMessage = null;
+            if (template == null)
+            {
+                errorMessage = "Kein Design ausgewählt.";
+                return false;
+            }
+
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(template.ZipPath) && File.Exists(template.ZipPath))
+                {
+                    File.Delete(template.ZipPath);
+                }
+                else if (string.IsNullOrWhiteSpace(template.ZipPath))
+                {
+                    errorMessage = "Dateipfad des Designs ist ungültig.";
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Löschen fehlgeschlagen: {ex.Message}";
+                return false;
+            }
+
+            _allowedTemplateNames.RemoveAll(name => string.Equals(name, template.Name, StringComparison.Ordinal));
+            RefreshTemplatesFromDisk();
+            try { SettingsService.SaveAllowedTemplates(_allowedTemplateNames); } catch { }
+            return true;
+        }
+
         public void RefreshUsbDrives()
         {
             var drives = DriveInfo.GetDrives()
@@ -364,6 +962,10 @@ namespace FotoboxApp.ViewModels
                 if (SelectedTemplate1 != null) SelectedTemplate1 = null;
                 if (SelectedTemplate2 != null) SelectedTemplate2 = null;
                 if (ActiveTemplate != null) ActiveTemplate = null;
+                OnPropertyChanged(nameof(TemplateSlot1Template));
+                OnPropertyChanged(nameof(TemplateSlot1Preview));
+                OnPropertyChanged(nameof(TemplateSlot2Template));
+                OnPropertyChanged(nameof(TemplateSlot2Preview));
                 return;
             }
 
@@ -397,6 +999,11 @@ namespace FotoboxApp.ViewModels
             {
                 ActiveTemplate = SelectedTemplate1 ?? SelectedTemplate2;
             }
+
+            OnPropertyChanged(nameof(TemplateSlot1Template));
+            OnPropertyChanged(nameof(TemplateSlot1Preview));
+            OnPropertyChanged(nameof(TemplateSlot2Template));
+            OnPropertyChanged(nameof(TemplateSlot2Preview));
         }
 
         private static string BuildAllowedSummary(IReadOnlyCollection<string> allowed, IEnumerable<string> availableEnumerable, string emptyMessage)
@@ -784,11 +1391,18 @@ namespace FotoboxApp.ViewModels
                     var removed = _selectedTemplate2;
                     _selectedTemplate2 = null;
                     OnPropertyChanged(nameof(SelectedTemplate2));
+                    OnPropertyChanged(nameof(TemplateSlot2Template));
+                    OnPropertyChanged(nameof(TemplateSlot2Preview));
 
                     if (ReferenceEquals(_activeTemplate, removed))
                     {
                         ActiveTemplate = _selectedTemplate1;
                     }
+                }
+                else
+                {
+                    OnPropertyChanged(nameof(TemplateSlot2Template));
+                    OnPropertyChanged(nameof(TemplateSlot2Preview));
                 }
 
                 try { SettingsService.SaveAllowTwoTemplates(_allowTwoTemplates); } catch { }
@@ -842,48 +1456,10 @@ namespace FotoboxApp.ViewModels
                 OnPropertyChanged(nameof(FotoFilter));
             }
 
-            // Templates laden
-            string templatesRoot = Path.Combine(
-                System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyPictures),
-                "Fotobox", "templates"
-            );
-            if (Directory.Exists(templatesRoot))
-            {
-                foreach (var zipFile in Directory.GetFiles(templatesRoot, "*.zip"))
-                {
-                    BitmapImage previewImg = null;
-                    try
-                    {
-                        using (var archive = ZipFile.OpenRead(zipFile))
-                        {
-                            var entry = archive.GetEntry("preview.png");
-                            if (entry != null)
-                            {
-                                using (var stream = entry.Open())
-                                using (var ms = new MemoryStream())
-                                {
-                                    stream.CopyTo(ms);
-                                    ms.Position = 0;
-                                    previewImg = new BitmapImage();
-                                    previewImg.BeginInit();
-                                    previewImg.StreamSource = ms;
-                                    previewImg.CacheOption = BitmapCacheOption.OnLoad;
-                                    previewImg.EndInit();
-                                    previewImg.Freeze();
-                                }
-                            }
-                        }
-                    }
-                    catch { }
-
-                    Templates.Add(new TemplateItem
-                    {
-                        Name = Path.GetFileNameWithoutExtension(zipFile),
-                        ZipPath = zipFile,
-                        PreviewImage = previewImg
-                    });
-                }
-            }
+            EnsureDefaultGraphicsActive();
+            ReloadTemplatesFromDisk();
+            RefreshStartInstructionGraphic();
+            RefreshWarningInfoGraphic();
 
             // --- Kamera- & Druckerliste laden ---
             foreach (var cam in CameraHelper.GetAllCameraNames())
