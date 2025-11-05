@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,15 +15,18 @@ namespace FotoboxApp.Services
             public bool AllowGalerie { get; set; } = true;
             public bool AllowFotoFilter { get; set; }
             public int PostProcessDelaySeconds { get; set; }
+            public int StartReadyDelaySeconds { get; set; }
+            public int CollageCreationDelaySeconds { get; set; }
             public List<string> AllowedCameras { get; set; } = new();
             public List<string> AllowedPrinters { get; set; } = new();
             public List<string> AllowedTemplates { get; set; } = new();
+            public string DefaultTemplateName { get; set; } = string.Empty;
             public bool CameraRotate180 { get; set; }
             public string UsbDrivePath { get; set; } = string.Empty;
         }
 
         private static string SettingsFolder =>
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "Fotobox");
+            Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyPictures), "Fotobox");
 
         private static string SettingsPath => Path.Combine(SettingsFolder, "settings.json");
 
@@ -79,6 +81,11 @@ namespace FotoboxApp.Services
             return list;
         }
 
+        public static int LoadStartReadyDelaySeconds() => LoadModel().StartReadyDelaySeconds;
+        public static int LoadCollageCreationDelaySeconds() => LoadModel().CollageCreationDelaySeconds;
+
+        public static string LoadDefaultTemplateName() => LoadModel().DefaultTemplateName ?? string.Empty;
+
         public static string LoadUsbDrivePath() => LoadModel().UsbDrivePath ?? string.Empty;
 
         public static bool LoadCameraRotate180() => LoadModel().CameraRotate180;
@@ -121,7 +128,7 @@ namespace FotoboxApp.Services
         public static void SavePostProcessDelaySeconds(int seconds)
         {
             var model = LoadModel();
-            model.PostProcessDelaySeconds = Math.Max(0, seconds);
+            model.PostProcessDelaySeconds = System.Math.Max(0, seconds);
             SaveModel(model);
         }
 
@@ -143,6 +150,27 @@ namespace FotoboxApp.Services
         {
             var model = LoadModel();
             model.AllowedTemplates = templates?.Where(t => !string.IsNullOrWhiteSpace(t)).Distinct().ToList() ?? new List<string>();
+            SaveModel(model);
+        }
+
+        public static void SaveStartReadyDelaySeconds(int seconds)
+        {
+            var model = LoadModel();
+            model.StartReadyDelaySeconds = System.Math.Max(0, seconds);
+            SaveModel(model);
+        }
+
+        public static void SaveCollageCreationDelaySeconds(int seconds)
+        {
+            var model = LoadModel();
+            model.CollageCreationDelaySeconds = System.Math.Max(0, seconds);
+            SaveModel(model);
+        }
+
+        public static void SaveDefaultTemplateName(string name)
+        {
+            var model = LoadModel();
+            model.DefaultTemplateName = name ?? string.Empty;
             SaveModel(model);
         }
 

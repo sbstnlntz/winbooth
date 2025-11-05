@@ -201,11 +201,11 @@ namespace FotoboxApp.ViewModels
 
             foreach (var zipFile in Directory.GetFiles(templatesRoot, "*.zip").OrderBy(Path.GetFileName))
             {
-                Templates.Add(new TemplateItem
-                {
-                    Name = Path.GetFileNameWithoutExtension(zipFile),
-                    ZipPath = zipFile,
-                    PreviewImage = LoadTemplatePreview(zipFile)
+            Templates.Add(new TemplateItem
+            {
+                Name = Path.GetFileNameWithoutExtension(zipFile),
+                ZipPath = zipFile,
+                PreviewImage = LoadTemplatePreview(zipFile)
                 });
             }
 
@@ -213,6 +213,9 @@ namespace FotoboxApp.ViewModels
             OnPropertyChanged(nameof(TemplateSlot1Preview));
             OnPropertyChanged(nameof(TemplateSlot2Template));
             OnPropertyChanged(nameof(TemplateSlot2Preview));
+
+            EnsureDefaultTemplateValid();
+            EnsureDefaultTemplateAllowed();
         }
 
         public void RefreshTemplatesFromDisk()
@@ -543,12 +546,15 @@ namespace FotoboxApp.ViewModels
         }
 
         // --- Template-Auswahl ---
+        private string _defaultTemplateName;
         private TemplateItem _selectedTemplate1;
         public TemplateItem SelectedTemplate1
         {
             get => _selectedTemplate1;
             set
             {
+                var previous = _selectedTemplate1;
+
                 if (_selectedTemplate1 != value)
                 {
                     _selectedTemplate1 = value;
@@ -557,8 +563,7 @@ namespace FotoboxApp.ViewModels
                     OnPropertyChanged(nameof(TemplateSlot1Preview));
                     OnPropertyChanged(nameof(TemplateSlot2Template));
                     OnPropertyChanged(nameof(TemplateSlot2Preview));
-                    if (ActiveTemplate == null && value != null)
-                        ActiveTemplate = value;
+                    UpdateActiveTemplateAfterSelectionChange(previous, value, slotIndex: 1);
                 }
             }
         }
@@ -569,6 +574,8 @@ namespace FotoboxApp.ViewModels
             get => _selectedTemplate2;
             set
             {
+                var previous = _selectedTemplate2;
+
                 if (!_allowTwoTemplates && value != null)
                 {
                     return;
@@ -580,8 +587,7 @@ namespace FotoboxApp.ViewModels
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(TemplateSlot2Template));
                     OnPropertyChanged(nameof(TemplateSlot2Preview));
-                    if (ActiveTemplate == null && value != null)
-                        ActiveTemplate = value;
+                    UpdateActiveTemplateAfterSelectionChange(previous, value, slotIndex: 2);
                 }
             }
         }
@@ -592,6 +598,10 @@ namespace FotoboxApp.ViewModels
             {
                 if (SelectedTemplate1 != null)
                     return SelectedTemplate1;
+
+                var defaultTemplate = DefaultTemplate;
+                if (defaultTemplate != null)
+                    return defaultTemplate;
 
                 var options = GetSelectableTemplates();
                 return options.FirstOrDefault();
@@ -605,20 +615,83 @@ namespace FotoboxApp.ViewModels
                 if (!_allowTwoTemplates)
                     return null;
 
-                if (SelectedTemplate2 != null)
-                    return SelectedTemplate2;
-
-                var options = GetSelectableTemplates();
-                if (options.Count == 0)
-                    return null;
-
-                var primary = TemplateSlot1Template;
-                return options.FirstOrDefault(t => !ReferenceEquals(t, primary));
+                return SelectedTemplate2;
             }
         }
 
-        public ImageSource TemplateSlot1Preview => (ImageSource)SelectedTemplate1?.PreviewImage;
-        public ImageSource TemplateSlot2Preview => (ImageSource)SelectedTemplate2?.PreviewImage;
+        public ImageSource TemplateSlot1Preview
+        {
+            get
+            {
+                var template = TemplateSlot1Template;
+                return (ImageSource)(template?.PreviewImage ?? DefaultTemplatePreviewImage);
+            }
+        }
+
+        public ImageSource TemplateSlot2Preview
+        {
+            get
+            {
+                var template = TemplateSlot2Template;
+                return (ImageSource)(template?.PreviewImage ?? DefaultTemplatePreviewImage);
+            }
+        }
+
+        private void UpdateActiveTemplateAfterSelectionChange(TemplateItem previous, TemplateItem current, int slotIndex)
+        {
+            // If a slot loses its selection and it was active, fall back to the remaining template/default
+            if (previous != null && current == null && ReferenceEquals(ActiveTemplate, previous))
+            {
+                if (slotIndex == 1 && SelectedTemplate2 != null)
+                {
+                    ActiveTemplate = SelectedTemplate2;
+                    return;
+                }
+
+                if (slotIndex == 2 && SelectedTemplate1 != null)
+                {
+                    ActiveTemplate = SelectedTemplate1;
+                    return;
+                }
+
+                ActiveTemplate = TemplateSlot1Template ?? TemplateSlot2Template;
+                return;
+            }
+
+            // If only one template is selected, make sure it is marked active
+            if (current != null)
+            {
+                var hasOnlyFirst = SelectedTemplate1 != null && SelectedTemplate2 == null;
+                var hasOnlySecond = SelectedTemplate2 != null && SelectedTemplate1 == null;
+
+                if ((hasOnlyFirst && ReferenceEquals(current, SelectedTemplate1)) ||
+                    (hasOnlySecond && ReferenceEquals(current, SelectedTemplate2)))
+                {
+                    ActiveTemplate = current;
+                }
+            }
+
+            if (ActiveTemplate == null)
+            {
+                ActiveTemplate = TemplateSlot1Template ?? TemplateSlot2Template;
+            }
+        }
+
+        public TemplateItem DefaultTemplate
+        {
+            get => FindTemplateByName(_defaultTemplateName);
+            set => UpdateDefaultTemplate(value?.Name, persist: true);
+        }
+
+        public string DefaultTemplateName => _defaultTemplateName;
+
+        public bool HasDefaultTemplate => DefaultTemplate != null;
+
+        public string DefaultTemplateDisplayName => DefaultTemplate?.Name ?? "Kein Standard";
+
+        public ImageSource DefaultTemplatePreview => (ImageSource)(DefaultTemplate?.PreviewImage ?? DefaultTemplatePreviewImage);
+
+        public void SetDefaultTemplateByName(string templateName) => UpdateDefaultTemplate(templateName, persist: true);
 
         private TemplateItem _activeTemplate;
         public TemplateItem ActiveTemplate
@@ -652,7 +725,7 @@ namespace FotoboxApp.ViewModels
 
         private const int MaxPostProcessDelaySeconds = 30;
 
-        private int _previewDurationSeconds = 3;
+        private int _previewDurationSeconds = 7;
         public int PreviewDurationSeconds
         {
             get => _previewDurationSeconds;
@@ -667,6 +740,42 @@ namespace FotoboxApp.ViewModels
             }
         }
         public int PreviewDurationMs => _previewDurationSeconds * 1000;
+
+        private int _startReadyDelaySeconds = 3;
+        public int StartReadyDelaySeconds
+        {
+            get => _startReadyDelaySeconds;
+            set
+            {
+                var clamped = System.Math.Max(0, value);
+                if (_startReadyDelaySeconds == clamped)
+                    return;
+
+                _startReadyDelaySeconds = clamped;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(StartReadyDelayMilliseconds));
+                try { SettingsService.SaveStartReadyDelaySeconds(_startReadyDelaySeconds); } catch { }
+            }
+        }
+        public int StartReadyDelayMilliseconds => _startReadyDelaySeconds * 1000;
+
+        private int _collageCreationDelaySeconds = 2;
+        public int CollageCreationDelaySeconds
+        {
+            get => _collageCreationDelaySeconds;
+            set
+            {
+                var clamped = System.Math.Max(0, value);
+                if (_collageCreationDelaySeconds == clamped)
+                    return;
+
+                _collageCreationDelaySeconds = clamped;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(CollageCreationDelayMilliseconds));
+                try { SettingsService.SaveCollageCreationDelaySeconds(_collageCreationDelaySeconds); } catch { }
+            }
+        }
+        public int CollageCreationDelayMilliseconds => _collageCreationDelaySeconds * 1000;
 
         private int _postProcessDelaySeconds;
         public int PostProcessDelaySeconds
@@ -692,6 +801,12 @@ namespace FotoboxApp.ViewModels
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(PostProcessDelayMilliseconds));
 
+            try { _startReadyDelaySeconds = SettingsService.LoadStartReadyDelaySeconds(); } catch { _startReadyDelaySeconds = 3; }
+            OnPropertyChanged(nameof(StartReadyDelaySeconds));
+            OnPropertyChanged(nameof(StartReadyDelayMilliseconds));
+            try { _collageCreationDelaySeconds = SettingsService.LoadCollageCreationDelaySeconds(); } catch { _collageCreationDelaySeconds = 2; }
+            OnPropertyChanged(nameof(CollageCreationDelaySeconds));
+            OnPropertyChanged(nameof(CollageCreationDelayMilliseconds));
                 try { SettingsService.SavePostProcessDelaySeconds(clamped); } catch { }
             }
         }
@@ -820,7 +935,7 @@ namespace FotoboxApp.ViewModels
             errorMessage = null;
             if (template == null)
             {
-                errorMessage = "Kein Design ausgewählt.";
+                errorMessage = "Kein Design ausgew├ñhlt.";
                 return false;
             }
 
@@ -832,13 +947,13 @@ namespace FotoboxApp.ViewModels
                 }
                 else if (string.IsNullOrWhiteSpace(template.ZipPath))
                 {
-                    errorMessage = "Dateipfad des Designs ist ungültig.";
+                    errorMessage = "Dateipfad des Designs ist ung├╝ltig.";
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                errorMessage = $"Löschen fehlgeschlagen: {ex.Message}";
+                errorMessage = $"L├Âschen fehlgeschlagen: {ex.Message}";
                 return false;
             }
 
@@ -1027,7 +1142,7 @@ namespace FotoboxApp.ViewModels
             var allowedCount = allowedList.Count;
             if (allowedCount == 0 || allowedCount >= availableList.Count && !availableList.Except(allowedList).Any())
             {
-                return "Alle verfügbar";
+                return "Alle verf├╝gbar";
             }
 
             const int maxItemsToShow = 3;
@@ -1278,7 +1393,7 @@ namespace FotoboxApp.ViewModels
         }
 
         /// <summary>
-        /// Liefert den Text f�r den Speichern-Button:
+        /// Liefert den Text f´┐¢r den Speichern-Button:
         /// "NUR SPEICHERN" wenn Direktdruck aktiv ist, sonst "SPEICHERN".
         /// </summary>
         public string SaveButtonLabel => Direktdruck ? "NUR SPEICHERN" : "SPEICHERN";

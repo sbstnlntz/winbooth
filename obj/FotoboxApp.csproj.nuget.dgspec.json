@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Desktop\\_\\FotoboxApp\\FotoboxApp.csproj": {}
+    "d:\\Desktop\\_\\FotoboxApp\\FotoboxApp.csproj": {}
   },
   "projects": {
-    "D:\\Desktop\\_\\FotoboxApp\\FotoboxApp.csproj": {
+    "d:\\Desktop\\_\\FotoboxApp\\FotoboxApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Desktop\\_\\FotoboxApp\\FotoboxApp.csproj",
+        "projectUniqueName": "d:\\Desktop\\_\\FotoboxApp\\FotoboxApp.csproj",
         "projectName": "FotoboxApp",
-        "projectPath": "D:\\Desktop\\_\\FotoboxApp\\FotoboxApp.csproj",
+        "projectPath": "d:\\Desktop\\_\\FotoboxApp\\FotoboxApp.csproj",
         "packagesPath": "C:\\Users\\sebas\\.nuget\\packages\\",
-        "outputPath": "D:\\Desktop\\_\\FotoboxApp\\obj\\",
+        "outputPath": "d:\\Desktop\\_\\FotoboxApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

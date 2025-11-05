@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using FotoboxApp.ViewModels;
@@ -12,6 +13,8 @@ namespace FotoboxApp.Views
     {
         private readonly StartViewModel _vm;
         private string _enteredPin = string.Empty;
+        private bool _defaultTemplateConfirmationPending;
+        private bool _startReadyOverlayActive;
 
         public StartView(StartViewModel vm)
         {
@@ -37,8 +40,11 @@ namespace FotoboxApp.Views
             }
         }
 
-        private void BtnStart_Click(object sender, RoutedEventArgs e)
+        private async void BtnStart_Click(object sender, RoutedEventArgs e)
         {
+            if (_startReadyOverlayActive)
+                return;
+
             if (_vm.ActiveTemplate == null)
             {
                 _vm.ActiveTemplate = _vm.TemplateSlot1Template ?? _vm.TemplateSlot2Template;
@@ -51,25 +57,21 @@ namespace FotoboxApp.Views
                 return;
             }
 
-            // Sicherstellen, dass ein Galerie-Name eingegeben wurde
-            if (string.IsNullOrWhiteSpace(_vm.GalleryName))
+            var defaultTemplate = _vm.DefaultTemplate;
+            var usesDefaultOnly = defaultTemplate != null
+                                  && _vm.SelectedTemplate1 == null
+                                  && _vm.SelectedTemplate2 == null
+                                  && _vm.ActiveTemplate != null
+                                  && string.Equals(_vm.ActiveTemplate.ZipPath, defaultTemplate.ZipPath, StringComparison.OrdinalIgnoreCase);
+
+            if (usesDefaultOnly)
             {
-                MessageBox.Show("Bitte gib einen Galerie-Namen ein!", "Name fehlt", MessageBoxButton.OK, MessageBoxImage.Warning);
+                _defaultTemplateConfirmationPending = true;
+                DefaultTemplateOverlay.Visibility = Visibility.Visible;
                 return;
             }
 
-            // Zur CameraView navigieren, ViewModel mitgeben
-            var window = Window.GetWindow(this) as MainWindow;
-            if (window != null)
-            {
-                window.MainFrame.Navigate(
-                    new CameraView(
-                        _vm.ActiveTemplate.ZipPath,
-                        _vm.GalleryName,
-                        _vm   // Das ViewModel wird mitgegeben!
-                    )
-                );
-            }
+            await ProceedToCameraAsync();
         }
 
 
@@ -90,6 +92,36 @@ namespace FotoboxApp.Views
             );
         }
 
+        private async Task ProceedToCameraAsync()
+        {
+            // Sicherstellen, dass ein Galerie-Name eingegeben wurde
+            if (string.IsNullOrWhiteSpace(_vm.GalleryName))
+            {
+                MessageBox.Show("Bitte gib einen Galerie-Namen ein!", "Name fehlt", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            await ShowStartReadyOverlayAsync();
+            NavigateToCamera();
+        }
+
+        private void DefaultTemplateCancel_Click(object sender, RoutedEventArgs e)
+        {
+            DefaultTemplateOverlay.Visibility = Visibility.Collapsed;
+            _defaultTemplateConfirmationPending = false;
+        }
+
+        private async void DefaultTemplateProceed_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_defaultTemplateConfirmationPending)
+                return;
+
+            DefaultTemplateOverlay.Visibility = Visibility.Collapsed;
+            _defaultTemplateConfirmationPending = false;
+
+            await ProceedToCameraAsync();
+        }
+
 
 
         private void SelectTemplate1_Click(object sender, RoutedEventArgs e)
@@ -99,6 +131,46 @@ namespace FotoboxApp.Views
         private void SelectTemplate2_Click(object sender, RoutedEventArgs e)
         {
             _vm.ActiveTemplate = _vm.TemplateSlot2Template;
+        }
+
+        private async Task ShowStartReadyOverlayAsync()
+        {
+            var delayMs = _vm.StartReadyDelayMilliseconds;
+            if (delayMs <= 0)
+            {
+                StartReadyOverlay.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            if (_startReadyOverlayActive)
+                return;
+
+            _startReadyOverlayActive = true;
+            StartReadyOverlay.Visibility = Visibility.Visible;
+            try
+            {
+                await Task.Delay(delayMs);
+            }
+            finally
+            {
+                StartReadyOverlay.Visibility = Visibility.Collapsed;
+                _startReadyOverlayActive = false;
+            }
+        }
+
+        private void NavigateToCamera()
+        {
+            var window = Window.GetWindow(this) as MainWindow;
+            if (window != null)
+            {
+                window.MainFrame.Navigate(
+                    new CameraView(
+                        _vm.ActiveTemplate.ZipPath,
+                        _vm.GalleryName,
+                        _vm
+                    )
+                );
+            }
         }
 
 

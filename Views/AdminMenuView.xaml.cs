@@ -100,6 +100,17 @@ namespace FotoboxApp.Views
             }
         }
 
+        private void OpenDefaultTemplate_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is not StartViewModel vm)
+                return;
+
+            if (Application.Current.MainWindow is MainWindow wnd)
+            {
+                wnd.MainFrame.Navigate(new AdminDefaultTemplateView(vm));
+            }
+        }
+
         private void SyncTemplateOptions(StartViewModel vm)
         {
             if (vm == null)

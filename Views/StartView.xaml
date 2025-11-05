@@ -170,13 +170,13 @@
                         <Button.BorderThickness>
                             <MultiBinding Converter="{StaticResource SelectedBorderMultiConverter}">
                                 <Binding Path="ActiveTemplate"/>
-                                <Binding Path="SelectedTemplate1"/>
+                                <Binding Path="TemplateSlot1Template"/>
                             </MultiBinding>
                         </Button.BorderThickness>
                         <Button.BorderBrush>
                             <MultiBinding Converter="{StaticResource SelectedBorderBrushMultiConverter}">
                                 <Binding Path="ActiveTemplate"/>
-                                <Binding Path="SelectedTemplate1"/>
+                                <Binding Path="TemplateSlot1Template"/>
                             </MultiBinding>
                         </Button.BorderBrush>
                         <Button.Template>
@@ -190,7 +190,7 @@
                                             <Image Source="{Binding TemplateSlot1Preview}"
                                                    Width="420"
                                                    RenderOptions.BitmapScalingMode="HighQuality"
-                                                   Visibility="{Binding SelectedTemplate1, Converter={StaticResource NullToVisibilityConverter}}"/>
+                                                   Visibility="{Binding TemplateSlot1Template, Converter={StaticResource NullToVisibilityConverter}}"/>
                                         </Viewbox>
                                         <TextBlock Text="Default"
                                                    FontSize="28"
@@ -202,7 +202,7 @@
                                                 <Style TargetType="TextBlock">
                                                     <Setter Property="Visibility" Value="Collapsed"/>
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding SelectedTemplate1}" Value="{x:Null}">
+                                                        <DataTrigger Binding="{Binding TemplateSlot1Template}" Value="{x:Null}">
                                                             <Setter Property="Visibility" Value="Visible"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
@@ -220,18 +220,31 @@
                             Padding="0"
                             Background="Transparent"
                             Cursor="Hand"
-                            Visibility="{Binding AllowTwoTemplates, Converter={StaticResource BoolToVisibilityConverter}}"
                             Click="SelectTemplate2_Click">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Visibility">
+                                    <Setter.Value>
+                                        <Binding Path="AllowTwoTemplates" Converter="{StaticResource BoolToVisibilityConverter}"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding TemplateSlot2Template}" Value="{x:Null}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
                         <Button.BorderThickness>
                             <MultiBinding Converter="{StaticResource SelectedBorderMultiConverter}">
                                 <Binding Path="ActiveTemplate"/>
-                                <Binding Path="SelectedTemplate2"/>
+                                <Binding Path="TemplateSlot2Template"/>
                             </MultiBinding>
                         </Button.BorderThickness>
                         <Button.BorderBrush>
                             <MultiBinding Converter="{StaticResource SelectedBorderBrushMultiConverter}">
                                 <Binding Path="ActiveTemplate"/>
-                                <Binding Path="SelectedTemplate2"/>
+                                <Binding Path="TemplateSlot2Template"/>
                             </MultiBinding>
                         </Button.BorderBrush>
                         <Button.Template>
@@ -245,7 +258,7 @@
                                             <Image Source="{Binding TemplateSlot2Preview}"
                                                    Width="420"
                                                    RenderOptions.BitmapScalingMode="HighQuality"
-                                                   Visibility="{Binding SelectedTemplate2, Converter={StaticResource NullToVisibilityConverter}}"/>
+                                                   Visibility="{Binding TemplateSlot2Template, Converter={StaticResource NullToVisibilityConverter}}"/>
                                         </Viewbox>
                                         <TextBlock Text="Default"
                                                    FontSize="28"
@@ -257,7 +270,7 @@
                                                 <Style TargetType="TextBlock">
                                                     <Setter Property="Visibility" Value="Collapsed"/>
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding SelectedTemplate2}" Value="{x:Null}">
+                                                        <DataTrigger Binding="{Binding TemplateSlot2Template}" Value="{x:Null}">
                                                             <Setter Property="Visibility" Value="Visible"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
@@ -271,6 +284,81 @@
                     </Button>
                 </StackPanel>
             </Grid>
+        </Grid>
+
+        <!-- Startvorbereitungs-Overlay -->
+        <Grid x:Name="StartReadyOverlay"
+              Grid.Column="0"
+              Grid.ColumnSpan="2"
+              Background="#88000000"
+              Visibility="Collapsed"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch"
+              Margin="-36,0"
+              Panel.ZIndex="850">
+            <Border Background="White"
+                    CornerRadius="20"
+                    Padding="48"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                <StackPanel Width="720" HorizontalAlignment="Center">
+                    <TextBlock Text="Gleich geht’s los!"
+                               FontSize="54"
+                               FontWeight="Bold"
+                               Foreground="#222"
+                               TextAlignment="Center"/>
+                    <TextBlock Text="Bitte kurz warten, die Fotobox wird vorbereitet."
+                               FontSize="28"
+                               Foreground="#444"
+                               Margin="0,24,0,0"
+                               TextAlignment="Center"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Hinweis Overlay Standard-Design -->
+        <Grid x:Name="DefaultTemplateOverlay"
+              Grid.Column="0"
+              Grid.ColumnSpan="2"
+              Background="#66000000"
+              Visibility="Collapsed"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch"
+              Margin="-36,0"
+              Panel.ZIndex="900">
+            <Border Background="White"
+                    CornerRadius="32"
+                    Padding="80"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                <StackPanel Width="900">
+                    <TextBlock Text="Standard-Design aktiv"
+                               FontSize="64"
+                               FontWeight="Bold"
+                               Foreground="#222"
+                               TextAlignment="Center"/>
+                    <TextBlock Text="Es wurde noch kein individuelles Foto-Design ausgewählt. Die Aufnahme würde mit dem Standard-Design starten."
+                               FontSize="40"
+                               Foreground="#444"
+                               Margin="0,40,0,64"
+                               TextWrapping="Wrap"
+                               TextAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center">
+                        <Button Content="Abbrechen"
+                                Width="360"
+                                Height="104"
+                                FontSize="36"
+                                Margin="0,0,32,0"
+                                Click="DefaultTemplateCancel_Click"/>
+                        <Button Content="Trotzdem starten"
+                                Width="360"
+                                Height="104"
+                                FontSize="36"
+                                Click="DefaultTemplateProceed_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
         </Grid>
 
         <!-- PIN Overlay -->
@@ -303,33 +391,48 @@
                     Padding="24"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center">
-                <StackPanel>
-                    <TextBlock Text="Bitte Code eingeben"
-                               FontSize="24"
-                               FontWeight="Bold"
-                               Margin="0,0,0,12"
-                               HorizontalAlignment="Center"/>
-                    <TextBlock x:Name="PinDisplay"
-                               Text=""
-                               FontSize="28"
-                               HorizontalAlignment="Center"
-                               Margin="0,0,0,16"/>
-                    <UniformGrid Rows="4" Columns="3" HorizontalAlignment="Center">
-                        <Button Content="1" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
-                        <Button Content="2" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
-                        <Button Content="3" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
-                        <Button Content="4" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
-                        <Button Content="5" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
-                        <Button Content="6" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
-                        <Button Content="7" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
-                        <Button Content="8" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
-                        <Button Content="9" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
-                        <Button Content="DEL" Click="PinBack_Click" Style="{StaticResource PinKeyButton}"/>
-                        <Button Content="0" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
-                        <Button Content="OK" Click="PinOk_Click" Style="{StaticResource PinKeyButton}"/>
-                    </UniformGrid>
-                    <Button Content="Abbrechen" Click="PinCancel_Click" Margin="0,16,0,0" Style="{StaticResource PinActionButton}" HorizontalAlignment="Center"/>
-                </StackPanel>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Button Content="X"
+                            Width="44"
+                            Height="44"
+                            FontSize="20"
+                            FontWeight="Bold"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            Foreground="#444"
+                            HorizontalAlignment="Right"
+                            Click="PinCancel_Click"/>
+                    <StackPanel Grid.Row="1">
+                        <TextBlock Text="Bitte Code eingeben"
+                                   FontSize="24"
+                                   FontWeight="Bold"
+                                   Margin="0,0,0,12"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="PinDisplay"
+                                   Text=""
+                                   FontSize="28"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,16"/>
+                        <UniformGrid Rows="4" Columns="3" HorizontalAlignment="Center">
+                            <Button Content="1" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
+                            <Button Content="2" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
+                            <Button Content="3" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
+                            <Button Content="4" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
+                            <Button Content="5" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
+                            <Button Content="6" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
+                            <Button Content="7" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
+                            <Button Content="8" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
+                            <Button Content="9" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
+                            <Button Content="DEL" Click="PinBack_Click" Style="{StaticResource PinKeyButton}"/>
+                            <Button Content="0" Click="PinNumber_Click" Style="{StaticResource PinKeyButton}"/>
+                            <Button Content="OK" Click="PinOk_Click" Style="{StaticResource PinKeyButton}"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </Grid>
             </Border>
         </Grid>
     </Grid>

@@ -221,13 +221,17 @@ namespace FotoboxApp.Views
                 SelectedTemplatePreview1.Visibility = Visibility.Visible;
                 PlusIcon1.Visibility = Visibility.Collapsed;
                 DeleteTemplateBtn1.Visibility = Visibility.Visible;
+                DeleteTemplateBtn1.IsEnabled = true;
+                DeleteTemplateBtn1.Opacity = 1.0;
             }
             else
             {
                 SelectedTemplatePreview1.Source = null;
                 SelectedTemplatePreview1.Visibility = Visibility.Collapsed;
                 PlusIcon1.Visibility = Visibility.Visible;
-                DeleteTemplateBtn1.Visibility = Visibility.Collapsed;
+                DeleteTemplateBtn1.Visibility = Visibility.Visible;
+                DeleteTemplateBtn1.IsEnabled = false;
+                DeleteTemplateBtn1.Opacity = 0.4;
             }
 
             var selected2 = _mainViewModel.SelectedTemplate2;
@@ -237,13 +241,17 @@ namespace FotoboxApp.Views
                 SelectedTemplatePreview2.Visibility = Visibility.Visible;
                 PlusIcon2.Visibility = Visibility.Collapsed;
                 DeleteTemplateBtn2.Visibility = Visibility.Visible;
+                DeleteTemplateBtn2.IsEnabled = true;
+                DeleteTemplateBtn2.Opacity = 1.0;
             }
             else
             {
                 SelectedTemplatePreview2.Source = null;
                 SelectedTemplatePreview2.Visibility = Visibility.Collapsed;
                 PlusIcon2.Visibility = _mainViewModel.AllowTwoTemplates ? Visibility.Visible : Visibility.Collapsed;
-                DeleteTemplateBtn2.Visibility = Visibility.Collapsed;
+                DeleteTemplateBtn2.Visibility = Visibility.Visible;
+                DeleteTemplateBtn2.IsEnabled = false;
+                DeleteTemplateBtn2.Opacity = 0.4;
             }
         }
 

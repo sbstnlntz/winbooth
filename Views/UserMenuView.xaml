@@ -7,11 +7,11 @@
     <UserControl.Resources>
         <local:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
         <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-        <Style x:Key="UserActionButtonStyle" TargetType="Button" BasedOn="{StaticResource FB_ElegantButton}">
-            <Setter Property="Height" Value="54"/>
-            <Setter Property="Padding" Value="22,8"/>
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="Margin" Value="0,18,0,0"/>
+        <Style x:Key="UserActionButtonStyle" TargetType="Button">
+            <Setter Property="Padding" Value="14,6"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="0,0,8,8"/>
+            <Setter Property="MinWidth" Value="140"/>
         </Style>
     </UserControl.Resources>
 
@@ -57,7 +57,10 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Linke Spalte: Einstellungen -->
-                <StackPanel Grid.Column="0" VerticalAlignment="Top">
+                <ScrollViewer Grid.Column="0"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel>
 
                     <!-- Countdown-Zeit Slider -->
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,14" VerticalAlignment="Center">
@@ -99,85 +102,134 @@
                     <!-- Template-Slots (Designs) -->
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
                         <!-- Slot 1 -->
-                        <Grid Width="170" Height="120" Margin="0,0,14,0">
-                            <Rectangle Stroke="#222" StrokeThickness="2" RadiusX="7" RadiusY="7"
-                                       StrokeDashArray="4,3" Fill="White"/>
-                            <Grid>
-                                <Image x:Name="SelectedTemplatePreview1"
-                                       Width="150" Height="90"
-                                       Stretch="Uniform"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Center"
-                                       Visibility="Collapsed"/>
-                                <Button x:Name="SelectTemplateBtn1"
-                                        Background="Transparent"
-                                        BorderThickness="0"
-                                        Click="SelectTemplateBtn1_Click"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch"/>
-                                <Button x:Name="DeleteTemplateBtn1"
-                                        Width="30" Height="30"
-                                        Click="DeleteTemplateBtn1_Click"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Bottom"
-                                        Margin="0,0,4,4"
-                                        Visibility="Collapsed"
-                                        ToolTip="Auswahl löschen"
-                                        Background="Transparent"
-                                        BorderThickness="0">
-                                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" FontSize="22" Foreground="#444"/>
-                                </Button>
-                                <TextBlock x:Name="PlusIcon1" Text="+" FontSize="55" FontWeight="Bold" Foreground="#FF8600"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible"/>
+                        <Grid Margin="0,0,14,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid Width="170" Height="120">
+                                <Rectangle Stroke="#222" StrokeThickness="2" RadiusX="7" RadiusY="7"
+                                           StrokeDashArray="4,3" Fill="White"/>
+                                <Grid>
+                                    <Image x:Name="SelectedTemplatePreview1"
+                                           Width="150" Height="90"
+                                           Stretch="Uniform"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           Visibility="Collapsed"/>
+                                    <Button x:Name="SelectTemplateBtn1"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Click="SelectTemplateBtn1_Click"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch"/>
+                                    <TextBlock x:Name="PlusIcon1" Text="+" FontSize="55" FontWeight="Bold" Foreground="#FF8600"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible"/>
+                                </Grid>
                             </Grid>
+                            <Button x:Name="DeleteTemplateBtn1"
+                                    Grid.Column="1"
+                                    Width="40"
+                                    Height="40"
+                                    Margin="6,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Background="Transparent"
+                                    BorderBrush="Transparent"
+                                    ToolTip="Auswahl löschen"
+                                    Click="DeleteTemplateBtn1_Click">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SelectedTemplate1}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" FontSize="22" Foreground="#444"/>
+                            </Button>
                         </Grid>
                         <!-- Slot 2 -->
-                        <Grid x:Name="TemplateSlot2"
-                              Width="170"
-                              Height="120"
-                              Visibility="{Binding AllowTwoTemplates, Converter={StaticResource BoolToVisibilityConverter}}">
-                            <Rectangle Stroke="#222" StrokeThickness="2" RadiusX="7" RadiusY="7"
-                                       StrokeDashArray="4,3" Fill="White"/>
-                            <Grid>
-                                <Image x:Name="SelectedTemplatePreview2"
-                                       Width="150" Height="90"
-                                       Stretch="Uniform"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Center"
-                                       Visibility="Collapsed"/>
-                                <Button x:Name="SelectTemplateBtn2"
-                                        Background="Transparent"
-                                        BorderThickness="0"
-                                        Click="SelectTemplateBtn2_Click"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch"/>
-                                <Button x:Name="DeleteTemplateBtn2"
-                                        Width="30" Height="30"
-                                        Click="DeleteTemplateBtn2_Click"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Bottom"
-                                        Margin="0,0,4,4"
-                                        Visibility="Collapsed"
-                                        ToolTip="Auswahl löschen"
-                                        Background="Transparent"
-                                        BorderThickness="0">
-                                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" FontSize="22" Foreground="#444"/>
-                                </Button>
-                                <TextBlock x:Name="PlusIcon2" Text="+" FontSize="55" FontWeight="Bold" Foreground="#FF8600"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible"/>
+                        <Grid x:Name="TemplateSlot2">
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding AllowTwoTemplates}" Value="False">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid Width="170" Height="120">
+                                <Rectangle Stroke="#222" StrokeThickness="2" RadiusX="7" RadiusY="7"
+                                           StrokeDashArray="4,3" Fill="White"/>
+                                <Grid>
+                                    <Image x:Name="SelectedTemplatePreview2"
+                                           Width="150" Height="90"
+                                           Stretch="Uniform"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           Visibility="Collapsed"/>
+                                    <Button x:Name="SelectTemplateBtn2"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Click="SelectTemplateBtn2_Click"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch"/>
+                                    <TextBlock x:Name="PlusIcon2" Text="+" FontSize="55" FontWeight="Bold" Foreground="#FF8600"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible"/>
+                                </Grid>
                             </Grid>
+                            <Button x:Name="DeleteTemplateBtn2"
+                                    Grid.Column="1"
+                                    Width="40"
+                                    Height="40"
+                                    Margin="6,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Background="Transparent"
+                                    BorderBrush="Transparent"
+                                    ToolTip="Auswahl löschen"
+                                    Click="DeleteTemplateBtn2_Click">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SelectedTemplate2}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" FontSize="22" Foreground="#444"/>
+                            </Button>
                         </Grid>
                     </StackPanel>
-                </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
 
                 <!-- Rechte Spalte: Geräteinformationen -->
-                <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="38,0,0,0">
+                <Grid Grid.Column="1" Margin="38,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <ScrollViewer Grid.Row="0"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel>
                     <!-- Kamera -->
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12" VerticalAlignment="Center">
-                        <TextBlock Text="Kamera" FontWeight="Bold" FontSize="19" Margin="0,0,6,0"/>
-                        <StackPanel Margin="0,0,0,0">
-                            <TextBlock Text="{Binding SelectedCameraName}" FontSize="19" VerticalAlignment="Center" Margin="0,0,7,0"/>
-                            <TextBlock Text="{Binding CameraRotationSummary}" FontSize="14" Foreground="#666" Margin="0,-4,0,0"/>
+                        <TextBlock Text="Kamera" FontWeight="Bold" FontSize="19" Width="120"/>
+                        <StackPanel Width="220" Margin="8,0,0,0">
+                            <TextBlock Text="{Binding SelectedCameraName}" FontSize="19" TextWrapping="Wrap"/>
+                            <TextBlock Text="{Binding CameraRotationSummary}" FontSize="14" Foreground="#666" Margin="0,2,0,0"/>
                         </StackPanel>
                         <Button Width="34" Height="34" Margin="8,0,0,0"
                                 Background="#D93030"
@@ -197,9 +249,9 @@
 
                     <!-- Drucker -->
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12" VerticalAlignment="Center">
-                        <TextBlock Text="Drucker" FontWeight="Bold" FontSize="19" Margin="0,0,6,0"/>
-                        <TextBlock Text="{Binding SelectedPrinterName}" FontSize="19" VerticalAlignment="Center" Margin="0,0,7,0"/>
-                        <Button Width="28" Height="28" Margin="0,0,0,0"
+                        <TextBlock Text="Drucker" FontWeight="Bold" FontSize="19" Width="120"/>
+                        <TextBlock Text="{Binding SelectedPrinterName}" FontSize="19" Margin="8,0,0,0" Width="220" TextWrapping="Wrap"/>
+                        <Button Width="28" Height="28" Margin="6,0,0,0"
                                 Click="PrinterSettings_Click"
                                 ToolTip="Drucker auswählen">
                             <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="16"/>
@@ -208,25 +260,21 @@
 
                     <!-- USB Speicher -->
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12" VerticalAlignment="Center">
-                        <TextBlock Text="USB Speicher" FontWeight="Bold" FontSize="19" Margin="0,0,6,0"/>
-                        <TextBlock Text="{Binding UsbDriveSummary}" FontSize="19" VerticalAlignment="Center" Margin="0,0,7,0" Width="200" TextWrapping="Wrap"/>
-                        <Button Width="28" Height="28" Margin="0,0,0,0"
+                        <TextBlock Text="USB Speicher" FontWeight="Bold" FontSize="19" Width="120"/>
+                        <TextBlock Text="{Binding UsbDriveSummary}" FontSize="19" Margin="8,0,0,0" Width="220" TextWrapping="Wrap"/>
+                        <Button Width="28" Height="28" Margin="6,0,0,0"
                                 Click="UsbSettings_Click"
                                 ToolTip="USB-Speicher auswählen">
                             <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE898;" FontSize="16"/>
                         </Button>
                     </StackPanel>
 
-                    <Button Click="ShutdownSystem_Click"
-                            Style="{StaticResource UserActionButtonStyle}">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE7E7;" FontSize="18" Margin="0,0,6,0"/>
-                            <TextBlock Text="Fotobox ausschalten"/>
                         </StackPanel>
-                    </Button>
-                </StackPanel>
+                    </ScrollViewer>
 
-               
+                </Grid>
+
+
             </Grid>
         </Grid>
     </Border>

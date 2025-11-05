@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FotoboxApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ba13e61cd48d7646b6cec0c8c5ab09f200406a07")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c85f91c31f49664e8d93118fa1a5ec9b77094d9e")]
 [assembly: System.Reflection.AssemblyProductAttribute("FotoboxApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FotoboxApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

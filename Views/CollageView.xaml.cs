@@ -6,7 +6,8 @@ using System.Drawing.Printing;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Threading.Tasks;             // ← für Task.Delay
+using System.Diagnostics;
+using System.Threading.Tasks; // for Task.Delay
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -20,8 +21,8 @@ namespace FotoboxApp.Views
     {
         private readonly List<Bitmap> _originalPhotos;
         private List<Bitmap> _currentPhotos;
-        private readonly Bitmap _overlayBitmap;
-        private readonly TemplateDefinition _templateDef;
+        private Bitmap _overlayBitmap;
+        private TemplateDefinition _templateDef;
         private Bitmap _finalBitmap;
 
         private readonly string _zipPath;
@@ -37,7 +38,7 @@ namespace FotoboxApp.Views
         private readonly string _galleryName;
         private readonly bool _direktdruck;     // ← korrekt benannt
         private readonly StartViewModel _vm;
-        private readonly string _extractTarget;
+        private string _extractTarget;
 
         public CollageView(
             List<Bitmap> capturedPhotos,
@@ -57,47 +58,132 @@ namespace FotoboxApp.Views
 
             // Fotos kopieren
             _originalPhotos = capturedPhotos.Select(b => (Bitmap)b.Clone()).ToList();
-            _currentPhotos = _originalPhotos.Select(b => (Bitmap)b.Clone()).ToList();
-
-            // Template/Overlay laden
-            var extractTarget = Path.Combine(
-                Path.GetTempPath(),
-                "Fotobox_Template",
-                Guid.NewGuid().ToString("N"));
-            Directory.CreateDirectory(extractTarget);
-            ZipFile.ExtractToDirectory(_zipPath, extractTarget);
-            _extractTarget = extractTarget;
-
-            var xmlPath = Path.Combine(extractTarget, "template.xml");
-            _templateDef = TemplateLoader.Load(xmlPath);
-            using var ovBmp = new Bitmap(_templateDef.OverlayPath);
-            _overlayBitmap = new Bitmap(ovBmp);
-
-            // Erste Collage rendern
-            _finalBitmap = ComposeFinalBitmap(_currentPhotos, _overlayBitmap, _templateDef);
-            ImgResult.Source = ConvertBitmapToBitmapImage(_finalBitmap);
-
-            // Vorschau-Thumbnails
-            PreviewOriginal.Source = ConvertBitmapToBitmapImage(
-                ComposeFinalBitmap(_originalPhotos, _overlayBitmap, _templateDef, 0.18));
-            PreviewSW.Source = ConvertBitmapToBitmapImage(
-                ComposeFinalBitmap(
-                    _originalPhotos.Select(b => MakeBlackWhite((Bitmap)b.Clone())).ToList(),
-                    _overlayBitmap,
-                    _templateDef,
-                    0.18));
-            PreviewSepia.Source = ConvertBitmapToBitmapImage(
-                ComposeFinalBitmap(
-                    _originalPhotos.Select(b => MakeSepia((Bitmap)b.Clone())).ToList(),
-                    _overlayBitmap,
-                    _templateDef,
-                    0.18));
-            SetActiveFilter(FilterMode.Original);
+            _currentPhotos = new List<Bitmap>();
 
             // Buttons konfigurieren
             PrintButton.Visibility = _direktdruck ? Visibility.Visible : Visibility.Collapsed;
             SaveButton.Visibility = Visibility.Visible;
+
+            Loaded += CollageView_Loaded;
             this.Unloaded += (s, e) => CleanupResources();
+        }
+
+        private async void CollageView_Loaded(object sender, RoutedEventArgs e)
+        {
+            Loaded -= CollageView_Loaded;
+            await InitializeCollageAsync();
+        }
+
+        private async Task InitializeCollageAsync()
+        {
+            ShowProcessingOverlay("Collage wird erstellt...");
+
+            var stopwatch = Stopwatch.StartNew();
+
+            CollageInitializationData data;
+            try
+            {
+                data = await Task.Run(BuildInitialCollageData);
+            }
+            catch (Exception ex)
+            {
+                HideProcessingOverlay();
+                MessageBox.Show($"Collage konnte nicht erstellt werden:\n{ex.Message}", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                (Application.Current.MainWindow as MainWindow)?.MainFrame.Navigate(new StartView(_vm));
+                return;
+            }
+
+            _templateDef = data.TemplateDefinition;
+            _overlayBitmap = data.OverlayBitmap;
+            _extractTarget = data.ExtractTarget;
+            _currentPhotos = data.CurrentPhotos;
+            _finalBitmap = data.FinalBitmap;
+
+            ImgResult.Source = ConvertBitmapToBitmapImage(_finalBitmap);
+            PreviewOriginal.Source = ConvertBitmapToBitmapImage(data.PreviewOriginal);
+            PreviewSW.Source = ConvertBitmapToBitmapImage(data.PreviewSW);
+            PreviewSepia.Source = ConvertBitmapToBitmapImage(data.PreviewSepia);
+            SetActiveFilter(FilterMode.Original);
+
+            data.PreviewOriginal?.Dispose();
+            data.PreviewSW?.Dispose();
+            data.PreviewSepia?.Dispose();
+
+            var savedPath = SaveToGallery(_finalBitmap);
+            if (!string.IsNullOrEmpty(savedPath))
+            {
+                _vm.HandleCollageSaved(savedPath);
+            }
+            else
+            {
+                MessageBox.Show("Die Collage konnte nicht automatisch gespeichert werden. Bitte manuell speichern.", "Speicherhinweis", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+
+            var desiredDelay = _vm?.CollageCreationDelayMilliseconds ?? 0;
+            var elapsed = (int)stopwatch.ElapsedMilliseconds;
+            stopwatch.Stop();
+            if (desiredDelay > elapsed)
+            {
+                await Task.Delay(desiredDelay - elapsed);
+            }
+
+            HideProcessingOverlay();
+        }
+        private CollageInitializationData BuildInitialCollageData()
+        {
+            var data = new CollageInitializationData();
+
+            data.ExtractTarget = Path.Combine(
+                Path.GetTempPath(),
+                "Fotobox_Template",
+                Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(data.ExtractTarget);
+            ZipFile.ExtractToDirectory(_zipPath, data.ExtractTarget);
+
+            var xmlPath = Path.Combine(data.ExtractTarget, "template.xml");
+            data.TemplateDefinition = TemplateLoader.Load(xmlPath);
+            data.OverlayBitmap = new Bitmap(data.TemplateDefinition.OverlayPath);
+
+            data.CurrentPhotos = _originalPhotos.Select(b => (Bitmap)b.Clone()).ToList();
+            data.FinalBitmap = ComposeFinalBitmap(data.CurrentPhotos, data.OverlayBitmap, data.TemplateDefinition);
+
+            var previewOriginalPhotos = _originalPhotos.Select(b => (Bitmap)b.Clone()).ToList();
+            data.PreviewOriginal = ComposeFinalBitmap(previewOriginalPhotos, data.OverlayBitmap, data.TemplateDefinition, 0.18);
+            DisposeBitmapList(previewOriginalPhotos);
+
+            var previewSwPhotos = _originalPhotos.Select(b => MakeBlackWhite((Bitmap)b.Clone())).ToList();
+            data.PreviewSW = ComposeFinalBitmap(previewSwPhotos, data.OverlayBitmap, data.TemplateDefinition, 0.18);
+            DisposeBitmapList(previewSwPhotos);
+
+            var previewSepiaPhotos = _originalPhotos.Select(b => MakeSepia((Bitmap)b.Clone())).ToList();
+            data.PreviewSepia = ComposeFinalBitmap(previewSepiaPhotos, data.OverlayBitmap, data.TemplateDefinition, 0.18);
+            DisposeBitmapList(previewSepiaPhotos);
+
+
+            return data;
+        }
+
+        private static void DisposeBitmapList(IEnumerable<Bitmap> bitmaps)
+        {
+            if (bitmaps == null)
+                return;
+
+            foreach (var bmp in bitmaps)
+            {
+                try { bmp?.Dispose(); } catch { }
+            }
+        }
+
+        private sealed class CollageInitializationData
+        {
+            public TemplateDefinition TemplateDefinition { get; set; }
+            public Bitmap OverlayBitmap { get; set; }
+            public List<Bitmap> CurrentPhotos { get; set; }
+            public Bitmap FinalBitmap { get; set; }
+            public Bitmap PreviewOriginal { get; set; }
+            public Bitmap PreviewSW { get; set; }
+            public Bitmap PreviewSepia { get; set; }
+            public string ExtractTarget { get; set; }
         }
 
         private void CleanupResources()
@@ -190,7 +276,7 @@ namespace FotoboxApp.Views
 
         private void FilterOriginal_Click(object sender, RoutedEventArgs e)
         {
-            _currentPhotos = _originalPhotos.Select(b => (Bitmap)b.Clone()).ToList();
+            _currentPhotos = new List<Bitmap>();
             UpdateFinalBitmap();
             SetActiveFilter(FilterMode.Original);
         }

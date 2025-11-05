@@ -99,3 +99,5 @@ D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\App.baml
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\AdminMenuView.baml
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\CollageView.baml
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\StartView.baml
+D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\AdminDefaultTemplateView.baml
+D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\AdminDefaultTemplateView.g.cs
