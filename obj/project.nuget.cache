@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "YQrC5uJcMv0=",
+  "dgSpecHash": "wQDpn+V/0oA=",
   "success": true,
-  "projectFilePath": "d:\\Desktop\\_\\FotoboxApp\\FotoboxApp.csproj",
+  "projectFilePath": "D:\\Desktop\\_\\FotoboxApp\\FotoboxApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\sebas\\.nuget\\packages\\emgu.cv\\4.11.0.5746\\emgu.cv.4.11.0.5746.nupkg.sha512",
     "C:\\Users\\sebas\\.nuget\\packages\\emgu.cv.bitmap\\4.11.0.5746\\emgu.cv.bitmap.4.11.0.5746.nupkg.sha512",
