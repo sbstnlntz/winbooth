@@ -74,9 +74,11 @@ namespace FotoboxApp.Views
             await InitializeCollageAsync();
         }
 
+        private bool _resultHiddenByOverlay;
+
         private async Task InitializeCollageAsync()
         {
-            ShowProcessingOverlay("Collage wird erstellt...");
+            ShowProcessingOverlay("Die Collage wird erstellt...", hideResultImage: true);
 
             var stopwatch = Stopwatch.StartNew();
 
@@ -203,17 +205,27 @@ namespace FotoboxApp.Views
                 : Task.CompletedTask;
         }
 
-        private void ShowProcessingOverlay(string message)
+        private void ShowProcessingOverlay(string message, bool hideResultImage = false)
         {
             ProcessingOverlayText.Text = string.IsNullOrWhiteSpace(message)
-                ? "Bild wird verarbeitet…"
+                ? "Bild wird gespeichert..."
                 : message;
             ProcessingOverlay.Visibility = Visibility.Visible;
+            if (hideResultImage)
+            {
+                ImgResult.Visibility = Visibility.Hidden;
+                _resultHiddenByOverlay = true;
+            }
         }
 
         private void HideProcessingOverlay()
         {
             ProcessingOverlay.Visibility = Visibility.Collapsed;
+            if (_resultHiddenByOverlay)
+            {
+                ImgResult.Visibility = Visibility.Visible;
+                _resultHiddenByOverlay = false;
+            }
         }
 
         private void Reset_Click(object sender, RoutedEventArgs e)
@@ -224,7 +236,7 @@ namespace FotoboxApp.Views
 
         private async void Print_Click(object sender, RoutedEventArgs e)
         {
-            ShowProcessingOverlay("Bild wird verarbeitet…");
+            ShowProcessingOverlay("Bild wird gedruckt...");
 
             var savedPath = SaveToGallery(_finalBitmap);
             if (savedPath == null)
@@ -255,7 +267,7 @@ namespace FotoboxApp.Views
 
         private async void Save_Click(object sender, RoutedEventArgs e)
         {
-            ShowProcessingOverlay("Bild wird verarbeitet…");
+            ShowProcessingOverlay("Bild wird gespeichert...");
 
             var savedPath = SaveToGallery(_finalBitmap);
             if (savedPath == null)

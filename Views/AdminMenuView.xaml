@@ -9,7 +9,7 @@
             <Setter Property="Padding" Value="14,6"/>
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="Margin" Value="0,0,8,8"/>
-            <Setter Property="MinWidth" Value="140"/>
+            <Setter Property="Width" Value="220"/>
         </Style>
     </UserControl.Resources>
     <Viewbox Stretch="Uniform" StretchDirection="Both">
@@ -82,86 +82,30 @@
                                       FontSize="22"
                                       Margin="0,0,0,8"
                                       IsChecked="{Binding AllowFotoFilter, Mode=TwoWay}"/>
-                            <StackPanel Margin="0,0,0,12">
-                                <TextBlock Text="Verzögerung nach Collage" FontWeight="Bold" FontSize="20"/>
-                                <StackPanel Orientation="Horizontal" Margin="0,4,0,0" VerticalAlignment="Center">
-                                    <Slider Minimum="0"
-                                            Maximum="30"
-                                            TickFrequency="1"
-                                            IsSnapToTickEnabled="True"
-                                            Value="{Binding PostProcessDelaySeconds, Mode=TwoWay}"
-                                            Width="180"/>
-                                    <TextBlock Text="{Binding PostProcessDelaySeconds, StringFormat={}{0} Sek.}"
-                                               FontSize="18"
-                                               Margin="12,0,0,0"
-                                               VerticalAlignment="Center"/>
-                                </StackPanel>
-                            <TextBlock Text="Regelt die natürliche Wartezeit, bevor es aus dem Collage-Modus zurück geht."
-                                       Foreground="#666"
-                                       FontSize="14"
-                                       Margin="0,4,0,0"/>
-                        </StackPanel>
-
-                        <StackPanel Margin="0,12,0,12">
-                            <TextBlock Text="Start-Vorbereitungszeit"
-                                       FontWeight="Bold"
-                                       FontSize="20"/>
-                            <StackPanel Orientation="Horizontal" Margin="0,4,0,0" VerticalAlignment="Center">
-                                <Slider Minimum="0"
-                                        Maximum="15"
-                                        TickFrequency="1"
-                                        IsSnapToTickEnabled="True"
-                                        Value="{Binding StartReadyDelaySeconds, Mode=TwoWay}"
-                                        Width="180"/>
-                                <TextBlock Text="{Binding StartReadyDelaySeconds, StringFormat={}{0} Sek.}"
-                                           FontSize="18"
-                                           Margin="12,0,0,0"
-                                           VerticalAlignment="Center"/>
-                            </StackPanel>
-                        <StackPanel Margin="0,0,0,12">
-                            <TextBlock Text="Collage-Erstellzeit" FontWeight="Bold" FontSize="20"/>
-                            <StackPanel Orientation="Horizontal" Margin="0,4,0,0" VerticalAlignment="Center">
-                                <Slider Minimum="0"
-                                        Maximum="20"
-                                        TickFrequency="1"
-                                        IsSnapToTickEnabled="True"
-                                        Value="{Binding CollageCreationDelaySeconds, Mode=TwoWay}"
-                                        Width="180"/>
-                                <TextBlock Text="{Binding CollageCreationDelaySeconds, StringFormat={}{0} Sek.}"
-                                           FontSize="18"
-                                           Margin="12,0,0,0"
-                                           VerticalAlignment="Center"/>
-                            </StackPanel>
-                            <TextBlock Text="Wartezeit nach dem letzten Foto, bevor die Collage erscheint."
-                                       Foreground="#666"
-                                       FontSize="14"
-                                       Margin="0,4,0,0"/>
-                        </StackPanel>
-                            <TextBlock Text="Zeitspanne zwischen Start-Klick und Fotoaufnahme."
-                                       Foreground="#666"
-                                       FontSize="14"
-                                       Margin="0,4,0,0"/>
-                        </StackPanel>
-
-                        <TextBlock Text="Foto Design" FontWeight="Bold" FontSize="22" Margin="0,22,0,10"/>
                             <CheckBox Content="2 Designs"
-                                      FontSize="16"
+                                      FontSize="22"
+                                      Margin="0,0,0,8"
                                       IsChecked="{Binding AllowTwoTemplates, Mode=TwoWay}"/>
-                            <TextBlock Text="{Binding AllowedTemplatesSummary}"
-                                       FontSize="16"
-                                       Foreground="#444"
-                                       Margin="0,8,0,0"
-                                       TextWrapping="Wrap"/>
-                            <TextBlock Text="Aktuelles Standard-Design:"
-                                       FontSize="15"
-                                       FontWeight="Bold"
-                                       Foreground="#222"
-                                       Margin="0,12,0,0"/>
-                            <TextBlock Text="{Binding DefaultTemplateDisplayName}"
-                                       FontSize="16"
-                                       Foreground="#444"
-                                       Margin="0,2,0,0"
-                                       TextWrapping="Wrap"/>
+                            <Button Content="Verzögerungen"
+                                    Style="{StaticResource AdminActionButtonStyle}"
+                                    HorizontalAlignment="Left"
+                                    Margin="0,0,0,12"
+                                    Click="OpenDelaySettings_Click"/>
+                            <Button Content="Standard-Design"
+                                    Style="{StaticResource AdminActionButtonStyle}"
+                                    Margin="0,0,0,8"
+                                    HorizontalAlignment="Left"
+                                    Click="OpenDefaultTemplate_Click"/>
+                            <Button Content="Grafiken bearbeiten"
+                                    Style="{StaticResource AdminActionButtonStyle}"
+                                    Margin="0,0,0,8"
+                                    HorizontalAlignment="Left"
+                                    Click="OpenGraphicsManager_Click"/>
+                            <Button Content="Designs / Templates"
+                                    Style="{StaticResource AdminActionButtonStyle}"
+                                    Margin="0,0,0,8"
+                                    HorizontalAlignment="Left"
+                                    Click="OpenDesignSettings_Click"/>
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>
@@ -240,16 +184,7 @@
                             <TextBlock x:Name="TbPhotoCount" Text="121"/>
                         </StackPanel>
                     </StackPanel>
-                    <WrapPanel HorizontalAlignment="Right" Margin="0,24,0,0">
-                        <Button Content="Grafiken bearbeiten"
-                                Style="{StaticResource AdminActionButtonStyle}"
-                                Click="OpenGraphicsManager_Click"/>
-                        <Button Content="Design-Auswahl"
-                                Style="{StaticResource AdminActionButtonStyle}"
-                                Click="ConfigureTemplates_Click"/>
-                        <Button Content="Default-Design"
-                                Style="{StaticResource AdminActionButtonStyle}"
-                                Click="OpenDefaultTemplate_Click"/>
+                    <StackPanel HorizontalAlignment="Right" Margin="0,24,0,0">
                         <Button Content="Neues Event"
                                 Style="{StaticResource AdminActionButtonStyle}"
                                 Click="NewEvent_Click"/>
@@ -265,7 +200,7 @@
                         <Button Content="Fotobox ausschalten"
                                 Style="{StaticResource AdminActionButtonStyle}"
                                 Click="ShutdownSystem_Click"/>
-                    </WrapPanel>
+                    </StackPanel>
                 </StackPanel>
             </Grid>
 
@@ -303,181 +238,10 @@
                 </Border>
             </Grid>
 
-            <!-- Overlay: Designs verwalten -->
-            <Grid x:Name="TemplatesOverlay" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2"
-                  Background="#88000000" Visibility="Collapsed">
-                <Border Background="White" CornerRadius="14" Padding="28"
-                        HorizontalAlignment="Center" VerticalAlignment="Center"
-                        MinWidth="860" MinHeight="520">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <TextBlock Text="Designs verwalten"
-                                   FontSize="30"
-                                   FontWeight="Bold"
-                                   Foreground="#222"
-                                   Margin="0,0,0,18"/>
-
-                        <ListBox x:Name="TemplatesList" Padding="12,0,0,0"
-                                 Grid.Row="1"
-                                 ItemsSource="{Binding TemplateOptions, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                 Background="Transparent"
-                                 BorderThickness="0"
-                                 SelectionMode="Single"
-                                 HorizontalContentAlignment="Stretch"
-                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                            <ListBox.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel />
-                                </ItemsPanelTemplate>
-                            </ListBox.ItemsPanel>
-                            <ListBox.ItemContainerStyle>
-                                <Style TargetType="ListBoxItem">
-                                    <Setter Property="Margin" Value="8"/>
-                                    <Setter Property="Padding" Value="0"/>
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="ListBoxItem">
-                                                <Border x:Name="Container" Background="Transparent">
-                                                    <ContentPresenter />
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                    <Trigger Property="IsSelected" Value="True">
-                                                        <Setter TargetName="Container" Property="Background" Value="#FFEFF6FF"/>
-                                                    </Trigger>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter TargetName="Container" Property="Background" Value="#FFF8FBFF"/>
-                                                    </Trigger>
-                                                    <Trigger Property="IsEnabled" Value="False">
-                                                        <Setter TargetName="Container" Property="Opacity" Value="0.6"/>
-                                                    </Trigger>
-                                                </ControlTemplate.Triggers>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </ListBox.ItemContainerStyle>
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Border x:Name="Card"
-                                            CornerRadius="14"
-                                            BorderThickness="2"
-                                            Background="White"
-                                            BorderBrush="#CCCCCC"
-                                            Width="214"
-                                            MinHeight="236">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <Setter Property="Background" Value="White"/>
-                                                <Setter Property="BorderBrush" Value="#CCCCCC"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-                                                        <Setter Property="Background" Value="#FFF7EB"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding IsAllowed}" Value="True">
-                                                        <Setter Property="BorderBrush" Value="#FF8600"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-                                        <StackPanel>
-                                            <Grid Height="140" Background="#101010" ClipToBounds="True">
-                                                <Image Source="{Binding Template.PreviewImage}"
-                                                       Stretch="Uniform"
-                                                       HorizontalAlignment="Center"
-                                                       VerticalAlignment="Center"
-                                                       Margin="8"/>
-                                                <TextBlock Text="Keine Vorschau"
-                                                           Foreground="#F0F0F0"
-                                                           FontSize="15"
-                                                           FontWeight="SemiBold"
-                                                           HorizontalAlignment="Center"
-                                                           VerticalAlignment="Center">
-                                                    <TextBlock.Style>
-                                                        <Style TargetType="TextBlock">
-                                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding Template.PreviewImage}" Value="{x:Null}">
-                                                                    <Setter Property="Visibility" Value="Visible"/>
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </TextBlock.Style>
-                                                </TextBlock>
-                                            </Grid>
-                                            <StackPanel Margin="16,12,16,8">
-                                                <TextBlock Text="{Binding Template.Name}"
-                                                           FontSize="18"
-                                                           FontWeight="Bold"
-                                                           Foreground="#222"
-                                                           TextAlignment="Center"
-                                                           TextTrimming="CharacterEllipsis"/>
-                                            </StackPanel>
-                                            <CheckBox Content="In Auswahl anzeigen"
-                                                      Margin="0,0,0,16"
-                                                      FontSize="16"
-                                                      HorizontalAlignment="Center"
-                                                      Cursor="Hand"
-                                                      IsChecked="{Binding IsAllowed, Mode=TwoWay}"/>
-                                        </StackPanel>
-                                    </Border>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-
-                        <TextBlock Grid.Row="1"
-                                   Text="Es wurden noch keine Designs importiert."
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   FontSize="18"
-                                   Foreground="#666">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding TemplateOptions.Count, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="0">
-                                            <Setter Property="Visibility" Value="Visible"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-
-                        <StackPanel Grid.Row="2"
-                                    Orientation="Horizontal"
-                                    HorizontalAlignment="Right"
-                                    Margin="0,22,0,0">
-                            <Button Content="Auswahl übernehmen"
-                                    Width="220"
-                                    Style="{StaticResource AdminActionButtonStyle}"
-                                    Click="SaveTemplatesSelection_Click"/>
-                            <Button Content="Templates hinzufügen"
-                                    Width="220"
-                                    Margin="12,0,0,0"
-                                    Style="{StaticResource AdminActionButtonStyle}"
-                                    Click="AddTemplatesOverlay_Click"/>
-                            <Button Content="Ausgewähltes Template löschen"
-                                    Width="270"
-                                    Margin="12,0,0,0"
-                                    Style="{StaticResource AdminActionButtonStyle}"
-                                    Click="DeleteSelectedTemplate_Click"
-                                    IsEnabled="{Binding SelectedItem, ElementName=TemplatesList, Converter={StaticResource NullToBoolConverter}}"/>
-                            <Button Content="Schließen"
-                                    Width="160"
-                                    Margin="12,0,0,0"
-                                    Style="{StaticResource AdminActionButtonStyle}"
-                                    Click="CloseTemplatesOverlay_Click"/>
-                        </StackPanel>
-                    </Grid>
-                </Border>
-            </Grid>
+            
         </Grid>
     </Border>
     </Viewbox>
 </UserControl>
+
+

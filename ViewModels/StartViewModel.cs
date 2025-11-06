@@ -55,6 +55,12 @@ namespace FotoboxApp.ViewModels
         private const string CustomWarningInfoFilePrefix = "warning_hint_custom";
         private const int GraphicsDefaultsVersion = 2025020601;
         private static readonly string GraphicsVersionMarkerPath = Path.Combine(GraphicsAssetsFolder, "graphics_defaults.version");
+        private static readonly string TemplatesRootPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "templates");
+        private static readonly string LegacyTemplatesRootPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+            "Fotobox",
+            "templates");
+        private static bool _templatesLocationChecked;
 
         private Brush _startInstructionBrush;
         private string _startInstructionDescription = "Standardgrafik";
@@ -152,8 +158,53 @@ namespace FotoboxApp.ViewModels
             }
         }
 
-        private static string GetTemplatesRootPath() =>
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "Fotobox", "templates");
+        internal static string GetTemplatesRootPath()
+        {
+            if (!_templatesLocationChecked)
+            {
+                _templatesLocationChecked = true;
+                try
+                {
+                    if (Directory.Exists(LegacyTemplatesRootPath))
+                    {
+                        Directory.CreateDirectory(TemplatesRootPath);
+                        foreach (var sourceFile in Directory.GetFiles(LegacyTemplatesRootPath, "*.zip"))
+                        {
+                            try
+                            {
+                                var destination = Path.Combine(TemplatesRootPath, Path.GetFileName(sourceFile) ?? string.Empty);
+                                if (string.IsNullOrWhiteSpace(destination))
+                                    continue;
+
+                                if (!File.Exists(destination))
+                                {
+                                    File.Copy(sourceFile, destination, overwrite: false);
+                                }
+                            }
+                            catch
+                            {
+                                // Migration best effort; skip problematic files.
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                    // Migration errors are ignored.
+                }
+            }
+
+            try
+            {
+                Directory.CreateDirectory(TemplatesRootPath);
+            }
+            catch
+            {
+                // If creation fails we still return the path; calling code will handle errors on access.
+            }
+
+            return TemplatesRootPath;
+        }
 
         private static BitmapImage LoadTemplatePreview(string zipFile)
         {
@@ -693,6 +744,40 @@ namespace FotoboxApp.ViewModels
 
         public void SetDefaultTemplateByName(string templateName) => UpdateDefaultTemplate(templateName, persist: true);
 
+        private TemplateItem FindTemplateByName(string templateName)
+        {
+            if (string.IsNullOrWhiteSpace(templateName))
+            {
+                return null;
+            }
+
+            return Templates.FirstOrDefault(t => string.Equals(t.Name, templateName, StringComparison.Ordinal));
+        }
+
+        private void UpdateDefaultTemplate(string templateName, bool persist)
+        {
+            var resolved = FindTemplateByName(templateName);
+            var newName = resolved?.Name ?? string.Empty;
+
+            if (string.Equals(_defaultTemplateName, newName, StringComparison.Ordinal))
+            {
+                if (persist)
+                {
+                    try { SettingsService.SaveDefaultTemplateName(_defaultTemplateName); } catch { }
+                }
+                return;
+            }
+
+            _defaultTemplateName = newName;
+            NotifyDefaultTemplateChanged();
+            EnsureDefaultTemplateAllowed();
+
+            if (persist)
+            {
+                try { SettingsService.SaveDefaultTemplateName(_defaultTemplateName); } catch { }
+            }
+        }
+
         private TemplateItem _activeTemplate;
         public TemplateItem ActiveTemplate
         {
@@ -893,6 +978,13 @@ namespace FotoboxApp.ViewModels
                         continue;
                     }
 
+                    var templateName = Path.GetFileNameWithoutExtension(destName);
+                    if (string.IsNullOrWhiteSpace(templateName))
+                    {
+                        result.InvalidFiles.Add(filePath);
+                        continue;
+                    }
+
                     var destPath = Path.Combine(templatesRoot, destName);
                     var sourceFullPath = Path.GetFullPath(filePath);
                     var destFullPath = Path.GetFullPath(destPath);
@@ -901,21 +993,23 @@ namespace FotoboxApp.ViewModels
                     {
                         if (File.Exists(destFullPath))
                         {
-                            result.UpdatedTemplates.Add(Path.GetFileNameWithoutExtension(destName));
+                            result.UpdatedTemplates.Add(templateName);
+                            EnsureTemplateAllowedByName(templateName);
                         }
                         continue;
                     }
 
                     var wasExisting = File.Exists(destPath);
                     File.Copy(filePath, destPath, true);
+                    EnsureTemplateAllowedByName(templateName);
 
                     if (wasExisting)
                     {
-                        result.UpdatedTemplates.Add(Path.GetFileNameWithoutExtension(destName));
+                        result.UpdatedTemplates.Add(templateName);
                     }
                     else
                     {
-                        result.ImportedTemplates.Add(Path.GetFileNameWithoutExtension(destName));
+                        result.ImportedTemplates.Add(templateName);
                     }
                 }
                 catch (Exception ex)
@@ -1233,6 +1327,61 @@ namespace FotoboxApp.ViewModels
             OnPropertyChanged(nameof(AllowedTemplatesSummary));
         }
 
+        private void NotifyDefaultTemplateChanged()
+        {
+            OnPropertyChanged(nameof(DefaultTemplate));
+            OnPropertyChanged(nameof(DefaultTemplateName));
+            OnPropertyChanged(nameof(HasDefaultTemplate));
+            OnPropertyChanged(nameof(DefaultTemplateDisplayName));
+            OnPropertyChanged(nameof(DefaultTemplatePreview));
+        }
+
+        private void EnsureDefaultTemplateValid()
+        {
+            if (!string.IsNullOrWhiteSpace(_defaultTemplateName) &&
+                FindTemplateByName(_defaultTemplateName) != null)
+            {
+                return;
+            }
+
+            var fallback = Templates.FirstOrDefault();
+
+            if (fallback != null)
+            {
+                UpdateDefaultTemplate(fallback.Name, persist: false);
+            }
+            else if (!string.IsNullOrWhiteSpace(_defaultTemplateName))
+            {
+                UpdateDefaultTemplate(null, persist: false);
+            }
+        }
+
+        private void EnsureDefaultTemplateAllowed()
+        {
+            if (string.IsNullOrWhiteSpace(_defaultTemplateName))
+            {
+                return;
+            }
+
+            EnsureTemplateAllowedByName(_defaultTemplateName);
+        }
+
+        private void EnsureTemplateAllowedByName(string templateName)
+        {
+            if (string.IsNullOrWhiteSpace(templateName))
+            {
+                return;
+            }
+
+            if (_allowedTemplateNames.Any(name => string.Equals(name, templateName, StringComparison.Ordinal)))
+            {
+                return;
+            }
+
+            _allowedTemplateNames.Add(templateName);
+            OnPropertyChanged(nameof(AllowedTemplatesSummary));
+        }
+
         private static string NormalizeUsbPath(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
@@ -1541,6 +1690,8 @@ namespace FotoboxApp.ViewModels
             try { _allowedCameraNames.AddRange(SettingsService.LoadAllowedCameras()); } catch { }
             try { _allowedPrinterNames.AddRange(SettingsService.LoadAllowedPrinters()); } catch { }
             try { _allowedTemplateNames.AddRange(SettingsService.LoadAllowedTemplates()); } catch { }
+            try { _defaultTemplateName = SettingsService.LoadDefaultTemplateName() ?? string.Empty; } catch { _defaultTemplateName = string.Empty; }
+            NotifyDefaultTemplateChanged();
             try { _cameraRotate180 = SettingsService.LoadCameraRotate180(); } catch { _cameraRotate180 = false; }
             OnPropertyChanged(nameof(CameraRotate180));
             OnPropertyChanged(nameof(CameraRotationSummary));

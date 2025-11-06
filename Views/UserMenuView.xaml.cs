@@ -1,8 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Win32;
 using FotoboxApp.Models;
 using FotoboxApp.ViewModels;
 using FotoboxApp.Services;
@@ -116,6 +120,179 @@ namespace FotoboxApp.Views
                 _mainViewModel.ActiveTemplate = _mainViewModel.SelectedTemplate1;
             _mainViewModel.SelectedTemplate2 = null;
             UpdateTemplateButtons();
+        }
+
+        private void UploadTemplate_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog
+            {
+                Title = "Design hinzufügen",
+                Filter = "Design-Pakete (*.zip)|*.zip",
+                Multiselect = true,
+                CheckFileExists = true
+            };
+
+            try
+            {
+                var templatesRoot = StartViewModel.GetTemplatesRootPath();
+                if (!string.IsNullOrWhiteSpace(templatesRoot) && Directory.Exists(templatesRoot))
+                {
+                    dialog.InitialDirectory = templatesRoot;
+                }
+            }
+            catch
+            {
+                // Initial directory fallback is best-effort.
+            }
+
+            var owner = Window.GetWindow(this);
+            if (dialog.ShowDialog(owner) != true)
+            {
+                return;
+            }
+
+            var result = _mainViewModel.ImportTemplatesFromFiles(dialog.FileNames);
+
+            AssignImportedTemplateToEmptySlot(result);
+            UpdateTemplateButtons();
+            ShowTemplateImportFeedback(result);
+        }
+
+        private void AssignImportedTemplateToEmptySlot(StartViewModel.TemplateImportResult result)
+        {
+            if (result == null || result.ImportedTemplates.Count == 0)
+            {
+                return;
+            }
+
+            var importedLookup = new HashSet<string>(result.ImportedTemplates, StringComparer.Ordinal);
+            var importedTemplate = _mainViewModel.Templates
+                .FirstOrDefault(t => importedLookup.Contains(t.Name));
+
+            if (importedTemplate == null)
+            {
+                return;
+            }
+
+            if (_mainViewModel.SelectedTemplate1 == null)
+            {
+                _mainViewModel.SelectedTemplate1 = importedTemplate;
+                if (_mainViewModel.ActiveTemplate == null)
+                {
+                    _mainViewModel.ActiveTemplate = importedTemplate;
+                }
+                return;
+            }
+
+            var alreadyUsed =
+                string.Equals(_mainViewModel.SelectedTemplate1?.ZipPath, importedTemplate.ZipPath, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(_mainViewModel.SelectedTemplate2?.ZipPath, importedTemplate.ZipPath, StringComparison.OrdinalIgnoreCase);
+
+            if (alreadyUsed || !_mainViewModel.AllowTwoTemplates)
+            {
+                return;
+            }
+
+            if (_mainViewModel.SelectedTemplate2 == null)
+            {
+                _mainViewModel.SelectedTemplate2 = importedTemplate;
+                if (_mainViewModel.ActiveTemplate == null)
+                {
+                    _mainViewModel.ActiveTemplate = importedTemplate;
+                }
+            }
+        }
+
+        private static void ShowTemplateImportFeedback(StartViewModel.TemplateImportResult result)
+        {
+            if (result == null)
+            {
+                return;
+            }
+
+            var messages = new List<string>();
+
+            if (result.ImportedTemplates.Count > 0)
+            {
+                messages.Add(result.ImportedTemplates.Count == 1
+                    ? $"1 neues Design importiert: {result.ImportedTemplates[0]}"
+                    : $"{result.ImportedTemplates.Count} neue Designs importiert.");
+            }
+
+            if (result.UpdatedTemplates.Count > 0)
+            {
+                messages.Add(result.UpdatedTemplates.Count == 1
+                    ? $"1 vorhandenes Design aktualisiert: {result.UpdatedTemplates[0]}"
+                    : $"{result.UpdatedTemplates.Count} vorhandene Designs aktualisiert.");
+            }
+
+            if (result.InvalidFiles.Count > 0)
+            {
+                var invalidNames = result.InvalidFiles
+                    .Select(Path.GetFileName)
+                    .Where(n => !string.IsNullOrWhiteSpace(n))
+                    .ToList();
+
+                if (invalidNames.Count > 0)
+                {
+                    const int maxListEntries = 3;
+                    var displayNames = invalidNames.Take(maxListEntries).ToList();
+                    var remainder = invalidNames.Count - displayNames.Count;
+                    var summary = string.Join(", ", displayNames);
+                    if (remainder > 0)
+                    {
+                        summary += $" +{remainder}";
+                    }
+
+                    messages.Add(result.InvalidFiles.Count == 1
+                        ? $"1 Datei übersprungen (kein ZIP): {summary}"
+                        : $"{result.InvalidFiles.Count} Dateien übersprungen (kein ZIP): {summary}");
+                }
+                else
+                {
+                    messages.Add(result.InvalidFiles.Count == 1
+                        ? "1 Datei übersprungen (kein ZIP)."
+                        : $"{result.InvalidFiles.Count} Dateien übersprungen (kein ZIP).");
+                }
+            }
+
+            if (result.FailedFiles.Count > 0)
+            {
+                var failedNames = result.FailedFiles
+                    .Select(f => Path.GetFileName(f.File))
+                    .Where(n => !string.IsNullOrWhiteSpace(n))
+                    .ToList();
+
+                if (failedNames.Count > 0)
+                {
+                    const int maxListEntries = 3;
+                    var displayNames = failedNames.Take(maxListEntries).ToList();
+                    var remainder = failedNames.Count - displayNames.Count;
+                    var summary = string.Join(", ", displayNames);
+                    if (remainder > 0)
+                    {
+                        summary += $" +{remainder}";
+                    }
+
+                    messages.Add(result.FailedFiles.Count == 1
+                        ? $"1 Datei konnte nicht übernommen werden: {summary}"
+                        : $"{result.FailedFiles.Count} Dateien konnten nicht übernommen werden: {summary}");
+                }
+                else
+                {
+                    messages.Add(result.FailedFiles.Count == 1
+                        ? "1 Datei konnte nicht übernommen werden."
+                        : $"{result.FailedFiles.Count} Dateien konnten nicht übernommen werden.");
+                }
+            }
+
+            if (messages.Count == 0)
+            {
+                messages.Add("Es wurden keine gültigen Designs ausgewählt.");
+            }
+
+            var icon = result.FailedFiles.Count > 0 ? MessageBoxImage.Warning : MessageBoxImage.Information;
+            MessageBox.Show(string.Join(Environment.NewLine, messages), "Design-Upload", MessageBoxButton.OK, icon);
         }
 
         private void CameraSettings_Click(object sender, RoutedEventArgs e)

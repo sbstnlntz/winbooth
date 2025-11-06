@@ -138,7 +138,7 @@
 
 		<!-- 4) PROCESSING OVERLAY -->
 		<Grid x:Name="ProcessingOverlay"
-              Background="#99000000"
+              Background="#F2000000"
               Visibility="Collapsed"
               Panel.ZIndex="2">
 			<Border Background="#CC222222"
