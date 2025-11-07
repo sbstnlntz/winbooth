@@ -15,6 +15,7 @@ using Emgu.CV.Structure;
 using FotoboxApp.Services;
 using FotoboxApp.ViewModels;
 using FotoboxApp.Models;
+using FotoboxApp.Utilities;
 
 namespace FotoboxApp.Views
 {
@@ -286,6 +287,8 @@ namespace FotoboxApp.Views
                     var filename = Path.Combine(_sessionShotsDir, $"shot_{index:00}.jpg");
                     using var toSave = new Bitmap(_capturedPhotos[^1]);
                     toSave.Save(filename, System.Drawing.Imaging.ImageFormat.Jpeg);
+                    StatManager.RecordSinglePhoto(_galleryName);
+                    _vm?.RefreshStatistics();
                 }
             }
             catch { }

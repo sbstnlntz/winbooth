@@ -60,10 +60,17 @@
                            TextWrapping="Wrap"/>
             </StackPanel>
 
-            <Button Grid.Column="1"
-                    Content="Design importieren"
-                    Style="{StaticResource DialogButtonStyle}"
-                    Click="ImportDesign_Click"/>
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+                <Button Content="Ordner öffnen"
+                        Margin="0,0,8,0"
+                        Style="{StaticResource DialogButtonStyle}"
+                        Click="OpenTemplatesFolder_Click"/>
+                <Button Content="Design importieren"
+                        Style="{StaticResource DialogButtonStyle}"
+                        Click="ImportDesign_Click"/>
+            </StackPanel>
         </Grid>
 
         <Border Grid.Row="2"

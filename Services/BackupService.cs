@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 
 namespace FotoboxApp.Services
 {
@@ -10,10 +11,11 @@ namespace FotoboxApp.Services
         private static string PicturesRoot =>
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "Fotobox");
 
+        private static string AppFolderRoot => AppDomain.CurrentDomain.BaseDirectory;
+
         public static string GetBackupRoot()
         {
-            var root = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "FotoboxApp", "Backups");
+            var root = Path.Combine(AppFolderRoot, "Backups");
             Directory.CreateDirectory(root);
             return root;
         }
@@ -33,8 +35,6 @@ namespace FotoboxApp.Services
 
             ZipFile.CreateFromDirectory(galleryDir, backupPath, CompressionLevel.SmallestSize, includeBaseDirectory: false);
 
-            RemoveDirectory(galleryDir);
-
             return backupPath;
         }
 
@@ -45,6 +45,35 @@ namespace FotoboxApp.Services
             if (!di.Exists) yield break;
             foreach (var f in di.GetFiles("*.zip"))
                 yield return f;
+        }
+
+        public static bool BackupExists(string galleryName)
+        {
+            if (string.IsNullOrWhiteSpace(galleryName))
+                return false;
+
+            var pattern = $"{Sanitize(galleryName)}_*.zip";
+            return Directory.EnumerateFiles(GetBackupRoot(), pattern, SearchOption.TopDirectoryOnly).Any();
+        }
+
+        public static void DeleteGalleryDirectory(string galleryName)
+        {
+            if (string.IsNullOrWhiteSpace(galleryName))
+                return;
+
+            var galleryDir = Path.Combine(PicturesRoot, galleryName);
+            DeleteDirectorySafe(galleryDir);
+        }
+
+        public static void DeleteBackupFile(string backupFilePath)
+        {
+            if (string.IsNullOrWhiteSpace(backupFilePath))
+                return;
+
+            if (!File.Exists(backupFilePath))
+                return;
+
+            File.Delete(backupFilePath);
         }
 
         public static void RestoreBackup(string backupFilePath, string targetGalleryName)
@@ -71,7 +100,7 @@ namespace FotoboxApp.Services
             return string.Join("_", name.Split(invalid, StringSplitOptions.RemoveEmptyEntries)).Trim();
         }
 
-        private static void RemoveDirectory(string directory)
+        private static void DeleteDirectorySafe(string directory)
         {
             if (!Directory.Exists(directory))
                 return;

@@ -3,6 +3,8 @@
     "",
     "\\Assets",
     "\\Assets\\Output",
+    "\\dist",
+    "\\dist\\win-x64",
     "\\Models",
     "\\Services",
     "\\Themes",

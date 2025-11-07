@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using FotoboxApp.Models;
 using FotoboxApp.Services;
 using FotoboxApp.ViewModels;
+using FotoboxApp.Utilities;
 
 namespace FotoboxApp.Views
 {
@@ -24,6 +25,7 @@ namespace FotoboxApp.Views
         private Bitmap _overlayBitmap;
         private TemplateDefinition _templateDef;
         private Bitmap _finalBitmap;
+        private string _lastSavedPath;
 
         private readonly string _zipPath;
         private enum FilterMode
@@ -111,7 +113,7 @@ namespace FotoboxApp.Views
             data.PreviewSW?.Dispose();
             data.PreviewSepia?.Dispose();
 
-            var savedPath = SaveToGallery(_finalBitmap);
+            var savedPath = SaveToGallery(_finalBitmap, forceNewFile: true);
             if (!string.IsNullOrEmpty(savedPath))
             {
                 _vm.HandleCollageSaved(savedPath);
@@ -250,6 +252,8 @@ namespace FotoboxApp.Views
             try
             {
                 SendToPrinter(_finalBitmap);
+                StatManager.RecordCollagePrinted(_galleryName);
+                _vm?.RefreshStatistics();
             }
             catch (Exception ex)
             {
@@ -288,23 +292,32 @@ namespace FotoboxApp.Views
 
         private void FilterOriginal_Click(object sender, RoutedEventArgs e)
         {
-            _currentPhotos = new List<Bitmap>();
+            ReplaceCurrentPhotos(_originalPhotos.Select(b => (Bitmap)b.Clone()).ToList());
             UpdateFinalBitmap();
             SetActiveFilter(FilterMode.Original);
+            ResaveCurrentCollageIfPossible();
         }
 
         private void FilterSW_Click(object sender, RoutedEventArgs e)
         {
-            _currentPhotos = _originalPhotos.Select(b => MakeBlackWhite((Bitmap)b.Clone())).ToList();
+            ReplaceCurrentPhotos(_originalPhotos.Select(b => MakeBlackWhite((Bitmap)b.Clone())).ToList());
             UpdateFinalBitmap();
             SetActiveFilter(FilterMode.BlackWhite);
+            ResaveCurrentCollageIfPossible();
         }
 
         private void FilterSepia_Click(object sender, RoutedEventArgs e)
         {
-            _currentPhotos = _originalPhotos.Select(b => MakeSepia((Bitmap)b.Clone())).ToList();
+            ReplaceCurrentPhotos(_originalPhotos.Select(b => MakeSepia((Bitmap)b.Clone())).ToList());
             UpdateFinalBitmap();
             SetActiveFilter(FilterMode.Sepia);
+            ResaveCurrentCollageIfPossible();
+        }
+
+        private void ReplaceCurrentPhotos(List<Bitmap> newPhotos)
+        {
+            DisposeBitmapList(_currentPhotos);
+            _currentPhotos = newPhotos ?? new List<Bitmap>();
         }
 
         private void SetActiveFilter(FilterMode mode)
@@ -328,8 +341,18 @@ namespace FotoboxApp.Views
 
         private void UpdateFinalBitmap()
         {
-            _finalBitmap = ComposeFinalBitmap(_currentPhotos, _overlayBitmap, _templateDef);
+            var newBitmap = ComposeFinalBitmap(_currentPhotos, _overlayBitmap, _templateDef);
+            _finalBitmap?.Dispose();
+            _finalBitmap = newBitmap;
             ImgResult.Source = ConvertBitmapToBitmapImage(_finalBitmap);
+        }
+
+        private void ResaveCurrentCollageIfPossible()
+        {
+            if (string.IsNullOrEmpty(_lastSavedPath))
+                return;
+
+            SaveToGallery(_finalBitmap);
         }
 
         // ---- Collage erzeugen ----
@@ -404,7 +427,7 @@ namespace FotoboxApp.Views
             return bmp;
         }
 
-        private string SaveToGallery(Bitmap bmp)
+        private string SaveToGallery(Bitmap bmp, bool forceNewFile = false)
         {
             try
             {
@@ -413,10 +436,30 @@ namespace FotoboxApp.Views
                     "Fotobox", _galleryName);
                 Directory.CreateDirectory(folder);
 
-                var filename = $"{_galleryName}_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
-                var path = Path.Combine(folder, filename);
+                var reuseExisting = !forceNewFile
+                                    && !string.IsNullOrEmpty(_lastSavedPath)
+                                    && File.Exists(_lastSavedPath);
+
+                string path;
+                if (reuseExisting)
+                {
+                    path = _lastSavedPath;
+                }
+                else
+                {
+                    var filename = $"{_galleryName}_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
+                    path = Path.Combine(folder, filename);
+                }
+
                 bmp.Save(path, System.Drawing.Imaging.ImageFormat.Jpeg);
-                Utilities.StatManager.IncreaseTotalPhotoCount();
+
+                if (!reuseExisting)
+                {
+                    StatManager.RecordCollageCreated(_galleryName);
+                    _vm?.RefreshStatistics();
+                }
+
+                _lastSavedPath = path;
                 return path;
             }
             catch (Exception ex)

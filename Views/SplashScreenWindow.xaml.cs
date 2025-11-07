@@ -13,7 +13,7 @@ namespace FotoboxApp.Views;
 public partial class SplashScreenWindow : Window
 {
     private const double AutoProgressTarget = 90d;
-    private const string DisplayVersion = "0.1";
+    private const string DisplayVersion = "0.410";
 
     private CancellationTokenSource? _autoProgressCts;
     private CancellationTokenRegistration? _autoProgressCancellationRegistration;

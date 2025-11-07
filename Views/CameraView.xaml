@@ -78,54 +78,45 @@
 									  ShadowDepth="0"
 									  Opacity="0.8"/>
 				</Border.Effect>
-				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-					<Button Click="RepeatPhoto_Click"
-							Background="#FFAA1F1F"
-							Foreground="White"
-							FontSize="22"
-							FontWeight="Bold"
-							Padding="24,12"
-							Margin="0,0,20,0"
-							Cursor="Hand">
-						<Button.Template>
-							<ControlTemplate TargetType="Button">
-								<Border Background="{TemplateBinding Background}"
-										CornerRadius="20"
-										Padding="{TemplateBinding Padding}">
-									<ContentPresenter HorizontalAlignment="Center"
-													  VerticalAlignment="Center"/>
-								</Border>
-							</ControlTemplate>
-						</Button.Template>
+				<UniformGrid Rows="1" Columns="2" HorizontalAlignment="Stretch" Margin="0">
+					<UniformGrid.Resources>
+						<Style x:Key="ReviewActionButtonStyle" TargetType="Button">
+							<Setter Property="Width" Value="320"/>
+							<Setter Property="Height" Value="110"/>
+							<Setter Property="Foreground" Value="White"/>
+							<Setter Property="FontSize" Value="22"/>
+							<Setter Property="FontWeight" Value="Bold"/>
+							<Setter Property="Padding" Value="24,12"/>
+							<Setter Property="Cursor" Value="Hand"/>
+							<Setter Property="Template">
+								<Setter.Value>
+									<ControlTemplate TargetType="Button">
+										<Border Background="{TemplateBinding Background}"
+												CornerRadius="20"
+												Padding="{TemplateBinding Padding}"
+												HorizontalAlignment="Stretch"
+												VerticalAlignment="Stretch">
+											<ContentPresenter HorizontalAlignment="Center"
+														VerticalAlignment="Center"/>
+										</Border>
+									</ControlTemplate>
+								</Setter.Value>
+							</Setter>
+						</Style>
+					</UniformGrid.Resources>
+					<Button Style="{StaticResource ReviewActionButtonStyle}" Click="RepeatPhoto_Click" Background="#FFAA1F1F" Margin="0,0,15,0">
 						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 							<TextBlock Text="🔁" FontSize="28" Margin="0,0,10,0"/>
-							<TextBlock Text="FOTO WIEDERHOLEN"/>
+							<TextBlock Text="WIEDERHOLEN"/>
 						</StackPanel>
 					</Button>
-
-					<Button Click="ContinuePhoto_Click"
-							Background="#FF16B36B"
-							Foreground="White"
-							FontSize="22"
-							FontWeight="Bold"
-							Padding="24,12"
-							Cursor="Hand">
-						<Button.Template>
-							<ControlTemplate TargetType="Button">
-								<Border Background="{TemplateBinding Background}"
-										CornerRadius="20"
-										Padding="{TemplateBinding Padding}">
-									<ContentPresenter HorizontalAlignment="Center"
-													  VerticalAlignment="Center"/>
-								</Border>
-							</ControlTemplate>
-						</Button.Template>
+					<Button Style="{StaticResource ReviewActionButtonStyle}" Click="ContinuePhoto_Click" Background="#FF16B36B" Margin="15,0,0,0">
 						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 							<TextBlock Text="✅" FontSize="28" Margin="0,0,10,0"/>
 							<TextBlock Text="WEITER"/>
 						</StackPanel>
 					</Button>
-				</StackPanel>
+				</UniformGrid>
 			</Border>
 		</Grid>
 

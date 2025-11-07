@@ -36,7 +36,8 @@ namespace FotoboxApp.Views
         {
             if (MessageBox.Show("Möchtest du wirklich den Gesamtzähler auf 0 setzen?", "Zähler zurücksetzen", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
-                StatManager.ResetTotalPhotoCount();
+                StatManager.ResetStatistics();
+                _vm.RefreshStatistics();
             }
         }
 

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using FotoboxApp.Models;
 
@@ -29,18 +30,24 @@ namespace FotoboxApp.Services
             var baseDir = Path.GetDirectoryName(xmlPath) ?? string.Empty;
             var overlayPath = Path.Combine(baseDir, overlayAttr);
 
-            var regions = new List<ImageRegion>();
-            foreach (var photo in elements.Elements("Photo"))
-            {
-                regions.Add(new ImageRegion
+            var regions = elements.Elements("Photo")
+                .Select((photo, index) => new
                 {
-                    X = ParseIntAttr(photo, "Left", "template.xml: Photo.Left fehlt/ungueltig"),
-                    Y = ParseIntAttr(photo, "Top", "template.xml: Photo.Top fehlt/ungueltig"),
-                    Width = ParseIntAttr(photo, "Width", "template.xml: Photo.Width fehlt/ungueltig"),
-                    Height = ParseIntAttr(photo, "Height", "template.xml: Photo.Height fehlt/ungueltig"),
-                    Rotation = ParseDoubleAttr(photo, "Rotation", 0.0),
-                });
-            }
+                    Element = photo,
+                    Order = GetPhotoOrder(photo, index),
+                    Index = index
+                })
+                .OrderBy(p => p.Order)
+                .ThenBy(p => p.Index)
+                .Select(p => new ImageRegion
+                {
+                    X = ParseIntAttr(p.Element, "Left", "template.xml: Photo.Left fehlt/ungueltig"),
+                    Y = ParseIntAttr(p.Element, "Top", "template.xml: Photo.Top fehlt/ungueltig"),
+                    Width = ParseIntAttr(p.Element, "Width", "template.xml: Photo.Width fehlt/ungueltig"),
+                    Height = ParseIntAttr(p.Element, "Height", "template.xml: Photo.Height fehlt/ungueltig"),
+                    Rotation = ParseDoubleAttr(p.Element, "Rotation", 0.0),
+                })
+                .ToList();
 
             return new TemplateDefinition
             {
@@ -72,6 +79,31 @@ namespace FotoboxApp.Services
                 return value;
 
             return defaultValue;
+        }
+
+        private static int GetPhotoOrder(XElement photo, int fallbackIndex)
+        {
+            static bool TryParsePositiveInt(string raw, out int value)
+            {
+                if (int.TryParse(raw, out value) && value > 0)
+                    return true;
+                value = 0;
+                return false;
+            }
+
+            var numberAttr = photo.Attribute("PhotoNumber")?.Value;
+            if (TryParsePositiveInt(numberAttr, out var parsed))
+                return parsed;
+
+            var nameAttr = photo.Attribute("Name")?.Value;
+            if (!string.IsNullOrWhiteSpace(nameAttr))
+            {
+                var match = Regex.Match(nameAttr, @"\d+");
+                if (match.Success && TryParsePositiveInt(match.Value, out parsed))
+                    return parsed;
+            }
+
+            return fallbackIndex + 1;
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -67,7 +68,7 @@ namespace FotoboxApp.Views
 
             _suppressSelectionUpdates = true;
             TemplateOptions.Clear();
-            foreach (var template in _viewModel.Templates)
+            foreach (var template in _viewModel.DefaultTemplates)
             {
                 var isSelected = selectedNameLookup.Contains(template.Name);
                 TemplateOptions.Add(new TemplateOption(template, isSelected));
@@ -116,7 +117,7 @@ namespace FotoboxApp.Views
 
             try
             {
-                var templatesRoot = StartViewModel.GetTemplatesRootPath();
+                var templatesRoot = StartViewModel.GetDefaultTemplatesRootPath();
                 if (!string.IsNullOrWhiteSpace(templatesRoot) && Directory.Exists(templatesRoot))
                 {
                     dialog.InitialDirectory = templatesRoot;
@@ -130,9 +131,33 @@ namespace FotoboxApp.Views
             if (dialog.ShowDialog(this) != true)
                 return;
 
-            var result = _viewModel.ImportTemplatesFromFiles(dialog.FileNames);
+            var result = _viewModel.ImportDefaultTemplatesFromFiles(dialog.FileNames);
             SyncTemplateOptions();
             ShowTemplateImportResult(result);
+        }
+
+        private void OpenDefaultTemplatesFolder_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var folder = StartViewModel.GetDefaultTemplatesRootPath();
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = folder,
+                    UseShellExecute = true,
+                    Verb = "open"
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ordner konnte nicht geöffnet werden:\n{ex.Message}", "Standard-Design",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         private static void ShowTemplateImportResult(StartViewModel.TemplateImportResult result)
@@ -241,7 +266,7 @@ namespace FotoboxApp.Views
             if (confirm != MessageBoxResult.Yes)
                 return;
 
-            if (!_viewModel.TryDeleteTemplate(template, out var errorMessage))
+            if (!_viewModel.TryDeleteDefaultTemplate(template, out var errorMessage))
             {
                 MessageBox.Show(errorMessage ?? "Löschen fehlgeschlagen.", "Design löschen",
                     MessageBoxButton.OK, MessageBoxImage.Warning);

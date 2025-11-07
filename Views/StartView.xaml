@@ -184,7 +184,8 @@
                                 <Border CornerRadius="16"
                                         Background="White"
                                         BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        Padding="6">
                                     <Grid>
                                         <Viewbox Stretch="Uniform">
                                             <Image Source="{Binding TemplateSlot1Preview}"
@@ -252,7 +253,8 @@
                                 <Border CornerRadius="16"
                                         Background="White"
                                         BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        Padding="6">
                                     <Grid>
                                         <Viewbox Stretch="Uniform">
                                             <Image Source="{Binding TemplateSlot2Preview}"

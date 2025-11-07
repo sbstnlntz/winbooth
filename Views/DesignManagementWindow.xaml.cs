@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -149,6 +150,30 @@ namespace FotoboxApp.Views
             SyncTemplateOptions();
             PersistAllowedTemplates();
             ShowTemplateImportResult(result);
+        }
+
+        private void OpenTemplatesFolder_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var folder = StartViewModel.GetTemplatesRootPath();
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = folder,
+                    UseShellExecute = true,
+                    Verb = "open"
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ordner konnte nicht geöffnet werden:\n{ex.Message}", "Designs",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         private static void ShowTemplateImportResult(StartViewModel.TemplateImportResult result)

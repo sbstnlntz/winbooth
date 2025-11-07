@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,10 +24,27 @@ namespace FotoboxApp.Services
             public string DefaultTemplateName { get; set; } = string.Empty;
             public bool CameraRotate180 { get; set; }
             public string UsbDrivePath { get; set; } = string.Empty;
+            public string EventScopeGalleryName { get; set; } = string.Empty;
+            public bool DirektdruckState { get; set; } = true;
+            public bool GalerieButtonState { get; set; } = true;
+            public bool FotoFilterState { get; set; } = true;
+            public string SelectedTemplate1Name { get; set; } = string.Empty;
+            public string SelectedTemplate2Name { get; set; } = string.Empty;
+            public string ActiveTemplateName { get; set; } = string.Empty;
+            public string SelectedCameraName { get; set; } = string.Empty;
+            public string SelectedPrinterName { get; set; } = string.Empty;
         }
 
-        private static string SettingsFolder =>
+        private const int DelayMinSeconds = 1;
+        private const int DelayMaxSeconds = 10;
+        private const int DefaultDelaySeconds = 3;
+
+        private static readonly string LegacySettingsFolder =
             Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyPictures), "Fotobox");
+
+        private static readonly string LegacySettingsPath = Path.Combine(LegacySettingsFolder, "settings.json");
+
+        private static string SettingsFolder => AppStorage.EnsureDirectory("config");
 
         private static string SettingsPath => Path.Combine(SettingsFolder, "settings.json");
 
@@ -34,6 +52,8 @@ namespace FotoboxApp.Services
         {
             try
             {
+                MigrateLegacySettingsIfNeeded();
+
                 if (File.Exists(SettingsPath))
                 {
                     var json = File.ReadAllText(SettingsPath);
@@ -54,6 +74,26 @@ namespace FotoboxApp.Services
                 File.WriteAllText(SettingsPath, json);
             }
             catch { }
+        }
+
+        private static void MigrateLegacySettingsIfNeeded()
+        {
+            try
+            {
+                if (File.Exists(SettingsPath))
+                    return;
+
+                if (File.Exists(LegacySettingsPath))
+                {
+                    Directory.CreateDirectory(SettingsFolder);
+                    File.Copy(LegacySettingsPath, SettingsPath, overwrite: false);
+                    try { File.Delete(LegacySettingsPath); } catch { }
+                }
+            }
+            catch
+            {
+                // migration best effort
+            }
         }
 
         public static string LoadGalleryName() => LoadModel().GalleryName ?? string.Empty;
@@ -128,7 +168,7 @@ namespace FotoboxApp.Services
         public static void SavePostProcessDelaySeconds(int seconds)
         {
             var model = LoadModel();
-            model.PostProcessDelaySeconds = System.Math.Max(0, seconds);
+            model.PostProcessDelaySeconds = ClampDelay(seconds);
             SaveModel(model);
         }
 
@@ -156,14 +196,14 @@ namespace FotoboxApp.Services
         public static void SaveStartReadyDelaySeconds(int seconds)
         {
             var model = LoadModel();
-            model.StartReadyDelaySeconds = System.Math.Max(0, seconds);
+            model.StartReadyDelaySeconds = ClampDelay(seconds);
             SaveModel(model);
         }
 
         public static void SaveCollageCreationDelaySeconds(int seconds)
         {
             var model = LoadModel();
-            model.CollageCreationDelaySeconds = System.Math.Max(0, seconds);
+            model.CollageCreationDelaySeconds = ClampDelay(seconds);
             SaveModel(model);
         }
 
@@ -185,6 +225,123 @@ namespace FotoboxApp.Services
         {
             var model = LoadModel();
             model.CameraRotate180 = rotate180;
+            SaveModel(model);
+        }
+
+        public static bool LoadDirektdruckState() => LoadModel().DirektdruckState;
+
+        public static bool LoadGalerieButtonState() => LoadModel().GalerieButtonState;
+
+        public static bool LoadFotoFilterState() => LoadModel().FotoFilterState;
+
+        public static void SaveDirektdruckState(bool value)
+        {
+            var model = LoadModel();
+            model.DirektdruckState = value;
+            SaveModel(model);
+        }
+
+        public static void SaveGalerieButtonState(bool value)
+        {
+            var model = LoadModel();
+            model.GalerieButtonState = value;
+            SaveModel(model);
+        }
+
+        public static void SaveFotoFilterState(bool value)
+        {
+            var model = LoadModel();
+            model.FotoFilterState = value;
+            SaveModel(model);
+        }
+
+        public static (string Template1, string Template2, string Active) LoadSelectedTemplateNames()
+        {
+            var model = LoadModel();
+            return (
+                model.SelectedTemplate1Name ?? string.Empty,
+                model.SelectedTemplate2Name ?? string.Empty,
+                model.ActiveTemplateName ?? string.Empty);
+        }
+
+        public static void SaveSelectedTemplateNames(string template1, string template2, string active)
+        {
+            var model = LoadModel();
+            model.SelectedTemplate1Name = template1 ?? string.Empty;
+            model.SelectedTemplate2Name = template2 ?? string.Empty;
+            model.ActiveTemplateName = active ?? string.Empty;
+            SaveModel(model);
+        }
+
+        public static void EnsureEventScopeForGallery(string galleryName)
+        {
+            var model = LoadModel();
+            var current = model.EventScopeGalleryName ?? string.Empty;
+            var target = galleryName ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(current))
+            {
+                model.EventScopeGalleryName = target;
+                SaveModel(model);
+                return;
+            }
+
+            if (string.Equals(current, target, StringComparison.Ordinal))
+                return;
+
+            ApplyEventDefaults(model);
+            model.EventScopeGalleryName = target;
+            SaveModel(model);
+        }
+
+        public static void ResetEventScopedValues(string galleryName)
+        {
+            var model = LoadModel();
+            ApplyEventDefaults(model);
+            model.EventScopeGalleryName = galleryName ?? string.Empty;
+            SaveModel(model);
+        }
+
+        private static void ApplyEventDefaults(SettingsModel model)
+        {
+            model.AllowDirektdruck = false;
+            model.AllowGalerie = true;
+            model.AllowFotoFilter = false;
+            model.AllowTwoTemplates = false;
+            model.StartReadyDelaySeconds = DefaultDelaySeconds;
+            model.CollageCreationDelaySeconds = DefaultDelaySeconds;
+            model.PostProcessDelaySeconds = DefaultDelaySeconds;
+            model.DirektdruckState = true;
+            model.GalerieButtonState = true;
+            model.FotoFilterState = true;
+            model.SelectedTemplate1Name = string.Empty;
+            model.SelectedTemplate2Name = string.Empty;
+            model.ActiveTemplateName = string.Empty;
+        }
+
+        private static int ClampDelay(int seconds)
+        {
+            if (seconds < DelayMinSeconds)
+                return DelayMinSeconds;
+            if (seconds > DelayMaxSeconds)
+                return DelayMaxSeconds;
+            return seconds;
+        }
+
+        public static string LoadSelectedCameraName() => LoadModel().SelectedCameraName ?? string.Empty;
+        public static string LoadSelectedPrinterName() => LoadModel().SelectedPrinterName ?? string.Empty;
+
+        public static void SaveSelectedCameraName(string value)
+        {
+            var model = LoadModel();
+            model.SelectedCameraName = value ?? string.Empty;
+            SaveModel(model);
+        }
+
+        public static void SaveSelectedPrinterName(string value)
+        {
+            var model = LoadModel();
+            model.SelectedPrinterName = value ?? string.Empty;
             SaveModel(model);
         }
     }

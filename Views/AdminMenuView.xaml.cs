@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using FotoboxApp.Services;
 using FotoboxApp.ViewModels;
+using Microsoft.Win32;
 
 namespace FotoboxApp.Views
 {
@@ -246,40 +248,73 @@ namespace FotoboxApp.Views
                 return;
             }
 
-            try
-            {
-                var oldDir = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
-                    "Fotobox",
-                    oldName);
+            var picturesRoot = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+                "Fotobox");
+            var newGalleryDir = Path.Combine(picturesRoot, newName);
 
-                if (!string.IsNullOrWhiteSpace(oldName) && Directory.Exists(oldDir))
-                {
-                    BackupService.CreateBackup(oldName);
-                    if (BackupsOverlay.Visibility == Visibility.Visible)
-                        RefreshBackupsList();
-                }
-            }
-            catch (Exception ex)
+            var galleryAlreadyExists = Directory.Exists(newGalleryDir) &&
+                                       !string.Equals(oldName, newName, StringComparison.OrdinalIgnoreCase);
+            var backupAlreadyExists = BackupService.BackupExists(newName);
+
+            if (galleryAlreadyExists || backupAlreadyExists)
             {
-                MessageBox.Show($"Backup fehlgeschlagen:\n{ex.Message}", "Backup",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                var conflicts = new List<string>();
+                if (galleryAlreadyExists)
+                    conflicts.Add("ein Galerie-Ordner");
+                if (backupAlreadyExists)
+                    conflicts.Add("mindestens ein Backup");
+
+                var conflictText = string.Join(" und ", conflicts);
+                var duplicateResult = MessageBox.Show(
+                    $"Es existiert bereits {conflictText} mit diesem Namen.\nTrotzdem neues Event anlegen?",
+                    "Event bereits vorhanden",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (duplicateResult != MessageBoxResult.Yes)
+                    return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(oldName))
+            {
+                var oldDir = Path.Combine(picturesRoot, oldName);
+                if (Directory.Exists(oldDir))
+                {
+                    try
+                    {
+                        BackupService.CreateBackup(oldName);
+                        BackupService.DeleteGalleryDirectory(oldName);
+
+                        if (BackupsOverlay.Visibility == Visibility.Visible)
+                            RefreshBackupsList();
+                    }
+                    catch (Exception ex)
+                    {
+                        var backupFailed = MessageBox.Show(
+                            $"Das vorherige Event konnte nicht gesichert:\n{ex.Message}\nNeues Event ohne Backup anlegen?",
+                            "Backup fehlgeschlagen",
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Warning);
+
+                        if (backupFailed != MessageBoxResult.Yes)
+                            return;
+                    }
+                }
             }
 
             vm.GalleryName = newName;
 
             try
             {
-                var newDir = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
-                    "Fotobox",
-                    newName);
-                Directory.CreateDirectory(newDir);
+                Directory.CreateDirectory(newGalleryDir);
             }
             catch
             {
                 // Ignorieren, Ordner wird später angelegt.
             }
+
+            vm.ResetEventScopedState();
 
             NewEventOverlay.Visibility = Visibility.Collapsed;
             MessageBox.Show("Neues Event angelegt.", "Admin",
@@ -306,14 +341,24 @@ namespace FotoboxApp.Views
             catch { }
         }
 
+        private bool TryGetSelectedBackup(out FileInfo selected)
+        {
+            if (BackupsList.SelectedItem is FileInfo file)
+            {
+                selected = file;
+                return true;
+            }
+
+            MessageBox.Show("Bitte zuerst ein Backup auswählen.", "Backup",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+            selected = null;
+            return false;
+        }
+
         private void RestoreBackup_Click(object sender, RoutedEventArgs e)
         {
-            if (BackupsList.SelectedItem is not FileInfo selected)
-            {
-                MessageBox.Show("Bitte zuerst ein Backup auswählen.", "Backup",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+            if (!TryGetSelectedBackup(out var selected))
                 return;
-            }
 
             if (DataContext is not StartViewModel vm)
                 return;
@@ -351,6 +396,70 @@ namespace FotoboxApp.Views
             catch (Exception ex)
             {
                 MessageBox.Show($"Wiederherstellung fehlgeschlagen:\n{ex.Message}", "Backup",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void CopyBackup_Click(object sender, RoutedEventArgs e)
+        {
+            if (!TryGetSelectedBackup(out var selected))
+                return;
+
+            var dialog = new SaveFileDialog
+            {
+                Title = "Backup kopieren",
+                Filter = "ZIP-Archive (*.zip)|*.zip|Alle Dateien (*.*)|*.*",
+                FileName = selected.Name,
+                OverwritePrompt = true
+            };
+
+            if (DataContext is StartViewModel vm)
+            {
+                var usbPath = vm.SelectedUsbDrivePath;
+                if (!string.IsNullOrWhiteSpace(usbPath) && Directory.Exists(usbPath))
+                {
+                    dialog.InitialDirectory = usbPath;
+                }
+            }
+
+            if (dialog.ShowDialog() != true)
+                return;
+
+            try
+            {
+                File.Copy(selected.FullName, dialog.FileName, overwrite: true);
+                MessageBox.Show("Backup wurde kopiert.", "Backup kopieren",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Backup konnte nicht kopiert werden:\n{ex.Message}", "Backup kopieren",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void DeleteBackup_Click(object sender, RoutedEventArgs e)
+        {
+            if (!TryGetSelectedBackup(out var selected))
+                return;
+
+            var confirm = MessageBox.Show(
+                $"Backup \"{selected.Name}\" wirklich löschen?",
+                "Backup löschen",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (confirm != MessageBoxResult.Yes)
+                return;
+
+            try
+            {
+                BackupService.DeleteBackupFile(selected.FullName);
+                RefreshBackupsList();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Backup konnte nicht gelöscht werden:\n{ex.Message}", "Backup löschen",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }

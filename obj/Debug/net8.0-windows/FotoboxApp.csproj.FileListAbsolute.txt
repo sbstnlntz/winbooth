@@ -85,7 +85,6 @@ D:\Desktop\_\FotoboxApp\bin\Debug\net8.0-windows\runtimes\win-x86\native\vcrunti
 D:\Desktop\_\FotoboxApp\bin\Debug\net8.0-windows\runtimes\win\lib\net8.0\Microsoft.Win32.SystemEvents.dll
 D:\Desktop\_\FotoboxApp\bin\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.Management.dll
 D:\Desktop\_\FotoboxApp\bin\Debug\net8.0-windows\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
-D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\App.baml
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\AdminMenuView.baml
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\CollageView.baml
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\StartView.baml
@@ -107,3 +106,4 @@ D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\DesignManagementWindow.ba
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\DesignManagementWindow.g.cs
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\DefaultTemplateWindow.baml
 D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\Views\DefaultTemplateWindow.g.cs
+D:\Desktop\_\FotoboxApp\obj\Debug\net8.0-windows\App.baml

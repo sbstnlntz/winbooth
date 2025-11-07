@@ -26,8 +26,8 @@
                        FontWeight="Bold"
                        FontSize="20"/>
             <StackPanel Orientation="Horizontal" Margin="0,6,0,0" VerticalAlignment="Center">
-                <Slider Minimum="0"
-                        Maximum="15"
+                <Slider Minimum="1"
+                        Maximum="10"
                         TickFrequency="1"
                         IsSnapToTickEnabled="True"
                         Value="{Binding StartReadyDelaySeconds, Mode=TwoWay}"
@@ -47,8 +47,8 @@
                        FontWeight="Bold"
                        FontSize="20"/>
             <StackPanel Orientation="Horizontal" Margin="0,6,0,0" VerticalAlignment="Center">
-                <Slider Minimum="0"
-                        Maximum="20"
+                <Slider Minimum="1"
+                        Maximum="10"
                         TickFrequency="1"
                         IsSnapToTickEnabled="True"
                         Value="{Binding CollageCreationDelaySeconds, Mode=TwoWay}"
@@ -68,8 +68,8 @@
                        FontWeight="Bold"
                        FontSize="20"/>
             <StackPanel Orientation="Horizontal" Margin="0,6,0,0" VerticalAlignment="Center">
-                <Slider Minimum="0"
-                        Maximum="30"
+                <Slider Minimum="1"
+                        Maximum="10"
                         TickFrequency="1"
                         IsSnapToTickEnabled="True"
                         Value="{Binding PostProcessDelaySeconds, Mode=TwoWay}"
