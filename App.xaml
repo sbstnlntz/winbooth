@@ -1,31 +1,32 @@
-﻿<Application x:Class="winbooth.App"
+<!-- Central resource dictionary providing brushes, fonts, styles, and converters. -->
+<Application x:Class="winbooth.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:utilities="clr-namespace:winbooth.Utilities">
 	<Application.Resources>
 		<ResourceDictionary>
-			<!-- Zentrale Farben: Comic-Look -->
+			<!-- Core colors used for the comic inspired palette. -->
 			<Color x:Key="FB_BackgroundColor">#FF2D2D36</Color>
-			<!-- Sattes Comic-Violett/Blau -->
+			<!-- Vibrant comic style violet and blue accent. -->
 			<Color x:Key="FB_AccentColor">#FFFFE100</Color>
-			<!-- Comic-Gelb -->
+			<!-- Comic inspired yellow accent. -->
 			<Color x:Key="FB_AccentColorHover">#FF27C7FF</Color>
-			<!-- Helles Comic-Blau -->
+			<!-- Bright comic themed blue highlight. -->
 			<Color x:Key="FB_AccentColorPressed">#FFEF307B</Color>
-			<!-- Knalliges Comic-Rosa -->
+			<!-- Punchy comic pink accent. -->
 			<Color x:Key="FB_WhiteColor">#FFFFFFFF</Color>
 			<Color x:Key="FB_TextColor">#FF212529</Color>
-			<!-- Fast Schwarz, comicfreundlich -->
+			<!-- Near black tone that still fits the playful theme. -->
 			<Color x:Key="FB_ButtonTextColor">#FF252525</Color>
-			<!-- Kräftig, gut lesbar -->
+			<!-- Bold tone that remains easy to read. -->
 			<Color x:Key="FB_BorderColor">#FF5CF25B</Color>
-			<!-- Leuchtendes Comic-Grün -->
+			<!-- Bright comic green accent. -->
 			<Color x:Key="FB_OverlayColor">#D0000000</Color>
 			<Color x:Key="FB_ErrorColor">#FFFF006A</Color>
-			<!-- Knalliges Rot/Rosa -->
+			<!-- Vivid red and pink alert color. -->
 
-			<!-- Brushes -->
+			<!-- Brush resources -->
 			<SolidColorBrush x:Key="FB_BackgroundBrush" Color="{StaticResource FB_BackgroundColor}"/>
 			<SolidColorBrush x:Key="FB_AccentBrush" Color="{StaticResource FB_AccentColor}"/>
 			<SolidColorBrush x:Key="FB_AccentBrushHover" Color="{StaticResource FB_AccentColorHover}"/>
@@ -37,7 +38,7 @@
 			<SolidColorBrush x:Key="FB_OverlayBrush" Color="{StaticResource FB_OverlayColor}"/>
 			<SolidColorBrush x:Key="FB_ErrorBrush" Color="{StaticResource FB_ErrorColor}"/>
 
-			<!-- Schriftarten und Größen -->
+			<!-- Shared fonts and font sizes -->
 			<FontFamily x:Key="FB_FontFamily">Comic Sans MS</FontFamily>
 			<FontFamily x:Key="FB_FontFamilyAccent">Arial Rounded MT Bold</FontFamily>
 			<FontWeight x:Key="FB_FontWeightBold">Bold</FontWeight>
@@ -46,7 +47,7 @@
 			<sys:Double x:Key="FB_FontSizeNormal">18</sys:Double>
 			<sys:Double x:Key="FB_FontSizeSmall">14</sys:Double>
 
-			<!-- Zentrale Button-Styles -->
+			<!-- Primary button styles -->
 			<Style TargetType="Button" x:Key="FB_ElegantButton">
 				<Setter Property="FontFamily" Value="{StaticResource FB_FontFamily}"/>
 				<Setter Property="FontWeight" Value="Bold"/>
@@ -87,15 +88,15 @@
 				</Style.Triggers>
 			</Style>
 
-			<!-- Converter für IsEnabled-Bindings -->
-			<!-- Deine neuen Converter -->
+			<!-- Converters used by IsEnabled bindings -->
+			<!-- Additional converters referenced by the views -->
 			<utilities:NullToBoolConverter x:Key="NullToBoolConverter"/>
 			<utilities:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
 			<utilities:SelectedBorderMultiConverter x:Key="SelectedBorderMultiConverter"/>
 			<utilities:SelectedBorderBrushMultiConverter x:Key="SelectedBorderBrushMultiConverter"/>
 			
 
-			<!-- Nur für die Template-Auswahl-Buttons: -->
+			<!-- Used only by the template selection buttons -->
 			<Style x:Key="TemplateSelectButtonStyle" TargetType="Button">
 				<Setter Property="Background" Value="Transparent"/>
 				<Setter Property="BorderThickness" Value="1"/>
@@ -202,7 +203,7 @@
 			</Style>
 			<Style TargetType="CheckBox" BasedOn="{StaticResource FB_CheckBoxBaseStyle}"/>
 
-			<!-- Merged Dictionaries immer am Ende -->
+			<!-- Keep merged dictionaries at the end for predictable overrides -->
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="Themes/Styles.xaml"/>
 			</ResourceDictionary.MergedDictionaries>

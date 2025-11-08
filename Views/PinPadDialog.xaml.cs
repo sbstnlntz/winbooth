@@ -1,3 +1,5 @@
+// Implements the on screen PIN keypad, focus handling, and success callbacks.
+
 using System.Windows;
 using System.Windows.Controls;
 
@@ -11,7 +13,7 @@ namespace winbooth.Views
         {
             InitializeComponent();
             PinBox.Password = string.Empty;
-            PinBox.IsEnabled = false; // Eingabe erfolgt ausschließlich über das Keypad
+            PinBox.IsEnabled = false; // Input is disabled because entry happens exclusively via the keypad buttons.
         }
 
         private void Number_Click(object sender, RoutedEventArgs e)

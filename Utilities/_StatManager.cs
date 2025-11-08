@@ -1,3 +1,5 @@
+// Thread safe statistics persistence that tracks shots, collages, and per event counts.
+
 using System;
 using System.Collections.Generic;
 using System.IO;

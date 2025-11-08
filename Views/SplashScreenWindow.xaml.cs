@@ -1,3 +1,5 @@
+// Displays the boot splash screen while the app initializes.
+
 #nullable enable
 
 using System;

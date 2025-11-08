@@ -1,3 +1,5 @@
+// Extracts template zip archives, validates structure, and emits TemplateItem instances.
+
 using System.IO;
 using System.IO.Compression;
 

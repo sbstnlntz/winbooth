@@ -1,3 +1,5 @@
+// Controls the collage preview workflow including filter toggles, navigation buttons, and export logic.
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -42,7 +44,7 @@ namespace winbooth.Views
         private FilterMode _activeFilter = FilterMode.Original;
 
         private readonly string _galleryName;
-        private readonly bool _direktdruck;     // ← korrekt benannt
+        private readonly bool _direktdruck;     // Named after the Direktdruck feature so logs match the UI wording.
         private readonly StartViewModel _vm;
         private string _extractTarget;
 
@@ -50,23 +52,23 @@ namespace winbooth.Views
             List<Bitmap> capturedPhotos,
             string zipPath,
             string galleryName,
-            bool direktdruck,                 // Parameter korrekt benannt
+            bool direktdruck,                 // Parameter keeps the Direktdruck label to mirror the UI terminology.
             StartViewModel vm)
         {
             InitializeComponent();
 
-            // Parameter / Felder
+            // Wire up constructor parameters to the backing fields.
             _zipPath = zipPath ?? throw new ArgumentNullException(nameof(zipPath));
             _galleryName = galleryName ?? "Galerie";
-            _direktdruck = direktdruck;      // ← hier war vorher 'direktruck'
+            _direktdruck = direktdruck;      // Keep the intentional naming symmetry for clarity when debugging.
             _vm = vm ?? throw new ArgumentNullException(nameof(vm));
             DataContext = _vm;
 
-            // Fotos kopieren
+            // Copy the captured photos so filters never mutate the source bitmaps.
             _originalPhotos = capturedPhotos.Select(b => (Bitmap)b.Clone()).ToList();
             _currentPhotos = new List<Bitmap>();
 
-            // Buttons konfigurieren
+            // Configure button visibility based on whether direct print is active.
             PrintButton.Visibility = _direktdruck ? Visibility.Visible : Visibility.Collapsed;
             SaveButton.Visibility = Visibility.Visible;
 
@@ -292,7 +294,7 @@ namespace winbooth.Views
                 .MainFrame.Navigate(new StartView(_vm));
         }
 
-        // ---- FILTER-Buttons ----
+        // ---- Filter buttons ----
 
         private async void FilterOriginal_Click(object sender, RoutedEventArgs e)
         {
@@ -396,7 +398,7 @@ namespace winbooth.Views
             SaveToGallery(_finalBitmap);
         }
 
-        // ---- Collage erzeugen ----
+        // ---- Build collage ----
 
         private Bitmap ComposeFinalBitmap(
             List<Bitmap> fotos,

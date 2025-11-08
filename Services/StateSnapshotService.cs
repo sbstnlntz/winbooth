@@ -1,3 +1,5 @@
+// Serializes and restores the StartViewModel UI state so sessions can resume.
+
 using System;
 using System.IO;
 using System.Text.Json;

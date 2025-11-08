@@ -1,3 +1,5 @@
+// Wraps WIA camera enumeration and provides helper methods for safer access and formatting.
+
 using System.Collections.Generic;
 using System.Management;
 using Emgu.CV;
@@ -21,15 +23,15 @@ namespace winbooth.Services
                 {
                     foreach (var device in searcher.Get())
                     {
-                        string name = device["Caption"]?.ToString() ?? "Unbekanntes Gerät";
+                        string name = device["Caption"]?.ToString() ?? "Unbekanntes Gerï¿½t";
                         if (!names.Contains(name))
                             names.Add(name);
                     }
                 }
             }
-            catch { /* Ignorieren */ }
+            catch { /* Ignore WMI enumeration failures */ }
 
-            // --- Fallback: Gibt es zumindest ein VideoCapture(0)? ---
+            // Fallback: probe whether a VideoCapture(0) source is available.
             if (names.Count == 0)
             {
                 try
@@ -42,7 +44,7 @@ namespace winbooth.Services
                         }
                     }
                 }
-                catch { /* Nichts */ }
+                catch { /* Ignore VideoCapture fallback failures */ }
             }
             return names;
         }

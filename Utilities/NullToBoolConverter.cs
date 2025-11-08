@@ -1,3 +1,5 @@
+// Converts null to false and non null to true, simplifying bindings.
+
 using System;
 using System.Globalization;
 using System.Windows.Data;

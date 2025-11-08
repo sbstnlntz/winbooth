@@ -1,3 +1,5 @@
+// Application entry point that wires global exception handling and resource initialization.
+
 using System;
 using System.Threading.Tasks;
 using System.Windows;

@@ -1,3 +1,4 @@
+<!-- Reusable dialog host window with a consistent chrome. -->
 <Window x:Class="winbooth.Views.DialogHostWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

@@ -1,3 +1,5 @@
+// Simple dialog that lists detected cameras and returns the user choice.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

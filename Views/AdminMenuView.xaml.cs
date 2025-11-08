@@ -1,3 +1,5 @@
+// Admin dashboard interactions such as backups, diagnostics, device lists, and permission prompts.
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -350,7 +352,7 @@ namespace winbooth.Views
             }
             catch
             {
-                // Ignorieren, Ordner wird später angelegt.
+                // Ignore failures here; the folder can be created later if needed.
             }
 
             vm.ResetEventScopedState();

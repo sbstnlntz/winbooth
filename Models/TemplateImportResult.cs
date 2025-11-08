@@ -1,3 +1,5 @@
+// Records the outcome of template import operations, including success flags and errors.
+
 using System.Collections.Generic;
 
 namespace winbooth.Models

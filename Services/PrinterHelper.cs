@@ -1,3 +1,5 @@
+// Utility for enumerating printers, resolving driver info, and triggering diagnostics prints.
+
 using System.Collections.Generic;
 using System.Drawing.Printing;
 
@@ -18,7 +20,7 @@ namespace winbooth.Services
 			}
 		}
 
-		// Gibt alle installierten Druckernamen zurück
+		// Returns all installed printer names.
 		public static List<string> GetAllPrinterNames()
 		{
 			var names = new List<string>();
@@ -27,7 +29,7 @@ namespace winbooth.Services
 				names.Add(printer);
 			}
 
-			// Sicherstellen, dass es mindestens einen Eintrag gibt
+			// Ensure at least one entry is returned.
 			if (names.Count == 0)
 				names.Add("Kein Drucker gefunden");
 

@@ -1,3 +1,5 @@
+// Runs the live camera preview, countdown, overlay rendering, and captures for each template slot.
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -44,7 +46,7 @@ namespace winbooth.Views
         private readonly List<Bitmap> _capturedPhotos = new();
         private readonly List<System.Windows.Controls.Image> _previewOverlays = new();
         private readonly Stopwatch _previewFrameLimiter = Stopwatch.StartNew();
-        private const int PreviewFrameIntervalMs = 33; // ~30 FPS Ziel für UI-Thread
+        private const int PreviewFrameIntervalMs = 33; // ~30 FPS target for the UI thread
         private bool _sessionFinished = false;
         private bool _previewPaused;
         private bool _heartbeatSuspended;
@@ -101,7 +103,7 @@ namespace winbooth.Views
             _galleryName = SanitizeGalleryName(galleryName ?? "UnbenannteGalerie");
             _vm = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
 
-            // Session-Ordner für Einzelaufnahmen vorbereiten
+            // Prepare a dedicated session folder for single shots.
             var galleryDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "Fotobox", _galleryName);
             _sessionShotsDir = Path.Combine(galleryDir, "shots", DateTime.Now.ToString("yyyyMMdd_HHmmss"));
             try { Directory.CreateDirectory(_sessionShotsDir); } catch { }
@@ -238,16 +240,16 @@ namespace winbooth.Views
                 ApplyCameraRotation(shotRaw);
                 using var shot = (Bitmap)shotRaw.Clone();
 
-                // temporär hinzufügen
+                // Temporarily append the freshly captured shot so the operator can review it.
                 _capturedPhotos.Add((Bitmap)shot.Clone());
                 AddPreviewImage(shot, _currentRegion);
 
-                // Review anzeigen und Entscheidung abwarten
+                // Show the review overlay and wait for the decision.
                 await ShowReviewOverlayAsync();
 
                 if (_repeatLastPhoto)
                 {
-                    // Letztes Bild & Overlay entfernen
+                    // Remove the last photo and overlay when the operator wants a retake.
                     _capturedPhotos.RemoveAt(_capturedPhotos.Count - 1);
                     var lastOverlay = _previewOverlays[^1];
                     Application.Current.Dispatcher.Invoke(() =>
@@ -255,7 +257,7 @@ namespace winbooth.Views
                         TemplateCanvas.Children.Remove(lastOverlay);
                     });
                     _previewOverlays.RemoveAt(_previewOverlays.Count - 1);
-                    continue; // gleiches Foto nochmal
+                    continue; // Retry the same slot with a fresh photo.
                 }
 
                 _currentPhotoIndex++;
@@ -369,7 +371,7 @@ namespace winbooth.Views
             PauseLivePreview();
             _vm?.NotifyCameraSessionEnded();
 
-            // zuletzt geschossenes Bild holen
+            // Retrieve the most recent shot for review.
             var lastBitmap = _capturedPhotos[^1];
             using (var displayBitmap = new Bitmap(_currentRegion.Width, _currentRegion.Height))
             using (Graphics g = Graphics.FromImage(displayBitmap))
@@ -413,16 +415,16 @@ namespace winbooth.Views
             {
                 ReviewOverlay.Visibility = Visibility.Collapsed;
             });
-            // Kamera-Callback wieder aktivieren, damit Livebild für nächsten Slot läuft
+            // Re-enable the callback so the live preview resumes for the next slot.
             ResumeLivePreview();
             _vm?.NotifyCameraSessionStarted();
 
-            // Letztes akzeptiertes Foto in der Session speichern
+            // Persist the last accepted photo in the current session folder.
             try
             {
                 if (_capturedPhotos.Count > 0 && _currentRegion != null && !string.IsNullOrEmpty(_sessionShotsDir))
                 {
-                    var index = _currentPhotoIndex + 1; // 1-basiert für Dateiname
+                    var index = _currentPhotoIndex + 1; // 1-based index for the generated file names.
                     var filename = Path.Combine(_sessionShotsDir, $"shot_{index:00}.jpg");
                     using var toSave = new Bitmap(_capturedPhotos[^1]);
                     toSave.Save(filename, System.Drawing.Imaging.ImageFormat.Jpeg);
@@ -458,7 +460,7 @@ namespace winbooth.Views
 
                 Canvas.SetLeft(img, region.X);
                 Canvas.SetTop(img, region.Y);
-                TemplateCanvas.Children.Insert(0, img);  // wichtig!
+                TemplateCanvas.Children.Insert(0, img);  // Insert at index 0 so overlays stay behind adorner layers.
                 _previewOverlays.Add(img);
             }
         }

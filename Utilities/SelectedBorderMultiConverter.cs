@@ -1,3 +1,5 @@
+// Multi value converter that returns highlight colors and borders for selected template slots.
+
 using System;
 using System.Globalization;
 using System.Windows;

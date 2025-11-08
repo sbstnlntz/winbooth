@@ -1,3 +1,5 @@
+// Bootstraps dependency injection, shows the startup sequence, and transitions to the StartView.
+
 #nullable enable
 
 using System;

@@ -1,3 +1,4 @@
+<!-- Simple dialog prompting the operator for a gallery name. -->
 <Window x:Class="winbooth.Views.GalerieNameDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

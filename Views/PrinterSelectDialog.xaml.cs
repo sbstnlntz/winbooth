@@ -1,3 +1,5 @@
+// Wraps printer selection logic so the view model can present a modal printer picker.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

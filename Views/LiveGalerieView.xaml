@@ -1,9 +1,10 @@
+<!-- Shows the live gallery grid and modal overlay for focused previews. -->
 <UserControl x:Class="winbooth.Views.LiveGalerieView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Background="{StaticResource FB_BackgroundBrush}">
     <Grid>
-        <!-- Hauptebene: Galerie und Schließen-Button -->
+        <!-- Root grid containing the gallery and the close button -->
         <DockPanel>
             <Button x:Name="CloseButton"
                     Style="{StaticResource FB_DialogCloseButtonStyle}"
@@ -111,7 +112,7 @@
             </ScrollViewer>
         </DockPanel>
 
-        <!-- MODAL-OVERLAY: Immer GANZ OBEN (letztes Kind im Grid!) -->
+        <!-- Modal overlay kept as the last child so it always stays on top -->
         <Grid x:Name="ModalOverlay"
 
               Background="{StaticResource FB_OverlayBrush}"

@@ -1,3 +1,5 @@
+// Contains StartViewModel logic for template catalogs, slot selection, previews, and persistence.
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,7 +18,7 @@ namespace winbooth.ViewModels
 {
     public partial class StartViewModel
     {
-        // --- Template-Auswahl ---
+        // --- Template selection ---
         private string _defaultTemplateName;
         private TemplateItem _selectedTemplate1;
         public TemplateItem SelectedTemplate1

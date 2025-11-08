@@ -1,3 +1,5 @@
+// Connects the user menu view with the main view model and manages command handlers, file pickers, and overlay toggles.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,7 +23,7 @@ namespace winbooth.Views
         {
             InitializeComponent();
             _mainViewModel = mainViewModel;
-            DataContext = mainViewModel; // <<< WICHTIG!
+            DataContext = mainViewModel; // Important: reuse the shared StartViewModel instance.
 
             _mainViewModel.Direktdruck = _mainViewModel.AllowDirektdruck;
             _mainViewModel.GalerieButton = _mainViewModel.AllowGalerie;

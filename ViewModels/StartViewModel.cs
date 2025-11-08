@@ -1,3 +1,5 @@
+// Primary StartViewModel partial defining hardware monitoring, USB sync, state exposure, and UI commands.
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -32,7 +34,7 @@ namespace winbooth.ViewModels
         public ObservableCollection<TemplateItem> DefaultTemplates { get; } = new ObservableCollection<TemplateItem>();
         private StatManager.StatsSnapshot _statsSnapshot = new StatManager.StatsSnapshot();
 
-        // --- Kameras & Drucker ---
+        // --- Cameras & printers ---
         public ObservableCollection<string> AvailableCameras { get; } = new ObservableCollection<string>();
         public ObservableCollection<string> AvailablePrinters { get; } = new ObservableCollection<string>();
         public ObservableCollection<string> AvailableUsbDrives { get; } = new ObservableCollection<string>();
@@ -759,8 +761,8 @@ namespace winbooth.ViewModels
         }
 
         /// <summary>
-        /// Liefert den Text f´┐¢r den Speichern-Button:
-        /// "NUR SPEICHERN" wenn Direktdruck aktiv ist, sonst "SPEICHERN".
+        /// Returns the label shown on the save button:
+        /// displays "NUR SPEICHERN" when direct print is active, otherwise "SPEICHERN".
         /// </summary>
         public string SaveButtonLabel => Direktdruck ? "NUR SPEICHERN" : "SPEICHERN";
 
@@ -926,7 +928,7 @@ namespace winbooth.ViewModels
             catch { }
         }
 
-        // --- Konstruktor ---
+        // --- Constructor ---
         public StartViewModel()
         {
             SettingsService.SettingsSnapshot settingsSnapshot = null;
@@ -972,7 +974,7 @@ namespace winbooth.ViewModels
             RefreshWarningInfoGraphic();
             RefreshStatistics();
 
-            // --- Kamera- & Druckerliste laden ---
+            // --- Load camera and printer lists ---
             foreach (var cam in CameraHelper.GetAllCameraNames())
                 AvailableCameras.Add(cam);
             foreach (var drucker in PrinterHelper.GetAllPrinterNames())
@@ -989,7 +991,7 @@ namespace winbooth.ViewModels
             OnPropertyChanged(nameof(AllowedPrintersSummary));
             EnsureSelectedTemplatesValid();
 
-            // --- Standardauswahl setzen ---
+            // --- Apply default selection ---
             var selectableCameras = GetSelectableCameras();
             if (selectableCameras.Count > 0)
             {

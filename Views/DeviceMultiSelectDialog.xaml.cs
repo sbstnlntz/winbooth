@@ -1,3 +1,5 @@
+// Allows selecting multiple hardware devices such as cameras, printers, or USB drives.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

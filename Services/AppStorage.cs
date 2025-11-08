@@ -1,3 +1,5 @@
+// Provides helper methods for locating and creating application data directories.
+
 using System;
 using System.IO;
 

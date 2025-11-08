@@ -1,3 +1,5 @@
+// Parses template definitions, loads assets, and normalizes metadata for runtime use.
+
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;

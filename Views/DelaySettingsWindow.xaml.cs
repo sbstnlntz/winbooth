@@ -1,3 +1,5 @@
+// Offers sliders for tuning capture delays, countdowns, and idle timers.
+
 using System;
 using System.Windows;
 using winbooth.ViewModels;

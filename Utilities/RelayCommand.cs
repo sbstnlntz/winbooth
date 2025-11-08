@@ -1,3 +1,5 @@
+// Basic ICommand implementation with strongly typed execute and can execute delegates.
+
 using System;
 using System.Windows.Input;
 
@@ -27,8 +29,7 @@ namespace winbooth.Utilities
         }
 
         /// <summary>
-        /// Ruft CommandManager.InvalidateRequerySuggested auf,
-        /// damit WPF die CanExecute-Bedingung neu abfragt.
+        /// Triggers CommandManager.InvalidateRequerySuggested so WPF reevaluates the CanExecute state.
         /// </summary>
         public void RaiseCanExecuteChanged() =>
             CommandManager.InvalidateRequerySuggested();

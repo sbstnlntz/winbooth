@@ -1,3 +1,5 @@
+// Provides a focused window for picking a default template from the available list.
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

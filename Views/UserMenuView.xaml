@@ -1,3 +1,4 @@
+<!-- Layout for the user menu screen with quick settings, gallery controls, and template slots. -->
 <UserControl x:Class="winbooth.Views.UserMenuView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -27,7 +28,7 @@
                 <ColumnDefinition Width="1.7*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Titel & Fertig -->
+            <!-- Title row with the Done button -->
             <TextBlock Grid.Row="0" Grid.Column="0"
                        Text="EINSTELLUNGEN"
                        FontWeight="Bold"
@@ -41,20 +42,20 @@
                     VerticalAlignment="Top"
                     Click="Back_Click"/>
 
-            <!-- Einstellungen + Geräteinfos -->
+            <!-- Settings plus device info columns -->
             <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,18,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1.15*"/>
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Linke Spalte: Einstellungen -->
+                <!-- Left column with settings controls -->
                 <ScrollViewer Grid.Column="0"
                               VerticalScrollBarVisibility="Auto"
                               HorizontalScrollBarVisibility="Disabled">
                     <StackPanel>
 
-                    <!-- Countdown-Zeit Slider -->
+                    <!-- Countdown duration slider -->
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,14" VerticalAlignment="Center">
                         <TextBlock Text="Countdown" FontWeight="Bold" FontSize="22" Width="142"/>
                         <TextBlock Text="3" FontSize="16" VerticalAlignment="Center" Width="22" HorizontalAlignment="Left"/>
@@ -65,7 +66,7 @@
                         <TextBlock Text="{Binding PreviewDurationSeconds, StringFormat={}{0} Sek.}" FontSize="18" VerticalAlignment="Center" Margin="14,0"/>
                     </StackPanel>
 
-                    <!-- Direktdruck -->
+                    <!-- Direct print toggle -->
                     <StackPanel Margin="0,0,0,6"
                                 Visibility="{Binding AllowDirektdruck, Converter={StaticResource BoolToVisibilityConverter}}">
                         <StackPanel Orientation="Horizontal">
@@ -74,13 +75,13 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <!-- Galerie -->
+                    <!-- Gallery actions -->
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,6"
                                 Visibility="{Binding AllowGalerie, Converter={StaticResource BoolToVisibilityConverter}}">
                         <CheckBox IsChecked="{Binding GalerieButton, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0"/>
                         <TextBlock Text="Galerie" FontWeight="Bold" FontSize="22" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <!-- Foto-Filter -->
+                    <!-- Photo filter toggle -->
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,18"
                                 Visibility="{Binding AllowFotoFilter, Converter={StaticResource BoolToVisibilityConverter}}">
                         <CheckBox IsChecked="{Binding FotoFilter, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0"/>
@@ -89,7 +90,7 @@
                     </StackPanel>
                 </ScrollViewer>
 
-                <!-- Rechte Spalte: Geräteinformationen -->
+                <!-- Right column with device information -->
                 <Grid Grid.Column="1" Margin="38,0,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
@@ -100,7 +101,7 @@
                                   VerticalScrollBarVisibility="Auto"
                                   HorizontalScrollBarVisibility="Disabled">
                         <StackPanel>
-                    <!-- Kamera -->
+                    <!-- Camera summary -->
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12" VerticalAlignment="Center">
                         <TextBlock Text="Kamera" FontWeight="Bold" FontSize="19" Width="120"/>
                         <StackPanel Width="220" Margin="8,0,0,0">
@@ -123,7 +124,7 @@
                         </Button>
                     </StackPanel>
 
-                    <!-- Drucker -->
+                    <!-- Printer summary -->
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12" VerticalAlignment="Center">
                         <TextBlock Text="Drucker" FontWeight="Bold" FontSize="19" Width="120"/>
                         <TextBlock Text="{Binding SelectedPrinterName}" FontSize="19" Margin="8,0,0,0" Width="220" TextWrapping="Wrap"/>
@@ -134,7 +135,7 @@
                         </Button>
                     </StackPanel>
 
-                    <!-- USB Speicher -->
+                    <!-- USB storage summary -->
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,12" VerticalAlignment="Center">
                         <TextBlock Text="USB Speicher" FontWeight="Bold" FontSize="19" Width="120"/>
                         <TextBlock Text="{Binding UsbDriveSummary}" FontSize="19" Margin="8,0,0,0" Width="220" TextWrapping="Wrap"/>
@@ -145,7 +146,7 @@
                         </Button>
                     </StackPanel>
 
-                    <!-- Foto Design -->
+                    <!-- Photo design slots -->
                     <StackPanel Margin="24,24,0,0"
                                 HorizontalAlignment="Right">
                         <TextBlock Text="Foto Design"
@@ -154,7 +155,7 @@
                                    Margin="0,0,0,10"
                                    HorizontalAlignment="Right"/>
                         <StackPanel>
-                            <!-- Slot 1 -->
+                            <!-- Slot 1 preview -->
                             <Grid HorizontalAlignment="Right"
                                   Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
@@ -204,7 +205,7 @@
                                     <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" FontSize="22" Foreground="#444"/>
                                 </Button>
                             </Grid>
-                            <!-- Slot 2 -->
+                            <!-- Slot 2 preview -->
                             <Grid x:Name="TemplateSlot2"
                                   HorizontalAlignment="Right"
                                   Margin="0,12,0,0">

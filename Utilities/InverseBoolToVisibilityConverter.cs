@@ -1,3 +1,5 @@
+// Visibility converter that shows elements when the bound boolean is false.
+
 using System;
 using System.Globalization;
 using System.Windows;

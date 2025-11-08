@@ -1,3 +1,5 @@
+// Encapsulates StartViewModel helper methods for managing allowed device lists and validation.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;

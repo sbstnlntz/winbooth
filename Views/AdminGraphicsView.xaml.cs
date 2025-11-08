@@ -1,3 +1,5 @@
+// Manages admin only graphics controls, including image previews plus import and export.
+
 using System;
 using System.Windows;
 using System.Windows.Controls;

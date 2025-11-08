@@ -1,3 +1,5 @@
+// Singleton coordinating template storage folders, cleanup, and persistence snapshots.
+
 using System;
 using System.Collections.Generic;
 using System.IO;

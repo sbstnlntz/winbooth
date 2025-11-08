@@ -1,3 +1,5 @@
+// Code-behind for the start screen; routes button clicks to the StartViewModel and orchestrates overlays.
+
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -30,7 +32,7 @@ namespace winbooth.Views
             Application.Current.Shutdown();
         }
 
-        // Galerie-Name wird nur im Admin-Menü geändert (Start-Menü zeigt/ändert ihn nicht mehr)
+        // The gallery name is only changed inside the admin menu; the start screen simply displays it.
 
         private void ResetTotalPhotoCounter_Click(object sender, RoutedEventArgs e)
         {
@@ -51,7 +53,7 @@ namespace winbooth.Views
                 _vm.ActiveTemplate = _vm.TemplateSlot1Template ?? _vm.TemplateSlot2Template;
             }
 
-            // Sicherstellen, dass ein Template gewählt wurde
+            // Ensure that a template is selected before starting.
             if (_vm.ActiveTemplate == null)
             {
                 MessageBox.Show("Bitte wähle ein Foto-Design unten rechts!", "Vorlage fehlt", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -95,7 +97,7 @@ namespace winbooth.Views
 
         private async Task ProceedToCameraAsync()
         {
-            // Sicherstellen, dass ein Galerie-Name eingegeben wurde
+            // Ensure that a gallery name has been entered.
             if (string.IsNullOrWhiteSpace(_vm.GalleryName))
             {
                 MessageBox.Show("Bitte gib einen Galerie-Namen ein!", "Name fehlt", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -194,7 +196,7 @@ namespace winbooth.Views
                     PinDisplay.Text = new string('*', _enteredPin.Length);
                     if (_enteredPin.Length == 4)
                     {
-                        // Automatisch bestätigen, kein zusätzlicher OK-Klick nötig
+                        // Auto-confirm once four digits were entered; no extra OK click required.
                         PinOk_Click(null, null);
                     }
                 }

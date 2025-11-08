@@ -1,3 +1,5 @@
+// Multi value converter for computing selection brushes based on slot state.
+
 using System;
 using System.Globalization;
 using System.Windows;
@@ -23,15 +25,15 @@ namespace winbooth.Utilities
 
             if (active != null && slot != null)
                 return ReferenceEquals(active, slot)
-                    ? new SolidColorBrush(Color.FromRgb(200, 16, 46)) // Rot wie Banner
-                    : new SolidColorBrush(Color.FromRgb(160, 160, 160)); // Hellgrau
+                    ? new SolidColorBrush(Color.FromRgb(200, 16, 46)) // Same red as the accent banner.
+                    : new SolidColorBrush(Color.FromRgb(160, 160, 160)); // Light gray when not selected.
 
             if (treatNullAsSelected)
             {
                 var activeIsNull = activeUnset || values[0] == null;
                 var slotIsNull = slotUnset || values[1] == null;
                 if (activeIsNull && slotIsNull)
-                    return new SolidColorBrush(Color.FromRgb(200, 16, 46)); // Rot wie Banner
+                    return new SolidColorBrush(Color.FromRgb(200, 16, 46)); // Same red as the accent banner.
             }
 
             return new SolidColorBrush(Color.FromRgb(160, 160, 160));

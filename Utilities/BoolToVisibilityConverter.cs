@@ -1,3 +1,5 @@
+// Standard bool to visibility converter that hides controls when false.
+
 using System;
 using System.Globalization;
 using System.Windows;

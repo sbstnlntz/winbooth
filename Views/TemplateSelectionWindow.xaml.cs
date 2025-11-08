@@ -1,3 +1,5 @@
+// Hosts the pop-up template browser and surfaces selection events back to the calling view.
+
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;

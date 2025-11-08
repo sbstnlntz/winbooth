@@ -1,3 +1,4 @@
+<!-- Canvas layout for collage preview, filters, flash overlay, and action buttons. -->
 <UserControl x:Class="winbooth.Views.CollageView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -53,13 +54,13 @@
 	</UserControl.Resources>
 
 	<Grid>
-		<!-- 1) COLLAGE-BILD -->
+		<!-- 1) Collage image layer -->
 		<Image x:Name="ImgResult"
                Stretch="Uniform"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"/>
 
-		<!-- 2) FILTER-OVERLAY (nur so groß wie nötig!) -->
+		<!-- 2) Filter overlay sized only as necessary -->
 		<Border Background="#F0151515"
                 CornerRadius="16"
                 Padding="12"
@@ -99,7 +100,7 @@
 			</StackPanel>
 		</Border>
 
-		<!-- 3) AKTIONS-OVERLAY AM UNTEREN RAND -->
+		<!-- 3) Action overlay anchored to the bottom edge -->
 		<Border Background="#F0151515"
                 CornerRadius="24"
                 Padding="18,16"

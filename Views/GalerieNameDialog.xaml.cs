@@ -1,3 +1,5 @@
+// Simple text input dialog used to rename or create gallery folders.
+
 using System.Windows;
 
 namespace winbooth.Views

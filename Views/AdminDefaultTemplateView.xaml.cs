@@ -1,3 +1,5 @@
+// Handles admin configuration of default templates, slot assignments, and preview refresh.
+
 using System.Windows;
 using System.Windows.Controls;
 using winbooth.ViewModels;

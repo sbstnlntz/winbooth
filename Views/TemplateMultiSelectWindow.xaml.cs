@@ -1,3 +1,5 @@
+// Provides a modal UI for selecting multiple default templates at once.
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

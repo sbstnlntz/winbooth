@@ -1,3 +1,5 @@
+// StartViewModel logic for overlay media, instructional assets, and background rendering tasks.
+
 using System;
 using System.Globalization;
 using System.IO;
@@ -343,7 +345,7 @@ namespace winbooth.ViewModels
             }
             catch
             {
-                // Ignored: falls back to existing graphics without interrupting startup.
+                // Ignore failures and keep the previous graphics so startup is not interrupted.
             }
         }
 

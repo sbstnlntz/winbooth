@@ -1,3 +1,5 @@
+// Model describing a template slot including metadata, file paths, and preview info.
+
 using System.Windows.Media.Imaging;
 
 namespace winbooth.Models

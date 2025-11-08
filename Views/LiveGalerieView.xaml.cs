@@ -1,3 +1,5 @@
+// Displays live gallery images from disk and handles modal preview interactions.
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,7 +25,7 @@ namespace winbooth.Views
             _zipPath = zipPath;
             _galleryName = galleryName;
 
-            // KORREKTEN Galerie-Ordner benutzen!
+            // Use the gallery folder that is currently active in the admin view.
             string galerieDir = System.IO.Path.Combine(
                 System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyPictures), "Fotobox", _galleryName);
 
@@ -45,7 +47,7 @@ namespace winbooth.Views
             GalleryItems.ItemsSource = _images;
             System.Diagnostics.Debug.WriteLine("Images geladen und ItemsSource gesetzt: " + _images.Count); // Debug 2
 
-            // Der wichtige Trick:
+            // Critical trick: use AddHandler so touch and mouse events hit the same handlers.
             GalleryItems.AddHandler(UIElement.TouchUpEvent, new EventHandler<TouchEventArgs>(Image_TouchUp), true);
             GalleryItems.AddHandler(UIElement.MouseLeftButtonUpEvent, new MouseButtonEventHandler(Image_MouseLeftButtonUp), true);
             System.Diagnostics.Debug.WriteLine("AddHandler gesetzt!"); // Debug 3

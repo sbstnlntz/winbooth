@@ -1,3 +1,5 @@
+// Schedules, tracks, and cancels recurring background tasks tied to the UI dispatcher.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;

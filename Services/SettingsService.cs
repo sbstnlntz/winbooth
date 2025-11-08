@@ -1,3 +1,5 @@
+// Central settings persistence service supporting JSON storage and change notifications.
+
 using System;
 using System.Collections.Generic;
 using System.IO;

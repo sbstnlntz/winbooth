@@ -1,3 +1,5 @@
+// Value converter turning null references into collapsed visibility.
+
 using System;
 using System.Globalization;
 using System.Windows;

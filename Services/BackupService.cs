@@ -1,3 +1,5 @@
+// Handles gallery backups, find and restore operations, and housekeeping tasks.
+
 using System;
 using System.Collections.Generic;
 using System.IO;

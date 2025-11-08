@@ -1,3 +1,4 @@
+<!-- Admin dashboard layout with tabbed settings, overlays, and device information. -->
 <UserControl x:Class="winbooth.Views.AdminMenuView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -24,7 +25,7 @@
                 <ColumnDefinition Width="1.7*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Titel & Zurück (optisch wie UserMenuView) -->
+            <!-- Title row and back button styled to match the user menu -->
             <TextBlock Grid.Row="0" Grid.Column="0"
                        Text="ADMIN"
                        FontWeight="Bold"
@@ -38,14 +39,14 @@
                     VerticalAlignment="Top"
                     Click="Back_Click"/>
 
-            <!-- Hauptbereich zweispaltig -->
+            <!-- Main area arranged in two columns -->
             <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,18,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1.15*"/>
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Linke Spalte: Einstellungen -->
+                <!-- Left column with settings controls -->
                 <Grid Grid.Column="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
@@ -102,7 +103,7 @@
                     </ScrollViewer>
                 </Grid>
 
-                <!-- Rechte Spalte: Geräteinformationen & Statistik -->
+                <!-- Right column with device information and stats -->
                 <Grid Grid.Column="1" Margin="38,0,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -273,7 +274,7 @@
                 </Grid>
             </Grid>
 
-            <!-- Overlay: Neues Event (Galerie-Name abfragen) -->
+            <!-- Overlay for creating a new event and requesting the gallery name -->
             <Grid x:Name="NewEventOverlay" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2"
                   Background="#88000000" Visibility="Collapsed">
                 <Border Background="White" CornerRadius="10" Padding="24" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -321,7 +322,7 @@
                 </Border>
             </Grid>
 
-            <!-- Overlay: Backups anzeigen -->
+            <!-- Overlay displaying available backups -->
             <Grid x:Name="BackupsOverlay" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2"
                   Background="#88000000" Visibility="Collapsed">
                 <Border Background="White" CornerRadius="10" Padding="20" HorizontalAlignment="Center" VerticalAlignment="Center">

@@ -1,3 +1,5 @@
+// Hosts the design management interface used for importing and exporting template zip packages.
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

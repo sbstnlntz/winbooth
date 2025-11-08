@@ -1,3 +1,5 @@
+// Assembly level metadata and theme resource declarations for the WinBooth application.
+
 using System.Windows;
 
 [assembly:ThemeInfo(

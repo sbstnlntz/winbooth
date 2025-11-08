@@ -1,3 +1,5 @@
+// Lightweight logging helper that writes diagnostic messages and errors to disk.
+
 using System;
 using System.Collections.Concurrent;
 using System.IO;

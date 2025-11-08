@@ -1,3 +1,5 @@
+// Strongly typed representation of the template.json schema consumed by the loader.
+
 using System.Collections.Generic;
 
 namespace winbooth.Models
