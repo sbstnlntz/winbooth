@@ -10,3 +10,5 @@ dist/
 obj/
 build.log
 temp*
+!Models/TemplateImportResult.cs
+!Services/TemplateStorageService.cs

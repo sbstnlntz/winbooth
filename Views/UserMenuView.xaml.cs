@@ -122,7 +122,7 @@ namespace winbooth.Views
             UpdateTemplateButtons();
         }
 
-        private void UploadTemplate_Click(object sender, RoutedEventArgs e)
+        private async void UploadTemplate_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFileDialog
             {
@@ -151,14 +151,14 @@ namespace winbooth.Views
                 return;
             }
 
-            var result = _mainViewModel.ImportTemplatesFromFiles(dialog.FileNames);
+            var result = await _mainViewModel.ImportTemplatesFromFilesAsync(dialog.FileNames);
 
             AssignImportedTemplateToEmptySlot(result);
             UpdateTemplateButtons();
             ShowTemplateImportFeedback(result);
         }
 
-        private void AssignImportedTemplateToEmptySlot(StartViewModel.TemplateImportResult result)
+        private void AssignImportedTemplateToEmptySlot(TemplateImportResult result)
         {
             if (result == null || result.ImportedTemplates.Count == 0)
             {
@@ -203,7 +203,7 @@ namespace winbooth.Views
             }
         }
 
-        private static void ShowTemplateImportFeedback(StartViewModel.TemplateImportResult result)
+        private static void ShowTemplateImportFeedback(TemplateImportResult result)
         {
             if (result == null)
             {

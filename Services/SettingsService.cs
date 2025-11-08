@@ -3,11 +3,40 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace winbooth.Services
 {
     public static class SettingsService
     {
+        public sealed class SettingsSnapshot
+        {
+            public string GalleryName { get; init; }
+            public bool AllowTwoTemplates { get; init; }
+            public bool AllowDirektdruck { get; init; }
+            public bool AllowGalerie { get; init; }
+            public bool AllowFotoFilter { get; init; }
+            public int PostProcessDelaySeconds { get; init; }
+            public int StartReadyDelaySeconds { get; init; }
+            public int CollageCreationDelaySeconds { get; init; }
+            public IReadOnlyList<string> AllowedCameras { get; init; } = Array.Empty<string>();
+            public IReadOnlyList<string> AllowedPrinters { get; init; } = Array.Empty<string>();
+            public IReadOnlyList<string> AllowedTemplates { get; init; } = Array.Empty<string>();
+            public string DefaultTemplateName { get; init; }
+            public bool CameraRotate180 { get; init; }
+            public string UsbDrivePath { get; init; }
+            public string EventScopeGalleryName { get; init; }
+            public bool DirektdruckState { get; init; }
+            public bool GalerieButtonState { get; init; }
+            public bool FotoFilterState { get; init; }
+            public string SelectedTemplate1Name { get; init; }
+            public string SelectedTemplate2Name { get; init; }
+            public string ActiveTemplateName { get; init; }
+            public string SelectedCameraName { get; init; }
+            public string SelectedPrinterName { get; init; }
+        }
+
         private class SettingsModel
         {
             public string GalleryName { get; set; } = string.Empty;
@@ -15,9 +44,9 @@ namespace winbooth.Services
             public bool AllowDirektdruck { get; set; }
             public bool AllowGalerie { get; set; } = true;
             public bool AllowFotoFilter { get; set; }
-            public int PostProcessDelaySeconds { get; set; }
-            public int StartReadyDelaySeconds { get; set; }
-            public int CollageCreationDelaySeconds { get; set; }
+            public int PostProcessDelaySeconds { get; set; } = DefaultDelaySeconds;
+            public int StartReadyDelaySeconds { get; set; } = DefaultDelaySeconds;
+            public int CollageCreationDelaySeconds { get; set; } = DefaultDelaySeconds;
             public List<string> AllowedCameras { get; set; } = new();
             public List<string> AllowedPrinters { get; set; } = new();
             public List<string> AllowedTemplates { get; set; } = new();
@@ -40,40 +69,204 @@ namespace winbooth.Services
         private const int DefaultDelaySeconds = 3;
 
         private static readonly string LegacySettingsFolder =
-            Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyPictures), "Fotobox");
-
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "Fotobox");
         private static readonly string LegacySettingsPath = Path.Combine(LegacySettingsFolder, "settings.json");
 
         private static string SettingsFolder => AppStorage.EnsureDirectory("config");
-
         private static string SettingsPath => Path.Combine(SettingsFolder, "settings.json");
 
-        private static SettingsModel LoadModel()
+        private static readonly object ModelLock = new();
+        private static SettingsModel _model = LoadModelFromDisk();
+        private static SettingsModel _pendingSnapshot;
+        private static int _persistLoopActive;
+        private static readonly JsonSerializerOptions SerializerOptions = new()
+        {
+            WriteIndented = true
+        };
+
+        private static SettingsModel EnsureModel()
+        {
+            if (_model != null)
+                return _model;
+
+            lock (ModelLock)
+            {
+                _model ??= LoadModelFromDisk();
+                return _model;
+            }
+        }
+
+        private static SettingsModel LoadModelFromDisk()
         {
             try
             {
                 MigrateLegacySettingsIfNeeded();
-
                 if (File.Exists(SettingsPath))
                 {
                     var json = File.ReadAllText(SettingsPath);
                     var model = JsonSerializer.Deserialize<SettingsModel>(json);
-                    return model ?? new SettingsModel();
+                    return NormalizeModel(model ?? new SettingsModel());
                 }
             }
-            catch { }
-            return new SettingsModel();
+            catch
+            {
+                // fall back to defaults
+            }
+
+            return NormalizeModel(new SettingsModel());
         }
 
-        private static void SaveModel(SettingsModel model)
+        private static SettingsModel NormalizeModel(SettingsModel model)
+        {
+            model.PostProcessDelaySeconds = ClampDelay(model.PostProcessDelaySeconds);
+            model.StartReadyDelaySeconds = ClampDelay(model.StartReadyDelaySeconds);
+            model.CollageCreationDelaySeconds = ClampDelay(model.CollageCreationDelaySeconds);
+            model.AllowedCameras ??= new List<string>();
+            model.AllowedPrinters ??= new List<string>();
+            model.AllowedTemplates ??= new List<string>();
+            model.SelectedTemplate1Name ??= string.Empty;
+            model.SelectedTemplate2Name ??= string.Empty;
+            model.ActiveTemplateName ??= string.Empty;
+            model.SelectedCameraName ??= string.Empty;
+            model.SelectedPrinterName ??= string.Empty;
+            model.DefaultTemplateName ??= string.Empty;
+            model.UsbDrivePath ??= string.Empty;
+            model.GalleryName ??= string.Empty;
+            model.EventScopeGalleryName ??= string.Empty;
+            return model;
+        }
+
+        private static SettingsModel CloneModel(SettingsModel source)
+        {
+            return new SettingsModel
+            {
+                GalleryName = source.GalleryName,
+                AllowTwoTemplates = source.AllowTwoTemplates,
+                AllowDirektdruck = source.AllowDirektdruck,
+                AllowGalerie = source.AllowGalerie,
+                AllowFotoFilter = source.AllowFotoFilter,
+                PostProcessDelaySeconds = source.PostProcessDelaySeconds,
+                StartReadyDelaySeconds = source.StartReadyDelaySeconds,
+                CollageCreationDelaySeconds = source.CollageCreationDelaySeconds,
+                AllowedCameras = new List<string>(source.AllowedCameras),
+                AllowedPrinters = new List<string>(source.AllowedPrinters),
+                AllowedTemplates = new List<string>(source.AllowedTemplates),
+                DefaultTemplateName = source.DefaultTemplateName,
+                CameraRotate180 = source.CameraRotate180,
+                UsbDrivePath = source.UsbDrivePath,
+                EventScopeGalleryName = source.EventScopeGalleryName,
+                DirektdruckState = source.DirektdruckState,
+                GalerieButtonState = source.GalerieButtonState,
+                FotoFilterState = source.FotoFilterState,
+                SelectedTemplate1Name = source.SelectedTemplate1Name,
+                SelectedTemplate2Name = source.SelectedTemplate2Name,
+                ActiveTemplateName = source.ActiveTemplateName,
+                SelectedCameraName = source.SelectedCameraName,
+                SelectedPrinterName = source.SelectedPrinterName
+            };
+        }
+
+        private static void SchedulePersistLocked()
+        {
+            _pendingSnapshot = CloneModel(_model);
+            if (Interlocked.CompareExchange(ref _persistLoopActive, 1, 0) == 0)
+            {
+                _ = Task.Run(PersistLoopAsync);
+            }
+        }
+
+        private static async Task PersistLoopAsync()
+        {
+            while (true)
+            {
+                SettingsModel snapshot;
+                lock (ModelLock)
+                {
+                    snapshot = _pendingSnapshot;
+                    _pendingSnapshot = null;
+                }
+
+                if (snapshot == null)
+                    break;
+
+                await PersistModelAsync(snapshot).ConfigureAwait(false);
+            }
+
+            Interlocked.Exchange(ref _persistLoopActive, 0);
+
+            if (Volatile.Read(ref _pendingSnapshot) != null &&
+                Interlocked.CompareExchange(ref _persistLoopActive, 1, 0) == 0)
+            {
+                _ = Task.Run(PersistLoopAsync);
+            }
+        }
+
+        private static async Task PersistModelAsync(SettingsModel snapshot)
         {
             try
             {
                 Directory.CreateDirectory(SettingsFolder);
-                var json = JsonSerializer.Serialize(model, new JsonSerializerOptions { WriteIndented = true });
-                File.WriteAllText(SettingsPath, json);
+                var tempPath = Path.Combine(SettingsFolder, $"settings_{Guid.NewGuid():N}.tmp");
+
+                await using (var stream = new FileStream(
+                    tempPath,
+                    FileMode.Create,
+                    FileAccess.Write,
+                    FileShare.None,
+                    4096,
+                    FileOptions.WriteThrough | FileOptions.Asynchronous))
+                {
+                    await JsonSerializer.SerializeAsync(stream, snapshot, SerializerOptions).ConfigureAwait(false);
+                    await stream.FlushAsync().ConfigureAwait(false);
+                }
+
+                File.Move(tempPath, SettingsPath, overwrite: true);
             }
-            catch { }
+            catch
+            {
+                // persistence best effort
+            }
+        }
+
+        public static SettingsSnapshot CaptureSnapshot()
+        {
+            lock (ModelLock)
+            {
+                return CreateSnapshot(EnsureModel());
+            }
+        }
+
+        private static SettingsSnapshot CreateSnapshot(SettingsModel model)
+        {
+            if (model == null)
+                return new SettingsSnapshot();
+
+            return new SettingsSnapshot
+            {
+                GalleryName = model.GalleryName,
+                AllowTwoTemplates = model.AllowTwoTemplates,
+                AllowDirektdruck = model.AllowDirektdruck,
+                AllowGalerie = model.AllowGalerie,
+                AllowFotoFilter = model.AllowFotoFilter,
+                PostProcessDelaySeconds = model.PostProcessDelaySeconds,
+                StartReadyDelaySeconds = model.StartReadyDelaySeconds,
+                CollageCreationDelaySeconds = model.CollageCreationDelaySeconds,
+                AllowedCameras = (model.AllowedCameras ?? new List<string>()).ToArray(),
+                AllowedPrinters = (model.AllowedPrinters ?? new List<string>()).ToArray(),
+                AllowedTemplates = (model.AllowedTemplates ?? new List<string>()).ToArray(),
+                DefaultTemplateName = model.DefaultTemplateName,
+                CameraRotate180 = model.CameraRotate180,
+                UsbDrivePath = model.UsbDrivePath,
+                EventScopeGalleryName = model.EventScopeGalleryName,
+                DirektdruckState = model.DirektdruckState,
+                GalerieButtonState = model.GalerieButtonState,
+                FotoFilterState = model.FotoFilterState,
+                SelectedTemplate1Name = model.SelectedTemplate1Name,
+                SelectedTemplate2Name = model.SelectedTemplate2Name,
+                ActiveTemplateName = model.ActiveTemplateName,
+                SelectedCameraName = model.SelectedCameraName,
+                SelectedPrinterName = model.SelectedPrinterName
+            };
         }
 
         private static void MigrateLegacySettingsIfNeeded()
@@ -96,210 +289,358 @@ namespace winbooth.Services
             }
         }
 
-        public static string LoadGalleryName() => LoadModel().GalleryName ?? string.Empty;
+        public static string LoadGalleryName()
+        {
+            lock (ModelLock)
+            {
+                return EnsureModel().GalleryName;
+            }
+        }
 
-        public static bool LoadAllowTwoTemplates() => LoadModel().AllowTwoTemplates;
-        public static bool LoadAllowDirektdruck() => LoadModel().AllowDirektdruck;
-        public static bool LoadAllowGalerie() => LoadModel().AllowGalerie;
-        public static bool LoadAllowFotoFilter() => LoadModel().AllowFotoFilter;
-        public static int LoadPostProcessDelaySeconds() => LoadModel().PostProcessDelaySeconds;
+        public static bool LoadAllowTwoTemplates()
+        {
+            lock (ModelLock)
+            {
+                return EnsureModel().AllowTwoTemplates;
+            }
+        }
+
+        public static bool LoadAllowDirektdruck()
+        {
+            lock (ModelLock)
+            {
+                return EnsureModel().AllowDirektdruck;
+            }
+        }
+
+        public static bool LoadAllowGalerie()
+        {
+            lock (ModelLock)
+            {
+                return EnsureModel().AllowGalerie;
+            }
+        }
+
+        public static bool LoadAllowFotoFilter()
+        {
+            lock (ModelLock)
+            {
+                return EnsureModel().AllowFotoFilter;
+            }
+        }
+
+        public static int LoadPostProcessDelaySeconds()
+        {
+            lock (ModelLock)
+            {
+                return EnsureModel().PostProcessDelaySeconds;
+            }
+        }
+
         public static IReadOnlyList<string> LoadAllowedCameras()
         {
-            var list = LoadModel().AllowedCameras ?? new List<string>();
-            return list;
+            lock (ModelLock)
+            {
+                return EnsureModel().AllowedCameras.ToArray();
+            }
         }
 
         public static IReadOnlyList<string> LoadAllowedPrinters()
         {
-            var list = LoadModel().AllowedPrinters ?? new List<string>();
-            return list;
+            lock (ModelLock)
+            {
+                return EnsureModel().AllowedPrinters.ToArray();
+            }
         }
 
         public static IReadOnlyList<string> LoadAllowedTemplates()
         {
-            var list = LoadModel().AllowedTemplates ?? new List<string>();
-            return list;
+            lock (ModelLock)
+            {
+                return EnsureModel().AllowedTemplates.ToArray();
+            }
         }
 
-        public static int LoadStartReadyDelaySeconds() => LoadModel().StartReadyDelaySeconds;
-        public static int LoadCollageCreationDelaySeconds() => LoadModel().CollageCreationDelaySeconds;
+        public static int LoadStartReadyDelaySeconds()
+        {
+            lock (ModelLock)
+            {
+                return EnsureModel().StartReadyDelaySeconds;
+            }
+        }
 
-        public static string LoadDefaultTemplateName() => LoadModel().DefaultTemplateName ?? string.Empty;
+        public static int LoadCollageCreationDelaySeconds()
+        {
+            lock (ModelLock)
+            {
+                return EnsureModel().CollageCreationDelaySeconds;
+            }
+        }
 
-        public static string LoadUsbDrivePath() => LoadModel().UsbDrivePath ?? string.Empty;
+        public static string LoadDefaultTemplateName()
+        {
+            lock (ModelLock)
+            {
+                return EnsureModel().DefaultTemplateName;
+            }
+        }
 
-        public static bool LoadCameraRotate180() => LoadModel().CameraRotate180;
+        public static string LoadUsbDrivePath()
+        {
+            lock (ModelLock)
+            {
+                return EnsureModel().UsbDrivePath;
+            }
+        }
+
+        public static bool LoadCameraRotate180()
+        {
+            lock (ModelLock)
+            {
+                return EnsureModel().CameraRotate180;
+            }
+        }
 
         public static void SaveGalleryName(string name)
         {
-            var model = LoadModel();
-            model.GalleryName = name ?? string.Empty;
-            SaveModel(model);
+            lock (ModelLock)
+            {
+                EnsureModel().GalleryName = name ?? string.Empty;
+                SchedulePersistLocked();
+            }
         }
 
         public static void SaveAllowTwoTemplates(bool allowTwoTemplates)
         {
-            var model = LoadModel();
-            model.AllowTwoTemplates = allowTwoTemplates;
-            SaveModel(model);
+            lock (ModelLock)
+            {
+                EnsureModel().AllowTwoTemplates = allowTwoTemplates;
+                SchedulePersistLocked();
+            }
         }
 
         public static void SaveAllowDirektdruck(bool allowDirektdruck)
         {
-            var model = LoadModel();
-            model.AllowDirektdruck = allowDirektdruck;
-            SaveModel(model);
+            lock (ModelLock)
+            {
+                EnsureModel().AllowDirektdruck = allowDirektdruck;
+                SchedulePersistLocked();
+            }
         }
 
         public static void SaveAllowGalerie(bool allowGalerie)
         {
-            var model = LoadModel();
-            model.AllowGalerie = allowGalerie;
-            SaveModel(model);
+            lock (ModelLock)
+            {
+                EnsureModel().AllowGalerie = allowGalerie;
+                SchedulePersistLocked();
+            }
         }
 
         public static void SaveAllowFotoFilter(bool allowFotoFilter)
         {
-            var model = LoadModel();
-            model.AllowFotoFilter = allowFotoFilter;
-            SaveModel(model);
+            lock (ModelLock)
+            {
+                EnsureModel().AllowFotoFilter = allowFotoFilter;
+                SchedulePersistLocked();
+            }
         }
 
         public static void SavePostProcessDelaySeconds(int seconds)
         {
-            var model = LoadModel();
-            model.PostProcessDelaySeconds = ClampDelay(seconds);
-            SaveModel(model);
+            lock (ModelLock)
+            {
+                EnsureModel().PostProcessDelaySeconds = ClampDelay(seconds);
+                SchedulePersistLocked();
+            }
         }
 
         public static void SaveAllowedCameras(IEnumerable<string> cameras)
         {
-            var model = LoadModel();
-            model.AllowedCameras = cameras?.Where(c => !string.IsNullOrWhiteSpace(c)).Distinct().ToList() ?? new List<string>();
-            SaveModel(model);
+            lock (ModelLock)
+            {
+                EnsureModel().AllowedCameras = cameras?
+                    .Where(c => !string.IsNullOrWhiteSpace(c))
+                    .Distinct(StringComparer.Ordinal)
+                    .ToList() ?? new List<string>();
+                SchedulePersistLocked();
+            }
         }
 
         public static void SaveAllowedPrinters(IEnumerable<string> printers)
         {
-            var model = LoadModel();
-            model.AllowedPrinters = printers?.Where(p => !string.IsNullOrWhiteSpace(p)).Distinct().ToList() ?? new List<string>();
-            SaveModel(model);
+            lock (ModelLock)
+            {
+                EnsureModel().AllowedPrinters = printers?
+                    .Where(p => !string.IsNullOrWhiteSpace(p))
+                    .Distinct(StringComparer.Ordinal)
+                    .ToList() ?? new List<string>();
+                SchedulePersistLocked();
+            }
         }
 
         public static void SaveAllowedTemplates(IEnumerable<string> templates)
         {
-            var model = LoadModel();
-            model.AllowedTemplates = templates?.Where(t => !string.IsNullOrWhiteSpace(t)).Distinct().ToList() ?? new List<string>();
-            SaveModel(model);
+            lock (ModelLock)
+            {
+                EnsureModel().AllowedTemplates = templates?
+                    .Where(t => !string.IsNullOrWhiteSpace(t))
+                    .Distinct(StringComparer.Ordinal)
+                    .ToList() ?? new List<string>();
+                SchedulePersistLocked();
+            }
         }
 
         public static void SaveStartReadyDelaySeconds(int seconds)
         {
-            var model = LoadModel();
-            model.StartReadyDelaySeconds = ClampDelay(seconds);
-            SaveModel(model);
+            lock (ModelLock)
+            {
+                EnsureModel().StartReadyDelaySeconds = ClampDelay(seconds);
+                SchedulePersistLocked();
+            }
         }
 
         public static void SaveCollageCreationDelaySeconds(int seconds)
         {
-            var model = LoadModel();
-            model.CollageCreationDelaySeconds = ClampDelay(seconds);
-            SaveModel(model);
+            lock (ModelLock)
+            {
+                EnsureModel().CollageCreationDelaySeconds = ClampDelay(seconds);
+                SchedulePersistLocked();
+            }
         }
 
         public static void SaveDefaultTemplateName(string name)
         {
-            var model = LoadModel();
-            model.DefaultTemplateName = name ?? string.Empty;
-            SaveModel(model);
+            lock (ModelLock)
+            {
+                EnsureModel().DefaultTemplateName = name ?? string.Empty;
+                SchedulePersistLocked();
+            }
         }
 
         public static void SaveUsbDrivePath(string path)
         {
-            var model = LoadModel();
-            model.UsbDrivePath = path ?? string.Empty;
-            SaveModel(model);
+            lock (ModelLock)
+            {
+                EnsureModel().UsbDrivePath = path ?? string.Empty;
+                SchedulePersistLocked();
+            }
         }
 
         public static void SaveCameraRotate180(bool rotate180)
         {
-            var model = LoadModel();
-            model.CameraRotate180 = rotate180;
-            SaveModel(model);
+            lock (ModelLock)
+            {
+                EnsureModel().CameraRotate180 = rotate180;
+                SchedulePersistLocked();
+            }
         }
 
-        public static bool LoadDirektdruckState() => LoadModel().DirektdruckState;
+        public static bool LoadDirektdruckState()
+        {
+            lock (ModelLock)
+            {
+                return EnsureModel().DirektdruckState;
+            }
+        }
 
-        public static bool LoadGalerieButtonState() => LoadModel().GalerieButtonState;
+        public static bool LoadGalerieButtonState()
+        {
+            lock (ModelLock)
+            {
+                return EnsureModel().GalerieButtonState;
+            }
+        }
 
-        public static bool LoadFotoFilterState() => LoadModel().FotoFilterState;
+        public static bool LoadFotoFilterState()
+        {
+            lock (ModelLock)
+            {
+                return EnsureModel().FotoFilterState;
+            }
+        }
 
         public static void SaveDirektdruckState(bool value)
         {
-            var model = LoadModel();
-            model.DirektdruckState = value;
-            SaveModel(model);
+            lock (ModelLock)
+            {
+                EnsureModel().DirektdruckState = value;
+                SchedulePersistLocked();
+            }
         }
 
         public static void SaveGalerieButtonState(bool value)
         {
-            var model = LoadModel();
-            model.GalerieButtonState = value;
-            SaveModel(model);
+            lock (ModelLock)
+            {
+                EnsureModel().GalerieButtonState = value;
+                SchedulePersistLocked();
+            }
         }
 
         public static void SaveFotoFilterState(bool value)
         {
-            var model = LoadModel();
-            model.FotoFilterState = value;
-            SaveModel(model);
+            lock (ModelLock)
+            {
+                EnsureModel().FotoFilterState = value;
+                SchedulePersistLocked();
+            }
         }
 
         public static (string Template1, string Template2, string Active) LoadSelectedTemplateNames()
         {
-            var model = LoadModel();
-            return (
-                model.SelectedTemplate1Name ?? string.Empty,
-                model.SelectedTemplate2Name ?? string.Empty,
-                model.ActiveTemplateName ?? string.Empty);
+            lock (ModelLock)
+            {
+                var model = EnsureModel();
+                return (model.SelectedTemplate1Name, model.SelectedTemplate2Name, model.ActiveTemplateName);
+            }
         }
 
         public static void SaveSelectedTemplateNames(string template1, string template2, string active)
         {
-            var model = LoadModel();
-            model.SelectedTemplate1Name = template1 ?? string.Empty;
-            model.SelectedTemplate2Name = template2 ?? string.Empty;
-            model.ActiveTemplateName = active ?? string.Empty;
-            SaveModel(model);
+            lock (ModelLock)
+            {
+                var model = EnsureModel();
+                model.SelectedTemplate1Name = template1 ?? string.Empty;
+                model.SelectedTemplate2Name = template2 ?? string.Empty;
+                model.ActiveTemplateName = active ?? string.Empty;
+                SchedulePersistLocked();
+            }
         }
 
         public static void EnsureEventScopeForGallery(string galleryName)
         {
-            var model = LoadModel();
-            var current = model.EventScopeGalleryName ?? string.Empty;
-            var target = galleryName ?? string.Empty;
-
-            if (string.IsNullOrWhiteSpace(current))
+            lock (ModelLock)
             {
+                var model = EnsureModel();
+                var current = model.EventScopeGalleryName ?? string.Empty;
+                var target = galleryName ?? string.Empty;
+
+                if (string.IsNullOrWhiteSpace(current))
+                {
+                    model.EventScopeGalleryName = target;
+                    SchedulePersistLocked();
+                    return;
+                }
+
+                if (string.Equals(current, target, StringComparison.Ordinal))
+                    return;
+
+                ApplyEventDefaults(model);
                 model.EventScopeGalleryName = target;
-                SaveModel(model);
-                return;
+                SchedulePersistLocked();
             }
-
-            if (string.Equals(current, target, StringComparison.Ordinal))
-                return;
-
-            ApplyEventDefaults(model);
-            model.EventScopeGalleryName = target;
-            SaveModel(model);
         }
 
         public static void ResetEventScopedValues(string galleryName)
         {
-            var model = LoadModel();
-            ApplyEventDefaults(model);
-            model.EventScopeGalleryName = galleryName ?? string.Empty;
-            SaveModel(model);
+            lock (ModelLock)
+            {
+                var model = EnsureModel();
+                ApplyEventDefaults(model);
+                model.EventScopeGalleryName = galleryName ?? string.Empty;
+                SchedulePersistLocked();
+            }
         }
 
         private static void ApplyEventDefaults(SettingsModel model)
@@ -328,21 +669,38 @@ namespace winbooth.Services
             return seconds;
         }
 
-        public static string LoadSelectedCameraName() => LoadModel().SelectedCameraName ?? string.Empty;
-        public static string LoadSelectedPrinterName() => LoadModel().SelectedPrinterName ?? string.Empty;
+        public static string LoadSelectedCameraName()
+        {
+            lock (ModelLock)
+            {
+                return EnsureModel().SelectedCameraName;
+            }
+        }
+
+        public static string LoadSelectedPrinterName()
+        {
+            lock (ModelLock)
+            {
+                return EnsureModel().SelectedPrinterName;
+            }
+        }
 
         public static void SaveSelectedCameraName(string value)
         {
-            var model = LoadModel();
-            model.SelectedCameraName = value ?? string.Empty;
-            SaveModel(model);
+            lock (ModelLock)
+            {
+                EnsureModel().SelectedCameraName = value ?? string.Empty;
+                SchedulePersistLocked();
+            }
         }
 
         public static void SaveSelectedPrinterName(string value)
         {
-            var model = LoadModel();
-            model.SelectedPrinterName = value ?? string.Empty;
-            SaveModel(model);
+            lock (ModelLock)
+            {
+                EnsureModel().SelectedPrinterName = value ?? string.Empty;
+                SchedulePersistLocked();
+            }
         }
     }
 }

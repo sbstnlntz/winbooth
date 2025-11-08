@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 using winbooth.Services;
 
 namespace winbooth.Utilities
@@ -34,14 +36,25 @@ namespace winbooth.Utilities
             public int CollagesPrinted { get; set; }
         }
 
-        private static readonly object SyncRoot = new();
-
         private static readonly string StatsFolder = AppStorage.EnsureDirectory("metrics");
         private static readonly string StatsFilePath = Path.Combine(StatsFolder, "stats.json");
         private static readonly string LegacyUserFolder =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "Fotobox");
         private static readonly string LegacyStatsFilePath = Path.Combine(LegacyUserFolder, "stats.json");
         private static readonly string LegacyCounterPath = Path.Combine(LegacyUserFolder, "counter.txt");
+
+        private static readonly JsonSerializerOptions SerializerOptions = new()
+        {
+            WriteIndented = true
+        };
+
+        private static readonly object ModelLock = new();
+        private static StatsModel _modelCache = LoadModelFromDisk();
+        private static StatsModel _pendingSnapshot;
+        private static int _persistLoopActive;
+        private static int _consecutivePersistFailures;
+
+        public static int ConsecutivePersistFailures => Volatile.Read(ref _consecutivePersistFailures);
 
         public static void RecordSinglePhoto(string galleryName)
             => UpdateModel(model =>
@@ -69,9 +82,9 @@ namespace winbooth.Utilities
 
         public static StatsSnapshot GetStatsSnapshot(string galleryName)
         {
-            lock (SyncRoot)
+            lock (ModelLock)
             {
-                var model = LoadModel();
+                var model = EnsureModel();
                 var stats = TryGetEventStats(model, galleryName);
 
                 return new StatsSnapshot
@@ -88,24 +101,27 @@ namespace winbooth.Utilities
 
         public static void ResetStatistics()
         {
-            lock (SyncRoot)
+            lock (ModelLock)
             {
-                try
-                {
-                    if (File.Exists(StatsFilePath))
-                        File.Delete(StatsFilePath);
-                }
-                catch { }
-
-                try
-                {
-                    if (File.Exists(LegacyCounterPath))
-                        File.Delete(LegacyCounterPath);
-                    if (File.Exists(LegacyStatsFilePath))
-                        File.Delete(LegacyStatsFilePath);
-                }
-                catch { }
+                _modelCache = new StatsModel();
+                SchedulePersistLocked();
             }
+
+            try
+            {
+                if (File.Exists(StatsFilePath))
+                    File.Delete(StatsFilePath);
+            }
+            catch { }
+
+            try
+            {
+                if (File.Exists(LegacyCounterPath))
+                    File.Delete(LegacyCounterPath);
+                if (File.Exists(LegacyStatsFilePath))
+                    File.Delete(LegacyStatsFilePath);
+            }
+            catch { }
         }
 
         #region Legacy compatibility
@@ -121,15 +137,92 @@ namespace winbooth.Utilities
 
         private static void UpdateModel(Action<StatsModel> apply)
         {
-            lock (SyncRoot)
+            if (apply == null)
+                return;
+
+            lock (ModelLock)
             {
-                var model = LoadModel();
-                apply?.Invoke(model);
-                SaveModel(model);
+                var model = EnsureModel();
+                apply(model);
+                SchedulePersistLocked();
             }
         }
 
-        private static StatsModel LoadModel()
+        private static StatsModel EnsureModel()
+        {
+            if (_modelCache != null)
+                return _modelCache;
+
+            _modelCache = LoadModelFromDisk();
+            return _modelCache;
+        }
+
+        private static void SchedulePersistLocked()
+        {
+            _pendingSnapshot = CloneModel(_modelCache);
+            if (Interlocked.CompareExchange(ref _persistLoopActive, 1, 0) == 0)
+            {
+                _ = Task.Run(PersistLoopAsync);
+            }
+        }
+
+        private static async Task PersistLoopAsync()
+        {
+            while (true)
+            {
+                StatsModel snapshot;
+                lock (ModelLock)
+                {
+                    snapshot = _pendingSnapshot;
+                    _pendingSnapshot = null;
+                }
+
+                if (snapshot == null)
+                    break;
+
+                await PersistModelAsync(snapshot).ConfigureAwait(false);
+            }
+
+            Interlocked.Exchange(ref _persistLoopActive, 0);
+
+            if (Volatile.Read(ref _pendingSnapshot) != null &&
+                Interlocked.CompareExchange(ref _persistLoopActive, 1, 0) == 0)
+            {
+                _ = Task.Run(PersistLoopAsync);
+            }
+        }
+
+        private static async Task PersistModelAsync(StatsModel snapshot)
+        {
+            try
+            {
+                Directory.CreateDirectory(StatsFolder);
+                var tempPath = Path.Combine(StatsFolder, $"stats_{Guid.NewGuid():N}.tmp");
+
+                await using (var stream = new FileStream(
+                    tempPath,
+                    FileMode.Create,
+                    FileAccess.Write,
+                    FileShare.None,
+                    4096,
+                    FileOptions.WriteThrough | FileOptions.Asynchronous))
+                {
+                    await JsonSerializer.SerializeAsync(stream, snapshot, SerializerOptions).ConfigureAwait(false);
+                    await stream.FlushAsync().ConfigureAwait(false);
+                }
+
+                File.Move(tempPath, StatsFilePath, overwrite: true);
+                Interlocked.Exchange(ref _consecutivePersistFailures, 0);
+            }
+            catch (Exception ex)
+            {
+                Interlocked.Increment(ref _consecutivePersistFailures);
+                DiagnosticsLogger.LogError("Stats", "Speichern der Statistiken fehlgeschlagen", ex);
+                // stats persistence is best-effort
+            }
+        }
+
+        private static StatsModel LoadModelFromDisk()
         {
             try
             {
@@ -157,7 +250,6 @@ namespace winbooth.Utilities
             }
 
             var fallback = new StatsModel();
-            // Legacy migration: counter.txt stored number of collages created
             try
             {
                 if (File.Exists(LegacyCounterPath))
@@ -189,18 +281,28 @@ namespace winbooth.Utilities
             return model;
         }
 
-        private static void SaveModel(StatsModel model)
+        private static StatsModel CloneModel(StatsModel source)
         {
-            try
+            var clone = new StatsModel
             {
-                Directory.CreateDirectory(StatsFolder);
-                var json = JsonSerializer.Serialize(model, new JsonSerializerOptions { WriteIndented = true });
-                File.WriteAllText(StatsFilePath, json);
-            }
-            catch
+                SchemaVersion = source.SchemaVersion,
+                TotalSinglePhotos = source.TotalSinglePhotos,
+                TotalCollagesCreated = source.TotalCollagesCreated,
+                TotalCollagesPrinted = source.TotalCollagesPrinted,
+                Events = new Dictionary<string, EventStats>(source.Events.Count, StringComparer.OrdinalIgnoreCase)
+            };
+
+            foreach (var kvp in source.Events)
             {
-                // ignore persistence errors
+                clone.Events[kvp.Key] = new EventStats
+                {
+                    SinglePhotos = kvp.Value?.SinglePhotos ?? 0,
+                    CollagesCreated = kvp.Value?.CollagesCreated ?? 0,
+                    CollagesPrinted = kvp.Value?.CollagesPrinted ?? 0
+                };
             }
+
+            return clone;
         }
 
         private static string NormalizeGalleryName(string galleryName)

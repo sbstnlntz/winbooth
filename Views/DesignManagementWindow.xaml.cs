@@ -120,7 +120,7 @@ namespace winbooth.Views
             PersistAllowedTemplates();
         }
 
-        private void ImportDesign_Click(object sender, RoutedEventArgs e)
+        private async void ImportDesign_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new OpenFileDialog
             {
@@ -146,7 +146,7 @@ namespace winbooth.Views
             if (dialog.ShowDialog(this) != true)
                 return;
 
-            var result = _viewModel.ImportTemplatesFromFiles(dialog.FileNames);
+            var result = await _viewModel.ImportTemplatesFromFilesAsync(dialog.FileNames);
             SyncTemplateOptions();
             PersistAllowedTemplates();
             ShowTemplateImportResult(result);
@@ -176,7 +176,7 @@ namespace winbooth.Views
             }
         }
 
-        private static void ShowTemplateImportResult(StartViewModel.TemplateImportResult result)
+        private static void ShowTemplateImportResult(TemplateImportResult result)
         {
             if (result == null)
                 return;

@@ -1,39 +1,40 @@
 using System.Windows;
 using System.Windows.Controls;
 
-
 namespace winbooth.Views
 {
     public partial class PinPadDialog : Window
     {
-        public string EnteredPin { get; private set; } = "";
-        private int _failedAttempts = 0;
+        public string EnteredPin { get; private set; } = string.Empty;
 
         public PinPadDialog()
         {
             InitializeComponent();
-            PinBox.Password = "";
-            PinBox.IsEnabled = false; // Wir steuern Eingabe �ber das Keypad
+            PinBox.Password = string.Empty;
+            PinBox.IsEnabled = false; // Eingabe erfolgt ausschließlich über das Keypad
         }
 
         private void Number_Click(object sender, RoutedEventArgs e)
         {
-            if (EnteredPin.Length >= 4) return;
+            if (EnteredPin.Length >= 4)
+                return;
+
             if (sender is Button btn && btn.Content is string digit)
                 EnteredPin += digit;
-            PinBox.Password = EnteredPin;
-            ErrorText.Text = "";
-        }
 
+            PinBox.Password = EnteredPin;
+            ErrorText.Text = string.Empty;
+        }
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
             if (EnteredPin.Length > 0)
             {
-                EnteredPin = EnteredPin.Substring(0, EnteredPin.Length - 1);
+                EnteredPin = EnteredPin[..^1];
                 PinBox.Password = EnteredPin;
             }
-            ErrorText.Text = "";
+
+            ErrorText.Text = string.Empty;
         }
 
         private void Ok_Click(object sender, RoutedEventArgs e)
@@ -43,6 +44,7 @@ namespace winbooth.Views
                 ErrorText.Text = "Bitte 4 Ziffern eingeben!";
                 return;
             }
+
             DialogResult = true;
         }
     }

@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.IO.Compression;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -33,6 +34,11 @@ namespace winbooth.Views
         private Bitmap _overlayBitmap;
         private string _extractTarget;
         private string _sessionShotsDir;
+        private readonly CancellationTokenSource _cameraLifecycleCts = new();
+        private Task _cameraHeartbeatTask;
+        private DateTime _lastFrameUtc = DateTime.UtcNow;
+        private bool _restartInProgress;
+        private static readonly TimeSpan CameraFrameTimeout = TimeSpan.FromSeconds(10);
 
         private int _currentPhotoIndex = 0;
         private readonly List<Bitmap> _capturedPhotos = new();
@@ -40,6 +46,8 @@ namespace winbooth.Views
         private readonly Stopwatch _previewFrameLimiter = Stopwatch.StartNew();
         private const int PreviewFrameIntervalMs = 33; // ~30 FPS Ziel für UI-Thread
         private bool _sessionFinished = false;
+        private bool _previewPaused;
+        private bool _heartbeatSuspended;
 
         private ImageRegion _currentRegion;
 
@@ -58,6 +66,33 @@ namespace winbooth.Views
             }
         }
 
+        private void StartCameraHeartbeatMonitor()
+        {
+            _cameraHeartbeatTask = Task.Run(async () =>
+            {
+                while (!_cameraLifecycleCts.IsCancellationRequested)
+                {
+                    try
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(5), _cameraLifecycleCts.Token);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        break;
+                    }
+
+                    if (!_heartbeatSuspended && DateTime.UtcNow - _lastFrameUtc > CameraFrameTimeout)
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            HandleCameraFailure("Keine Kameraframes empfangen - Kamera wird neu gestartet.");
+                        });
+                        break;
+                    }
+                }
+            });
+        }
+
         public CameraView(string zipPath, string galleryName, StartViewModel viewModel, bool startImmediately = false)
         {
             InitializeComponent();
@@ -73,6 +108,8 @@ namespace winbooth.Views
 
             LoadTemplate(_zipPath);
             StartCamera();
+            StartCameraHeartbeatMonitor();
+            _vm.NotifyCameraSessionStarted();
             _ = StartCaptureSequence();
 
             // Ensure cleanup on unload
@@ -108,11 +145,66 @@ namespace winbooth.Views
 
         private void StartCamera()
         {
-            _capture?.Dispose();
-            _capture = new VideoCapture(0, VideoCapture.API.DShow);
-            _frame = new Mat();
-            _capture.ImageGrabbed += ProcessFrame;
-            _capture.Start();
+            try
+            {
+                if (_capture != null)
+                {
+                    _capture.ImageGrabbed -= ProcessFrame;
+                    _capture.Dispose();
+                }
+
+                _frame?.Dispose();
+
+                _capture = new VideoCapture(0, VideoCapture.API.DShow);
+                _frame = new Mat();
+                _capture.ImageGrabbed += ProcessFrame;
+                _capture.Start();
+                _previewPaused = false;
+                _vm.ReportCameraRecovery("Kamera bereit");
+            }
+            catch (Exception ex)
+            {
+                HandleCameraFailure($"Kamera konnte nicht gestartet werden: {ex.Message}");
+            }
+        }
+
+        private void PauseLivePreview()
+        {
+            if (_previewPaused || _capture == null)
+                return;
+
+            try
+            {
+                _capture.ImageGrabbed -= ProcessFrame;
+                _capture.Stop();
+            }
+            catch { }
+
+            _previewPaused = true;
+            _heartbeatSuspended = true;
+            _lastFrameUtc = DateTime.UtcNow;
+        }
+
+        private void ResumeLivePreview()
+        {
+            if (!_previewPaused || _capture == null || _sessionFinished)
+                return;
+
+            try
+            {
+                _capture.ImageGrabbed -= ProcessFrame;
+                _capture.ImageGrabbed += ProcessFrame;
+                _capture.Start();
+            }
+            catch
+            {
+                HandleCameraFailure("Kamera konnte nicht fortgesetzt werden.");
+                return;
+            }
+
+            _previewPaused = false;
+            _heartbeatSuspended = false;
+            _lastFrameUtc = DateTime.UtcNow;
         }
 
         private async Task StartCaptureSequence()
@@ -125,12 +217,23 @@ namespace winbooth.Views
                 await RunCountdownAsync();
 
                 if (_capture == null)
-                    throw new InvalidOperationException("Kamera nicht initialisiert.");
+                {
+                    HandleCameraFailure("Kamera nicht initialisiert.");
+                    return;
+                }
 
                 await ShowFlashEffectAsync();
 
-                _capture.Grab();
-                _capture.Retrieve(_frame);
+                try
+                {
+                    _capture.Grab();
+                    _capture.Retrieve(_frame);
+                }
+                catch (Exception ex)
+                {
+                    HandleCameraFailure($"Aufnahme fehlgeschlagen: {ex.Message}");
+                    return;
+                }
                 using var shotRaw = _frame.ToImage<Bgr, byte>().ToBitmap();
                 ApplyCameraRotation(shotRaw);
                 using var shot = (Bitmap)shotRaw.Clone();
@@ -177,11 +280,16 @@ namespace winbooth.Views
         {
             try
             {
-                _capture?.Stop();
-                _capture?.Dispose();
-                _capture = null;
+                if (_capture != null)
+                {
+                    _capture.ImageGrabbed -= ProcessFrame;
+                    _capture.Stop();
+                    _capture.Dispose();
+                    _capture = null;
+                }
             }
             catch { }
+            _previewPaused = false;
             try
             {
                 _frame?.Dispose();
@@ -203,6 +311,34 @@ namespace winbooth.Views
                 }
             }
             catch { }
+            try
+            {
+                if (!_cameraLifecycleCts.IsCancellationRequested)
+                {
+                    _cameraLifecycleCts.Cancel();
+                }
+            }
+            catch { }
+            _vm.NotifyCameraSessionEnded();
+        }
+
+        private void HandleCameraFailure(string message)
+        {
+            if (_restartInProgress)
+                return;
+
+            _restartInProgress = true;
+            CleanupResources();
+            _vm.ReportCameraFault(message);
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                MessageBox.Show(message, "Kamera", MessageBoxButton.OK, MessageBoxImage.Warning);
+                if (Window.GetWindow(this) is MainWindow window)
+                {
+                    window.MainFrame.Navigate(new CameraView(_zipPath, _galleryName, _vm, startImmediately: true));
+                }
+            });
         }
 
         private void InitRegionPreview()
@@ -230,9 +366,8 @@ namespace winbooth.Views
             _reviewDecisionSource = new TaskCompletionSource<bool>();
             _repeatLastPhoto = false;
 
-            // Kamera-Livebild pausieren
-            if (_capture != null)
-                _capture.ImageGrabbed -= ProcessFrame;
+            PauseLivePreview();
+            _vm?.NotifyCameraSessionEnded();
 
             // zuletzt geschossenes Bild holen
             var lastBitmap = _capturedPhotos[^1];
@@ -264,9 +399,8 @@ namespace winbooth.Views
                 ReviewOverlay.Visibility = Visibility.Collapsed;
             });
 
-            // Kamera-Callback wieder aktivieren
-            if (_capture != null)
-                _capture.ImageGrabbed += ProcessFrame;
+            ResumeLivePreview();
+            _vm?.NotifyCameraSessionStarted();
 
             _reviewDecisionSource?.SetResult(true);
         }
@@ -280,8 +414,8 @@ namespace winbooth.Views
                 ReviewOverlay.Visibility = Visibility.Collapsed;
             });
             // Kamera-Callback wieder aktivieren, damit Livebild für nächsten Slot läuft
-            if (_capture != null)
-                _capture.ImageGrabbed += ProcessFrame;
+            ResumeLivePreview();
+            _vm?.NotifyCameraSessionStarted();
 
             // Letztes akzeptiertes Foto in der Session speichern
             try
@@ -444,10 +578,24 @@ namespace winbooth.Views
 
         private void ProcessFrame(object sender, EventArgs e)
         {
-            if (_sessionFinished || _currentRegion == null)
+            if (_sessionFinished || _currentRegion == null || _capture == null || _frame == null)
                 return;
 
-            _capture.Retrieve(_frame);
+            try
+            {
+                _capture.Retrieve(_frame);
+            }
+            catch (Exception ex)
+            {
+                Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    HandleCameraFailure($"Livebild fehlgeschlagen: {ex.Message}");
+                }));
+                return;
+            }
+
+            _vm.ReportCameraHeartbeat();
+            _lastFrameUtc = DateTime.UtcNow;
 
             if (_previewFrameLimiter.ElapsedMilliseconds < PreviewFrameIntervalMs)
             {

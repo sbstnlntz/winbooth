@@ -53,6 +53,28 @@
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
 
+        <Border Grid.ColumnSpan="2"
+                Margin="0,-20,0,0"
+                Padding="12"
+                CornerRadius="12"
+                Background="#FFFFF4E5"
+                BorderBrush="#FFD97706"
+                BorderThickness="1.5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Top"
+                Panel.ZIndex="950"
+                Visibility="{Binding HasHardwareWarning, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center">
+                <TextBlock Text="Systemhinweis:"
+                           FontWeight="Bold"
+                           Foreground="#8A1C00"/>
+                <TextBlock Text="{Binding HardwareHealthMessage}"
+                           Margin="8,0,0,0"
+                           Foreground="#8A1C00"/>
+            </StackPanel>
+        </Border>
+
         <!-- Linke Seite -->
         <Grid Grid.Column="0"
               Margin="0,50,48,0">
