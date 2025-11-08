@@ -74,16 +74,23 @@
                         </Style.Triggers>
                     </Style>
                 </ScrollViewer.Resources>
-                <ItemsControl x:Name="GalleryItems">
+                <ItemsControl x:Name="GalleryItems"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Top">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid x:Name="GalleryUniformGrid" Columns="5"/>
+                            <WrapPanel x:Name="GalleryWrapPanel"
+                                       Orientation="Horizontal"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Top"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border Margin="8"
                                     Padding="6"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
                                     CornerRadius="14"
                                     Background="#33000000">
                                 <Viewbox Stretch="Uniform"
@@ -116,10 +123,6 @@
               VerticalAlignment="Stretch"
 
               Focusable="True"
-
-              IsManipulationEnabled="True"
-
-              ManipulationCompleted="ModalOverlay_ManipulationCompleted"
 
               Panel.ZIndex="1000">
 
@@ -179,7 +182,11 @@
 
                        MaxHeight="900"
 
-                       MaxWidth="1600"/>
+                       MaxWidth="1600"
+
+                       IsManipulationEnabled="True"
+
+                       ManipulationCompleted="ModalOverlay_ManipulationCompleted"/>
 
             </Border>
 

@@ -60,13 +60,13 @@
 
 		<!-- Review-Overlay -->
 		<Grid x:Name="ReviewOverlay"
-			  Background="#99000000"
+			  Background="Transparent"
 			  Visibility="Collapsed"
 			  HorizontalAlignment="Stretch"
 			  VerticalAlignment="Stretch"
 			  Panel.ZIndex="10">
 
-			<Border Background="#FF1C1C1C"
+			<Border Background="#F0151515"
 					CornerRadius="26"
 					Padding="28,20"
 					Margin="0,0,0,20"
