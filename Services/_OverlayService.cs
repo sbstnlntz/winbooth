@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 
-namespace FotoboxApp.Services {
+namespace winbooth.Services {
     public static class OverlayService {
         public static void ApplyTemplateWithImages(
             string templatePath,

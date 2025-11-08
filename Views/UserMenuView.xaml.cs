@@ -7,11 +7,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
-using FotoboxApp.Models;
-using FotoboxApp.ViewModels;
-using FotoboxApp.Services;
+using winbooth.Models;
+using winbooth.ViewModels;
+using winbooth.Services;
 
-namespace FotoboxApp.Views
+namespace winbooth.Views
 {
     public partial class UserMenuView : UserControl
     {

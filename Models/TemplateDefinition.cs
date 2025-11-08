@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace FotoboxApp.Models
+namespace winbooth.Models
 {
     public class TemplateDefinition
     {

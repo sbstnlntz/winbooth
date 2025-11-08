@@ -7,7 +7,7 @@ using System.Windows.Media.Imaging;
 using System.Windows;
 using System.Windows.Input;
 
-namespace FotoboxApp.Views
+namespace winbooth.Views
 {
     public partial class LiveGalerieView : UserControl
     {

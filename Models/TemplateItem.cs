@@ -1,6 +1,6 @@
 using System.Windows.Media.Imaging;
 
-namespace FotoboxApp.Models
+namespace winbooth.Models
 {
     public class TemplateItem
     {

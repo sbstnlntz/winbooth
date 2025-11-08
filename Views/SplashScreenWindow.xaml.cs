@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media.Animation;
 
-namespace FotoboxApp.Views;
+namespace winbooth.Views;
 
 public partial class SplashScreenWindow : Window
 {

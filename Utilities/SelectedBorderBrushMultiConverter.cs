@@ -3,9 +3,9 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
-using FotoboxApp.Models;
+using winbooth.Models;
 
-namespace FotoboxApp.Utilities
+namespace winbooth.Utilities
 {
     public class SelectedBorderBrushMultiConverter : IMultiValueConverter
     {

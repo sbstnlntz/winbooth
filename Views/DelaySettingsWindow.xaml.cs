@@ -1,8 +1,8 @@
 using System;
 using System.Windows;
-using FotoboxApp.ViewModels;
+using winbooth.ViewModels;
 
-namespace FotoboxApp.Views
+namespace winbooth.Views
 {
     public partial class DelaySettingsWindow : Window
     {

@@ -2,12 +2,12 @@ using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using FotoboxApp.ViewModels;
-using FotoboxApp.Utilities;
-using FotoboxApp.Models;
+using winbooth.ViewModels;
+using winbooth.Utilities;
+using winbooth.Models;
 
 
-namespace FotoboxApp.Views
+namespace winbooth.Views
 {
     public partial class StartView : UserControl
     {

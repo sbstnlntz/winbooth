@@ -2,9 +2,9 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
-using FotoboxApp.ViewModels;
+using winbooth.ViewModels;
 
-namespace FotoboxApp.Views
+namespace winbooth.Views
 {
     public partial class AdminGraphicsView : UserControl
     {

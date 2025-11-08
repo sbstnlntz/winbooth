@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
-using FotoboxApp.Services;
+using winbooth.Services;
 
-namespace FotoboxApp.Utilities
+namespace winbooth.Utilities
 {
     public static class StatManager
     {

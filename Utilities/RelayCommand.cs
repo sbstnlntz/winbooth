@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Input;
 
-namespace FotoboxApp.Utilities
+namespace winbooth.Utilities
 {
     public class RelayCommand : ICommand
     {

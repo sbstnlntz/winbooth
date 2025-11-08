@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace FotoboxApp.Services
+namespace winbooth.Services
 {
     internal static class AppStorage
     {

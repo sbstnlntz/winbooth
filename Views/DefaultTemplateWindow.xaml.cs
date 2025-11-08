@@ -9,10 +9,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using Microsoft.Win32;
-using FotoboxApp.Models;
-using FotoboxApp.ViewModels;
+using winbooth.Models;
+using winbooth.ViewModels;
 
-namespace FotoboxApp.Views
+namespace winbooth.Views
 {
     public partial class DefaultTemplateWindow : Window
     {

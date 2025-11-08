@@ -15,12 +15,12 @@ using System.Windows.Interop;
 using System.Windows.Threading;
 using Emgu.CV;
 using Emgu.CV.Structure;
-using FotoboxApp.Services;
-using FotoboxApp.ViewModels;
-using FotoboxApp.Models;
-using FotoboxApp.Utilities;
+using winbooth.Services;
+using winbooth.ViewModels;
+using winbooth.Models;
+using winbooth.Utilities;
 
-namespace FotoboxApp.Views
+namespace winbooth.Views
 {
     public partial class CameraView : UserControl
     {

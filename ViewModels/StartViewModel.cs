@@ -12,11 +12,11 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using FotoboxApp.Models;
-using FotoboxApp.Services;
-using FotoboxApp.Utilities;
+using winbooth.Models;
+using winbooth.Services;
+using winbooth.Utilities;
 
-namespace FotoboxApp.ViewModels
+namespace winbooth.ViewModels
 {
     public class StartViewModel : INotifyPropertyChanged
     {
@@ -53,9 +53,9 @@ namespace FotoboxApp.ViewModels
             "Fotobox");
         private static readonly string[] CustomGraphicExtensions = { ".png", ".jpg", ".jpeg" };
 
-        private static readonly Uri DefaultStartInstructionUri = new("pack://application:,,,/FotoboxApp;component/Assets/start_instructions.png", UriKind.Absolute);
-        private static readonly Uri DefaultWarningInfoUri = new("pack://application:,,,/FotoboxApp;component/Assets/warning_hint.png", UriKind.Absolute);
-        private static readonly BitmapImage DefaultTemplatePreviewImage = LoadBitmapImage(new Uri("pack://application:,,,/FotoboxApp;component/Assets/template_placeholder.png", UriKind.Absolute));
+        private static readonly Uri DefaultStartInstructionUri = new("pack://application:,,,/winbooth;component/Assets/start_instructions.png", UriKind.Absolute);
+        private static readonly Uri DefaultWarningInfoUri = new("pack://application:,,,/winbooth;component/Assets/warning_hint.png", UriKind.Absolute);
+        private static readonly BitmapImage DefaultTemplatePreviewImage = LoadBitmapImage(new Uri("pack://application:,,,/winbooth;component/Assets/template_placeholder.png", UriKind.Absolute));
         private const string CustomStartInstructionFilePrefix = "start_instruction_custom";
         private const string CustomWarningInfoFilePrefix = "warning_hint_custom";
         private const int GraphicsDefaultsVersion = 2025020601;
@@ -1002,7 +1002,7 @@ namespace FotoboxApp.ViewModels
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(CurrentGalleryDisplayName));
                     // persist on change
-                    try { FotoboxApp.Services.SettingsService.SaveGalleryName(_galleryName); } catch { }
+                    try { winbooth.Services.SettingsService.SaveGalleryName(_galleryName); } catch { }
                     RefreshStatistics();
                 }
             }

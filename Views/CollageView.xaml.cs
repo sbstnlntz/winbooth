@@ -13,13 +13,13 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using System.Windows.Threading;
-using FotoboxApp.Models;
-using FotoboxApp.Services;
-using FotoboxApp.ViewModels;
-using FotoboxApp.Utilities;
+using winbooth.Models;
+using winbooth.Services;
+using winbooth.ViewModels;
+using winbooth.Utilities;
 using DrawingPixelFormat = System.Drawing.Imaging.PixelFormat;
 
-namespace FotoboxApp.Views
+namespace winbooth.Views
 {
     public partial class CollageView : UserControl
     {

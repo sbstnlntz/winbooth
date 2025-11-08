@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
 using System.Windows;
-using FotoboxApp.Views;
+using winbooth.Views;
 
-namespace FotoboxApp;
+namespace winbooth;
 
 /// <summary>
 /// Interaction logic for App.xaml

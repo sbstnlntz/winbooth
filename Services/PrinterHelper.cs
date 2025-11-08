@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Drawing.Printing;
 
-namespace FotoboxApp.Services
+namespace winbooth.Services
 {
 	public static class PrinterHelper
 	{

@@ -1,7 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace FotoboxApp.Views
+namespace winbooth.Views
 {
     public partial class DialogHostWindow : Window
     {

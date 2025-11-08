@@ -3,10 +3,10 @@
 using System;
 using System.ComponentModel;
 using System.Windows;
-using FotoboxApp.ViewModels;
-using FotoboxApp.Views;
+using winbooth.ViewModels;
+using winbooth.Views;
 
-namespace FotoboxApp;
+namespace winbooth;
 
 public partial class MainWindow : Window
 {

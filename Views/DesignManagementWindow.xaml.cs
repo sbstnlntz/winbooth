@@ -8,10 +8,10 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
-using FotoboxApp.Models;
-using FotoboxApp.ViewModels;
+using winbooth.Models;
+using winbooth.ViewModels;
 
-namespace FotoboxApp.Views
+namespace winbooth.Views
 {
     public partial class DesignManagementWindow : Window
     {

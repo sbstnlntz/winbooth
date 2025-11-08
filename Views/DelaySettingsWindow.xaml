@@ -1,4 +1,4 @@
-<Window x:Class="FotoboxApp.Views.DelaySettingsWindow"
+<Window x:Class="winbooth.Views.DelaySettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Verzögerungen"

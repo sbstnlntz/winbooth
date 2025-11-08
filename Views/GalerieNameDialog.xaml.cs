@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace FotoboxApp.Views
+namespace winbooth.Views
 {
     public partial class GalerieNameDialog : Window
     {

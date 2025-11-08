@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Management;
 using Emgu.CV;
 
-namespace FotoboxApp.Services
+namespace winbooth.Services
 {
     public static class CameraHelper
     {

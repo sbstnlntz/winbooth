@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using FotoboxApp.Models;
+using winbooth.Models;
 
-namespace FotoboxApp.Views
+namespace winbooth.Views
 {
     public partial class TemplateSelectionWindow : Window
     {

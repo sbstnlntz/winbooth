@@ -1,8 +1,8 @@
 using System.Windows;
 using System.Windows.Controls;
-using FotoboxApp.ViewModels;
+using winbooth.ViewModels;
 
-namespace FotoboxApp.Views
+namespace winbooth.Views
 {
     public partial class AdminDefaultTemplateView : UserControl
     {

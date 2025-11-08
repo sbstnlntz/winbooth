@@ -5,12 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using FotoboxApp.Services;
-using FotoboxApp.ViewModels;
+using winbooth.Services;
+using winbooth.ViewModels;
 using Microsoft.Win32;
 using Forms = System.Windows.Forms;
 
-namespace FotoboxApp.Views
+namespace winbooth.Views
 {
     public partial class AdminMenuView : UserControl
     {

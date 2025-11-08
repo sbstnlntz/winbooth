@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using FotoboxApp.Models;
+using winbooth.Models;
 
-namespace FotoboxApp.Views
+namespace winbooth.Views
 {
     public partial class TemplateMultiSelectWindow : Window
     {

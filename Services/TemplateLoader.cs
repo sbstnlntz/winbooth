@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using FotoboxApp.Models;
+using winbooth.Models;
 
-namespace FotoboxApp.Services
+namespace winbooth.Services
 {
     public static class TemplateLoader
     {
