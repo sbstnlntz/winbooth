@@ -41,18 +41,9 @@
                            VerticalAlignment="Top"/>
 
                 <Button Grid.Row="0"
-                        Content="X"
-                        Width="66"
-                        Height="66"
-                        FontSize="34"
-                        FontWeight="Bold"
-                        Background="#D93030"
-                        Foreground="White"
-                        BorderBrush="#B02020"
-                        BorderThickness="2"
+                        Style="{StaticResource FB_DialogCloseButtonStyle}"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
-                        Cursor="Hand"
                         Click="Back_Click"/>
 
                 <Grid Grid.Row="1" Margin="0,32,0,0">

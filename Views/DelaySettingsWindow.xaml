@@ -6,7 +6,8 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterOwner"
         Background="White"
-        MinWidth="420">
+        MinWidth="420"
+        WindowStyle="None">
     <Window.Resources>
         <Style x:Key="DialogButtonStyle" TargetType="Button">
             <Setter Property="Padding" Value="14,6"/>
@@ -17,11 +18,25 @@
     </Window.Resources>
     <Grid Margin="24">
         <Grid.RowDefinitions>
-            <RowDefinition/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <StackPanel>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Verzögerungen"
+                       FontSize="26"
+                       FontWeight="Bold"
+                       VerticalAlignment="Center"/>
+            <Button Grid.Column="1"
+                    Style="{StaticResource FB_DialogCloseButtonStyle}"
+                    Click="Close_Click"/>
+        </Grid>
+
+        <StackPanel Grid.Row="1" Margin="0,20,0,0">
             <TextBlock Text="Start-Vorbereitungszeit"
                        FontWeight="Bold"
                        FontSize="20"/>
@@ -86,14 +101,6 @@
                        TextWrapping="Wrap"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="1"
-                    Orientation="Horizontal"
-                    HorizontalAlignment="Right"
-                    Margin="0,24,0,0">
-            <Button Content="Schließen"
-                    Style="{StaticResource DialogButtonStyle}"
-                    Click="Close_Click"/>
-        </StackPanel>
     </Grid>
 </Window>
 

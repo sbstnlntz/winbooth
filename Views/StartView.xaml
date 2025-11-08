@@ -12,7 +12,6 @@
             <Setter Property="Height" Value="260"/>
             <Setter Property="FontSize" Value="30"/>
             <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Template">
@@ -48,7 +47,7 @@
              StretchDirection="Both"
              VerticalAlignment="Top"
              HorizontalAlignment="Center">
-        <Grid Width="1280" Height="950" Margin="36,0,36,0" Background="#F3F3F3">
+        <Grid Width="1280" Height="950" Margin="36,0,36,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="1*"/>
@@ -122,7 +121,6 @@
                     Margin="0,0,0,24"
                     Background="Transparent"
                     BorderBrush="Transparent"
-                    Cursor="Hand"
                     Click="BtnAdmin_Click">
                 <Border Width="44"
                         Height="44"
@@ -146,26 +144,16 @@
                   Margin="0,0,0,12"
                   Width="440">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0"
-                           Text="Foto Design"
-                           FontSize="26"
-                           FontWeight="Bold"
-                           Foreground="#111"
-                           HorizontalAlignment="Right"
-                           Margin="0,0,0,24"/>
-
-                <StackPanel Grid.Row="1"
+                <StackPanel Grid.Row="0"
                             Orientation="Vertical"
                             HorizontalAlignment="Stretch">
                     <Button Height="240"
                             Margin="12,0,0,28"
                             Padding="0"
                             Background="Transparent"
-                            Cursor="Hand"
                             Click="SelectTemplate1_Click">
                         <Button.BorderThickness>
                             <MultiBinding Converter="{StaticResource SelectedBorderMultiConverter}">
@@ -220,7 +208,6 @@
                             Margin="12,0,0,0"
                             Padding="0"
                             Background="Transparent"
-                            Cursor="Hand"
                             Click="SelectTemplate2_Click">
                         <Button.Style>
                             <Style TargetType="Button">
@@ -398,15 +385,9 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <Button Content="X"
-                            Width="44"
-                            Height="44"
-                            FontSize="20"
-                            FontWeight="Bold"
-                            Background="Transparent"
-                            BorderBrush="Transparent"
-                            Foreground="#444"
+                    <Button Style="{StaticResource FB_DialogCloseButtonStyle}"
                             HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
                             Click="PinCancel_Click"/>
                     <StackPanel Grid.Row="1">
                         <TextBlock Text="Bitte Code eingeben"

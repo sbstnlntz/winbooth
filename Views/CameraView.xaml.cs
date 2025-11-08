@@ -6,10 +6,13 @@ using System.IO;
 using System.IO.Compression;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Interop;
+using System.Windows.Threading;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using FotoboxApp.Services;
@@ -34,6 +37,8 @@ namespace FotoboxApp.Views
         private int _currentPhotoIndex = 0;
         private readonly List<Bitmap> _capturedPhotos = new();
         private readonly List<System.Windows.Controls.Image> _previewOverlays = new();
+        private readonly Stopwatch _previewFrameLimiter = Stopwatch.StartNew();
+        private const int PreviewFrameIntervalMs = 33; // ~30 FPS Ziel für UI-Thread
         private bool _sessionFinished = false;
 
         private ImageRegion _currentRegion;
@@ -287,6 +292,7 @@ namespace FotoboxApp.Views
                     var filename = Path.Combine(_sessionShotsDir, $"shot_{index:00}.jpg");
                     using var toSave = new Bitmap(_capturedPhotos[^1]);
                     toSave.Save(filename, System.Drawing.Imaging.ImageFormat.Jpeg);
+                    _vm?.HandleGalleryFileSaved(filename);
                     StatManager.RecordSinglePhoto(_galleryName);
                     _vm?.RefreshStatistics();
                 }
@@ -442,18 +448,52 @@ namespace FotoboxApp.Views
                 return;
 
             _capture.Retrieve(_frame);
+
+            if (_previewFrameLimiter.ElapsedMilliseconds < PreviewFrameIntervalMs)
+            {
+                return;
+            }
+            _previewFrameLimiter.Restart();
+
             using var bmp = _frame.ToImage<Bgr, byte>().ToBitmap();
             ApplyCameraRotation(bmp);
             using var resized = new Bitmap(bmp, _currentRegion.Width, _currentRegion.Height);
             var img = ConvertToBitmapImage(resized);
 
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
                 RegionPreviewImage.Source = img;
-            });
+            }), DispatcherPriority.Render);
         }
 
-        private BitmapImage ConvertToBitmapImage(Bitmap bitmap)
+        private BitmapSource ConvertToBitmapImage(Bitmap bitmap)
+        {
+            IntPtr hBitmap = IntPtr.Zero;
+            try
+            {
+                hBitmap = bitmap.GetHbitmap();
+                var img = Imaging.CreateBitmapSourceFromHBitmap(
+                    hBitmap,
+                    IntPtr.Zero,
+                    Int32Rect.Empty,
+                    BitmapSizeOptions.FromEmptyOptions());
+                img.Freeze();
+                return img;
+            }
+            catch
+            {
+                return ConvertToBitmapImageFallback(bitmap);
+            }
+            finally
+            {
+                if (hBitmap != IntPtr.Zero)
+                {
+                    DeleteObject(hBitmap);
+                }
+            }
+        }
+
+        private static BitmapSource ConvertToBitmapImageFallback(Bitmap bitmap)
         {
             using var ms = new MemoryStream();
             bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
@@ -479,5 +519,9 @@ namespace FotoboxApp.Views
                 TemplateCanvas.Children.Remove(img);
             _previewOverlays.Clear();
         }
+
+        [DllImport("gdi32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool DeleteObject(IntPtr hObject);
     }
 }

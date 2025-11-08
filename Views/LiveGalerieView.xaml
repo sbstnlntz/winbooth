@@ -6,49 +6,97 @@
         <!-- Hauptebene: Galerie und Schließen-Button -->
         <DockPanel>
             <Button x:Name="CloseButton"
-                    Content="X"
+                    Style="{StaticResource FB_DialogCloseButtonStyle}"
                     DockPanel.Dock="Top"
-                    Width="70" Height="70"
-                    FontSize="34"
-                    FontWeight="Bold"
-                    Background="#D93030"
-                    Foreground="White"
-                    BorderBrush="#B02020"
-                    BorderThickness="2"
                     Margin="10"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top"
-                    Cursor="Hand"
                     Click="CloseButton_Click"/>
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled"
+                          PanningMode="VerticalOnly"
+                          Padding="12,0,16,0"
                           Background="{StaticResource FB_BackgroundBrush}">
                 <ScrollViewer.Resources>
+                    <Style x:Key="GalleryScrollBarRepeatButtonStyle" TargetType="RepeatButton">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="RepeatButton">
+                                    <Border Background="Transparent"/>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="IsTabStop" Value="False"/>
+                        <Setter Property="Focusable" Value="False"/>
+                    </Style>
                     <Style TargetType="ScrollBar">
-                        <Setter Property="Opacity" Value="0"/>
-                        <Setter Property="Width" Value="0"/>
+                        <Setter Property="Width" Value="12"/>
+                        <Setter Property="Margin" Value="12,8,4,8"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ScrollBar">
+                                    <Grid Background="Transparent">
+                                        <Border Background="#22000000" CornerRadius="6"/>
+                                        <Track x:Name="PART_Track"
+                                               Orientation="{TemplateBinding Orientation}"
+                                               Minimum="{TemplateBinding Minimum}"
+                                               Maximum="{TemplateBinding Maximum}"
+                                               Value="{TemplateBinding Value}"
+                                               ViewportSize="{TemplateBinding ViewportSize}">
+                                            <Track.DecreaseRepeatButton>
+                                                <RepeatButton Command="{x:Static ScrollBar.LineUpCommand}"
+                                                              Style="{StaticResource GalleryScrollBarRepeatButtonStyle}"/>
+                                            </Track.DecreaseRepeatButton>
+                                            <Track.IncreaseRepeatButton>
+                                                <RepeatButton Command="{x:Static ScrollBar.LineDownCommand}"
+                                                              Style="{StaticResource GalleryScrollBarRepeatButtonStyle}"/>
+                                            </Track.IncreaseRepeatButton>
+                                            <Track.Thumb>
+                                                <Thumb Background="#FF0B8FCE">
+                                                    <Thumb.Template>
+                                                        <ControlTemplate TargetType="Thumb">
+                                                            <Border Background="{TemplateBinding Background}"
+                                                                    CornerRadius="6"
+                                                                    Margin="0,4,0,4"/>
+                                                        </ControlTemplate>
+                                                    </Thumb.Template>
+                                                </Thumb>
+                                            </Track.Thumb>
+                                        </Track>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="Orientation" Value="Horizontal">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+                        </Style.Triggers>
                     </Style>
                 </ScrollViewer.Resources>
                 <ItemsControl x:Name="GalleryItems">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <WrapPanel Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=ScrollViewer}}" />
+                            <UniformGrid x:Name="GalleryUniformGrid" Columns="5"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border Margin="10"
-                                    Padding="8"
+                            <Border Margin="8"
+                                    Padding="6"
                                     CornerRadius="14"
                                     Background="#33000000">
-                                <Grid Width="220" Height="160" ClipToBounds="True">
-                                    <Border Background="#22000000" CornerRadius="10"/>
-                                    <Image Source="{Binding}"
-                                           Stretch="Uniform"
-                                           SnapsToDevicePixels="True"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Cursor="Hand"/>
-                                </Grid>
+                                <Viewbox Stretch="Uniform"
+                                         StretchDirection="DownOnly">
+                                    <Grid Width="220" Height="160" ClipToBounds="True">
+                                        <Border Background="#22000000" CornerRadius="10"/>
+                                        <Image Source="{Binding}"
+                                               Stretch="Uniform"
+                                               SnapsToDevicePixels="True"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Viewbox>
                             </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -70,8 +118,6 @@
               Focusable="True"
 
               IsManipulationEnabled="True"
-
-              PreviewKeyDown="ModalOverlay_PreviewKeyDown"
 
               ManipulationCompleted="ModalOverlay_ManipulationCompleted"
 
@@ -111,9 +157,7 @@
 
                     Margin="20"
 
-                    Click="PreviousButton_Click"
-
-                    Cursor="Hand"/>
+                    Click="PreviousButton_Click"/>
 
 
 
@@ -163,40 +207,16 @@
 
                     Margin="20"
 
-                    Click="NextButton_Click"
-
-                    Cursor="Hand"/>
+                    Click="NextButton_Click"/>
 
 
 
             <Button x:Name="ModalCloseButton"
-
                     Grid.ColumnSpan="3"
-
-                    Content="X"
-
-                    Width="80" Height="80"
-
-                    FontSize="32"
-
-                    FontWeight="Bold"
-
-                    Background="#D93030"
-
-                    Foreground="White"
-
-                    BorderBrush="#B02020"
-
-                    BorderThickness="2"
-
+                    Style="{StaticResource FB_DialogCloseButtonStyle}"
                     HorizontalAlignment="Right"
-
                     VerticalAlignment="Top"
-
                     Margin="32"
-
-                    Cursor="Hand"
-
                     Click="ModalClose_Click"/>
 
         </Grid>

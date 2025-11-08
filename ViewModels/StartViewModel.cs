@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using FotoboxApp.Models;
 using FotoboxApp.Services;
 using FotoboxApp.Utilities;
@@ -45,6 +46,7 @@ namespace FotoboxApp.ViewModels
         private readonly List<string> _allowedPrinterNames = new();
         private readonly List<string> _allowedTemplateNames = new();
         private readonly object _usbSyncLock = new();
+        private readonly DispatcherTimer _usbMonitorTimer;
 
         private static readonly string GraphicsAssetsFolder = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
@@ -750,6 +752,7 @@ namespace FotoboxApp.ViewModels
                 try { SettingsService.SaveUsbDrivePath(normalized); } catch { }
 
                 ScheduleUsbSync();
+                TriggerAutomaticUsbBackup();
             }
         }
 
@@ -1308,14 +1311,13 @@ namespace FotoboxApp.ViewModels
                 OnPropertyChanged(nameof(SelectedUsbDrivePath));
                 OnPropertyChanged(nameof(UsbDriveSummary));
             }
+            else if (drives.Count == 1 && string.IsNullOrEmpty(_selectedUsbDrivePath))
+            {
+                SelectedUsbDrivePath = drives[0];
+            }
             else
             {
                 OnPropertyChanged(nameof(UsbDriveSummary));
-            }
-
-            if (!string.IsNullOrEmpty(_selectedUsbDrivePath))
-            {
-                ScheduleUsbSync();
             }
         }
 
@@ -1332,7 +1334,7 @@ namespace FotoboxApp.ViewModels
             RefreshStatistics();
         }
 
-        public void HandleCollageSaved(string sourceFile)
+        public void HandleGalleryFileSaved(string sourceFile)
         {
             if (string.IsNullOrWhiteSpace(sourceFile) || string.IsNullOrEmpty(_selectedUsbDrivePath))
             {
@@ -1345,16 +1347,61 @@ namespace FotoboxApp.ViewModels
                 {
                     try
                     {
+                        var galleryDir = GetGalleryDirectory();
                         var targetDir = GetUsbGalleryDirectory();
-                        if (targetDir == null)
+                        if (targetDir == null || string.IsNullOrWhiteSpace(galleryDir))
                             return;
 
-                        Directory.CreateDirectory(targetDir);
-                        CopySingleCollageToUsbUnlocked(sourceFile, targetDir);
+                        CopyFileToUsbUnlocked(sourceFile, galleryDir, targetDir);
                     }
                     catch { }
                 }
             });
+        }
+
+        private void CopyFileToUsbUnlocked(string sourceFile, string galleryDir, string targetRoot)
+        {
+            if (string.IsNullOrWhiteSpace(sourceFile) ||
+                string.IsNullOrWhiteSpace(galleryDir) ||
+                string.IsNullOrWhiteSpace(targetRoot))
+            {
+                return;
+            }
+
+            if (!File.Exists(sourceFile))
+                return;
+
+            try
+            {
+                var relative = GetRelativePathWithinGallery(galleryDir, sourceFile);
+                var destination = Path.Combine(targetRoot, relative ?? Path.GetFileName(sourceFile));
+                var destinationDir = Path.GetDirectoryName(destination);
+                if (!string.IsNullOrEmpty(destinationDir))
+                    Directory.CreateDirectory(destinationDir);
+
+                File.Copy(sourceFile, destination, true);
+            }
+            catch { }
+        }
+
+        private static string GetRelativePathWithinGallery(string galleryDir, string filePath)
+        {
+            if (!string.IsNullOrWhiteSpace(galleryDir) && !string.IsNullOrWhiteSpace(filePath))
+            {
+                try
+                {
+                    var relative = Path.GetRelativePath(galleryDir, filePath);
+                    if (!string.IsNullOrEmpty(relative) &&
+                        !string.Equals(relative, ".", StringComparison.Ordinal) &&
+                        !relative.StartsWith("..", StringComparison.Ordinal))
+                    {
+                        return relative;
+                    }
+                }
+                catch { }
+            }
+
+            return Path.GetFileName(filePath) ?? Guid.NewGuid().ToString("N");
         }
 
         private bool _cameraRotate180;
@@ -1685,10 +1732,10 @@ namespace FotoboxApp.ViewModels
                 return;
             }
 
-            Task.Run(CopyExistingCollagesToUsb);
+            Task.Run(SyncGalleryToUsb);
         }
 
-        private void CopyExistingCollagesToUsb()
+        private void SyncGalleryToUsb()
         {
             lock (_usbSyncLock)
             {
@@ -1702,30 +1749,80 @@ namespace FotoboxApp.ViewModels
                     if (targetDir == null)
                         return;
 
-                    Directory.CreateDirectory(targetDir);
-
-                    foreach (var file in Directory.GetFiles(sourceDir, "*.jpg", SearchOption.TopDirectoryOnly))
-                    {
-                        CopySingleCollageToUsbUnlocked(file, targetDir);
-                    }
+                    MirrorDirectory(sourceDir, targetDir);
                 }
                 catch { }
             }
         }
 
-        private void CopySingleCollageToUsbUnlocked(string sourceFile, string targetDir)
+        private void MirrorDirectory(string sourceDir, string targetDir)
         {
-            if (string.IsNullOrWhiteSpace(sourceFile) || string.IsNullOrWhiteSpace(targetDir))
+            if (string.IsNullOrWhiteSpace(sourceDir) || string.IsNullOrWhiteSpace(targetDir))
                 return;
 
             try
             {
-                var fileName = Path.GetFileName(sourceFile);
-                if (string.IsNullOrEmpty(fileName))
-                    return;
+                Directory.CreateDirectory(targetDir);
+            }
+            catch { }
 
-                var destination = Path.Combine(targetDir, fileName);
-                File.Copy(sourceFile, destination, true);
+            try
+            {
+                foreach (var file in Directory.GetFiles(sourceDir))
+                {
+                    try
+                    {
+                        var destination = Path.Combine(targetDir, Path.GetFileName(file) ?? string.Empty);
+                        if (string.IsNullOrEmpty(destination))
+                            continue;
+                        File.Copy(file, destination, true);
+                    }
+                    catch { }
+                }
+
+                foreach (var dir in Directory.GetDirectories(sourceDir))
+                {
+                    var name = Path.GetFileName(dir);
+                    if (string.IsNullOrEmpty(name))
+                        continue;
+
+                    var childTarget = Path.Combine(targetDir, name);
+                    MirrorDirectory(dir, childTarget);
+                }
+            }
+            catch { }
+        }
+
+        private void TriggerAutomaticUsbBackup()
+        {
+            var gallery = _galleryName?.Trim();
+            var usbPath = _selectedUsbDrivePath;
+
+            if (string.IsNullOrWhiteSpace(gallery) || string.IsNullOrEmpty(usbPath))
+                return;
+
+            Task.Run(() =>
+            {
+                try
+                {
+                    var backupPath = BackupService.CreateBackup(gallery);
+                    CopyBackupToUsb(backupPath, usbPath);
+                }
+                catch { }
+            });
+        }
+
+        private static void CopyBackupToUsb(string backupPath, string usbRoot)
+        {
+            if (string.IsNullOrWhiteSpace(backupPath) || string.IsNullOrWhiteSpace(usbRoot))
+                return;
+
+            try
+            {
+                var targetDir = Path.Combine(usbRoot, "Fotobox", "Backups");
+                Directory.CreateDirectory(targetDir);
+                var destination = Path.Combine(targetDir, Path.GetFileName(backupPath) ?? "backup.zip");
+                File.Copy(backupPath, destination, true);
             }
             catch { }
         }
@@ -2095,6 +2192,13 @@ namespace FotoboxApp.ViewModels
                 AvailablePrinters.Add(drucker);
 
             RefreshUsbDrives();
+
+            _usbMonitorTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(5)
+            };
+            _usbMonitorTimer.Tick += (_, _) => RefreshUsbDrives();
+            _usbMonitorTimer.Start();
 
             NormalizeAllowedDevices(_allowedCameraNames, AvailableCameras);
             NormalizeAllowedDevices(_allowedPrinterNames, AvailablePrinters);

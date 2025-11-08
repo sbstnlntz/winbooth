@@ -131,7 +131,7 @@ public partial class SplashScreenWindow : Window
 
     private void SplashScreenWindow_OnLoaded(object sender, RoutedEventArgs e)
     {
-        AdjustWindowToWorkArea();
+        AdjustWindowToFullScreen();
         SystemParameters.StaticPropertyChanged += SystemParametersOnStaticPropertyChanged;
 
         var currentYear = DateTime.Now.Year;
@@ -152,21 +152,26 @@ public partial class SplashScreenWindow : Window
     {
         if (e.PropertyName is nameof(SystemParameters.WorkArea)
             or nameof(SystemParameters.FullPrimaryScreenHeight)
-            or nameof(SystemParameters.FullPrimaryScreenWidth))
+            or nameof(SystemParameters.FullPrimaryScreenWidth)
+            or nameof(SystemParameters.PrimaryScreenHeight)
+            or nameof(SystemParameters.PrimaryScreenWidth))
         {
-            AdjustWindowToWorkArea();
+            AdjustWindowToFullScreen();
         }
     }
 
-    private void AdjustWindowToWorkArea()
+    private void AdjustWindowToFullScreen()
     {
-        var workArea = SystemParameters.WorkArea;
+        var screenWidth = SystemParameters.PrimaryScreenWidth;
+        var screenHeight = SystemParameters.PrimaryScreenHeight;
 
-        MaxWidth = workArea.Width;
-        MaxHeight = workArea.Height;
-        Width = workArea.Width;
-        Height = workArea.Height;
-        Left = workArea.Left;
-        Top = workArea.Top;
+        WindowState = WindowState.Normal;
+
+        MaxWidth = screenWidth;
+        MaxHeight = screenHeight;
+        Width = screenWidth;
+        Height = screenHeight;
+        Left = 0;
+        Top = 0;
     }
 }

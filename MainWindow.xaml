@@ -6,8 +6,8 @@
         WindowStyle="None"
         WindowState="Normal"
         ResizeMode="NoResize"
-        MaxHeight="{x:Static sys:SystemParameters.MaximizedPrimaryScreenHeight}"
-        MaxWidth="{x:Static sys:SystemParameters.MaximizedPrimaryScreenWidth}">
+        MaxHeight="{x:Static sys:SystemParameters.FullPrimaryScreenHeight}"
+        MaxWidth="{x:Static sys:SystemParameters.FullPrimaryScreenWidth}">
 
 	<!-- 
          Wir definieren aus historischen Gründen zwei Spalten, 

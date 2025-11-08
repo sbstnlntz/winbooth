@@ -8,7 +8,7 @@
     <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
     <SolidColorBrush x:Key="TextBrush" Color="White"/>
 
-    <!-- Button‐Style -->
+    <!-- Button-Style -->
     <Style TargetType="Button">
         <Setter Property="FontSize" Value="18"/>
         <Setter Property="FontWeight" Value="Bold"/>
@@ -22,10 +22,10 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="Bd"
-                  Background="{TemplateBinding Background}"
-                  CornerRadius="8">
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="8">
                         <ContentPresenter HorizontalAlignment="Center"
-                              VerticalAlignment="Center"/>
+                                          VerticalAlignment="Center"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsPressed" Value="True">

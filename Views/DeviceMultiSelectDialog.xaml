@@ -60,7 +60,7 @@
                             Padding="16,14">
                         <CheckBox Content="{Binding Name}" IsChecked="{Binding IsSelected, Mode=TwoWay}" FontSize="20" VerticalAlignment="Center">
                         <CheckBox.Style>
-                            <Style TargetType="CheckBox">
+                            <Style TargetType="CheckBox" BasedOn="{StaticResource FB_CheckBoxBaseStyle}">
                                 <Setter Property="IsEnabled" Value="True"/>
                                 <Setter Property="Foreground" Value="Black"/>
                                 <Style.Triggers>

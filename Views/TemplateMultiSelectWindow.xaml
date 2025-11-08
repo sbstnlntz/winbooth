@@ -7,7 +7,8 @@
         Width="960"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
-        Background="#F5F5F5">
+        Background="#F5F5F5"
+        WindowStyle="None">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </Window.Resources>
@@ -20,11 +21,20 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Designs freigeben"
-                   FontSize="32"
-                   FontWeight="Bold"
-                   Foreground="#222"
-                   Margin="0,0,0,8"/>
+        <Grid Grid.Row="0" Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Designs freigeben"
+                       FontSize="32"
+                       FontWeight="Bold"
+                       Foreground="#222"
+                       VerticalAlignment="Center"/>
+            <Button Grid.Column="1"
+                    Style="{StaticResource FB_DialogCloseButtonStyle}"
+                    Click="Cancel_Click"/>
+        </Grid>
 
         <TextBlock Grid.Row="1"
                    Text="Wähle die Foto-Designs aus, die im User-Menü angezeigt werden sollen."
@@ -38,7 +48,7 @@
                       HorizontalScrollBarVisibility="Disabled"
                       Background="Transparent">
             <ScrollViewer.Style>
-                <Style TargetType="ScrollViewer">
+                <Style TargetType="ScrollViewer" BasedOn="{StaticResource {x:Type ScrollViewer}}">
                     <Setter Property="Visibility" Value="Visible"/>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding HasTemplates}" Value="False">
@@ -58,8 +68,7 @@
                         <ToggleButton IsChecked="{Binding IsSelected, Mode=TwoWay}"
                                       Margin="12"
                                       Background="Transparent"
-                                      BorderThickness="0"
-                                      Cursor="Hand">
+                                      BorderThickness="0">
                             <ToggleButton.Template>
                                 <ControlTemplate TargetType="ToggleButton">
                                     <Border x:Name="Card"
@@ -134,13 +143,6 @@
                     Orientation="Horizontal"
                     HorizontalAlignment="Right"
                     Margin="0,24,0,0">
-            <Button Content="Abbrechen"
-                    Width="160"
-                    Height="48"
-                    FontSize="18"
-                    Padding="18,6"
-                    Margin="0,0,16,0"
-                    Click="Cancel_Click"/>
             <Button Content="Auswahl übernehmen"
                     Width="220"
                     Height="48"

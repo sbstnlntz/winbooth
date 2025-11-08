@@ -68,55 +68,54 @@
 
 			<Border Background="#FF1C1C1C"
 					CornerRadius="26"
-					Padding="28,24"
-					Margin="0,0,0,100"
+					Padding="28,20"
+					Margin="0,0,0,20"
 					HorizontalAlignment="Center"
 					VerticalAlignment="Bottom">
+				<Border.Resources>
+					<Style x:Key="ReviewActionButtonStyle" TargetType="Button">
+						<Setter Property="Background" Value="#FF2A2A2A"/>
+						<Setter Property="Foreground" Value="White"/>
+						<Setter Property="BorderBrush" Value="Transparent"/>
+						<Setter Property="Padding" Value="16,12"/>
+						<Setter Property="Margin" Value="6"/>
+						<Setter Property="FontSize" Value="20"/>
+						<Setter Property="FontWeight" Value="SemiBold"/>
+						<Setter Property="Cursor" Value="Hand"/>
+						<Setter Property="Template">
+							<Setter.Value>
+								<ControlTemplate TargetType="Button">
+									<Border Background="{TemplateBinding Background}"
+											CornerRadius="18"
+											Padding="{TemplateBinding Padding}">
+										<ContentPresenter HorizontalAlignment="Center"
+														  VerticalAlignment="Center"/>
+									</Border>
+								</ControlTemplate>
+							</Setter.Value>
+						</Setter>
+					</Style>
+				</Border.Resources>
 				<Border.Effect>
 					<DropShadowEffect Color="#22000000"
 									  BlurRadius="40"
 									  ShadowDepth="0"
 									  Opacity="0.8"/>
 				</Border.Effect>
-				<UniformGrid Rows="1" Columns="2" HorizontalAlignment="Stretch" Margin="0">
-					<UniformGrid.Resources>
-						<Style x:Key="ReviewActionButtonStyle" TargetType="Button">
-							<Setter Property="Width" Value="320"/>
-							<Setter Property="Height" Value="110"/>
-							<Setter Property="Foreground" Value="White"/>
-							<Setter Property="FontSize" Value="22"/>
-							<Setter Property="FontWeight" Value="Bold"/>
-							<Setter Property="Padding" Value="24,12"/>
-							<Setter Property="Cursor" Value="Hand"/>
-							<Setter Property="Template">
-								<Setter.Value>
-									<ControlTemplate TargetType="Button">
-										<Border Background="{TemplateBinding Background}"
-												CornerRadius="20"
-												Padding="{TemplateBinding Padding}"
-												HorizontalAlignment="Stretch"
-												VerticalAlignment="Stretch">
-											<ContentPresenter HorizontalAlignment="Center"
-														VerticalAlignment="Center"/>
-										</Border>
-									</ControlTemplate>
-								</Setter.Value>
-							</Setter>
-						</Style>
-					</UniformGrid.Resources>
-					<Button Style="{StaticResource ReviewActionButtonStyle}" Click="RepeatPhoto_Click" Background="#FFAA1F1F" Margin="0,0,15,0">
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+					<Button Style="{StaticResource ReviewActionButtonStyle}" Click="RepeatPhoto_Click" Background="#FFAA1F1F">
 						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-							<TextBlock Text="🔁" FontSize="28" Margin="0,0,10,0"/>
+							<TextBlock Text="♻" FontSize="24" Margin="0,0,10,0"/>
 							<TextBlock Text="WIEDERHOLEN"/>
 						</StackPanel>
 					</Button>
-					<Button Style="{StaticResource ReviewActionButtonStyle}" Click="ContinuePhoto_Click" Background="#FF16B36B" Margin="15,0,0,0">
+					<Button Style="{StaticResource ReviewActionButtonStyle}" Click="ContinuePhoto_Click" Background="#FF16B36B">
 						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-							<TextBlock Text="✅" FontSize="28" Margin="0,0,10,0"/>
+							<TextBlock Text="✔" FontSize="24" Margin="0,0,10,0"/>
 							<TextBlock Text="WEITER"/>
 						</StackPanel>
 					</Button>
-				</UniformGrid>
+				</StackPanel>
 			</Border>
 		</Grid>
 

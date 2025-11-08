@@ -8,11 +8,14 @@ using System.Windows.Controls;
 using FotoboxApp.Services;
 using FotoboxApp.ViewModels;
 using Microsoft.Win32;
+using Forms = System.Windows.Forms;
 
 namespace FotoboxApp.Views
 {
     public partial class AdminMenuView : UserControl
     {
+        private const int MaxEventCodeLength = 12;
+
         public AdminMenuView()
         {
             InitializeComponent();
@@ -35,8 +38,42 @@ namespace FotoboxApp.Views
 
         private void NewEvent_Click(object sender, RoutedEventArgs e)
         {
-            NewGalleryNameBox.Text = (DataContext as StartViewModel)?.GalleryName ?? string.Empty;
+            NewGalleryNameBox.Text = string.Empty;
             NewEventOverlay.Visibility = Visibility.Visible;
+        }
+
+        private void NewEventDigit_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button { Tag: not null } button)
+                return;
+
+            var digit = button.Tag?.ToString();
+            if (string.IsNullOrWhiteSpace(digit) || digit.Any(c => !char.IsDigit(c)))
+                return;
+
+            var appended = (NewGalleryNameBox.Text ?? string.Empty) + digit;
+            NewGalleryNameBox.Text = NormalizeEventCode(appended);
+        }
+
+        private void NewEventBackspace_Click(object sender, RoutedEventArgs e)
+        {
+            var current = NewGalleryNameBox.Text ?? string.Empty;
+            if (current.Length == 0)
+                return;
+
+            NewGalleryNameBox.Text = current.Substring(0, current.Length - 1);
+        }
+
+        private string NormalizeEventCode(string rawValue)
+        {
+            if (string.IsNullOrEmpty(rawValue))
+                return string.Empty;
+
+            var digitsOnly = new string(rawValue.Where(char.IsDigit).ToArray());
+            if (digitsOnly.Length > MaxEventCodeLength)
+                return digitsOnly.Substring(0, MaxEventCodeLength);
+
+            return digitsOnly;
         }
 
         private void OpenArchive_Click(object sender, RoutedEventArgs e)
@@ -240,10 +277,12 @@ namespace FotoboxApp.Views
             }
 
             string oldName = vm.GalleryName ?? string.Empty;
-            string newName = (NewGalleryNameBox.Text ?? string.Empty).Trim();
+            string newName = NormalizeEventCode(NewGalleryNameBox.Text ?? string.Empty);
+            NewGalleryNameBox.Text = newName;
+
             if (string.IsNullOrWhiteSpace(newName))
             {
-                MessageBox.Show("Bitte einen gültigen Galerie-Namen eingeben.", "Hinweis",
+                MessageBox.Show("Bitte eine gültige Eventnummer eingeben.", "Hinweis",
                     MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
@@ -371,15 +410,33 @@ namespace FotoboxApp.Views
                 return;
             }
 
-            var targetDir = Path.Combine(
+            var defaultRoot = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
-                "Fotobox",
-                galleryName);
+                "Fotobox");
+
+            using var dialog = new Forms.FolderBrowserDialog
+            {
+                Description = $"Bitte den Speicherort für die Galerie \"{galleryName}\" auswählen.",
+                ShowNewFolderButton = true
+            };
+
+            if (Directory.Exists(defaultRoot))
+                dialog.SelectedPath = defaultRoot;
+
+            var dialogResult = dialog.ShowDialog();
+            if (dialogResult != Forms.DialogResult.OK || string.IsNullOrWhiteSpace(dialog.SelectedPath))
+                return;
+
+            var selectedPath = Path.GetFullPath(dialog.SelectedPath.Trim());
+            var selectedLeaf = new DirectoryInfo(selectedPath).Name;
+            var targetDir = string.Equals(selectedLeaf, galleryName, StringComparison.OrdinalIgnoreCase)
+                ? selectedPath
+                : Path.Combine(selectedPath, galleryName);
 
             if (Directory.Exists(targetDir) && Directory.EnumerateFileSystemEntries(targetDir).Any())
             {
                 var confirm = MessageBox.Show(
-                    "Der aktuelle Galerie-Ordner enthält bereits Dateien. Soll er überschrieben werden?",
+                    $"Der Zielordner \"{targetDir}\" enthält bereits Dateien. Soll er überschrieben werden?",
                     "Backup wiederherstellen",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Question);
@@ -389,7 +446,7 @@ namespace FotoboxApp.Views
 
             try
             {
-                BackupService.RestoreBackup(selected.FullName, galleryName);
+                BackupService.RestoreBackup(selected.FullName, targetDir);
                 MessageBox.Show("Backup wurde wiederhergestellt.", "Backup",
                     MessageBoxButton.OK, MessageBoxImage.Information);
             }

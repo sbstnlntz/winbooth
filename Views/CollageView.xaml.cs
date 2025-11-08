@@ -1,7 +1,7 @@
-using System.Windows.Media;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Drawing.Printing;
 using System.IO;
 using System.IO.Compression;
@@ -11,10 +11,13 @@ using System.Threading.Tasks; // for Task.Delay
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using System.Windows.Media;
+using System.Windows.Threading;
 using FotoboxApp.Models;
 using FotoboxApp.Services;
 using FotoboxApp.ViewModels;
 using FotoboxApp.Utilities;
+using DrawingPixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace FotoboxApp.Views
 {
@@ -26,6 +29,7 @@ namespace FotoboxApp.Views
         private TemplateDefinition _templateDef;
         private Bitmap _finalBitmap;
         private string _lastSavedPath;
+        private bool _isApplyingFilter;
 
         private readonly string _zipPath;
         private enum FilterMode
@@ -116,7 +120,7 @@ namespace FotoboxApp.Views
             var savedPath = SaveToGallery(_finalBitmap, forceNewFile: true);
             if (!string.IsNullOrEmpty(savedPath))
             {
-                _vm.HandleCollageSaved(savedPath);
+                _vm.HandleGalleryFileSaved(savedPath);
             }
             else
             {
@@ -247,7 +251,7 @@ namespace FotoboxApp.Views
                 return;
             }
 
-            _vm.HandleCollageSaved(savedPath);
+            _vm.HandleGalleryFileSaved(savedPath);
 
             try
             {
@@ -280,7 +284,7 @@ namespace FotoboxApp.Views
                 return;
             }
 
-            _vm.HandleCollageSaved(savedPath);
+            _vm.HandleGalleryFileSaved(savedPath);
 
             await ApplyPostProcessDelayAsync();
 
@@ -290,34 +294,63 @@ namespace FotoboxApp.Views
 
         // ---- FILTER-Buttons ----
 
-        private void FilterOriginal_Click(object sender, RoutedEventArgs e)
+        private async void FilterOriginal_Click(object sender, RoutedEventArgs e)
         {
-            ReplaceCurrentPhotos(_originalPhotos.Select(b => (Bitmap)b.Clone()).ToList());
-            UpdateFinalBitmap();
-            SetActiveFilter(FilterMode.Original);
-            ResaveCurrentCollageIfPossible();
+            await ApplyFilterAsync(FilterMode.Original, static bmp => bmp, "Original wird wiederhergestellt...");
         }
 
-        private void FilterSW_Click(object sender, RoutedEventArgs e)
+        private async void FilterSW_Click(object sender, RoutedEventArgs e)
         {
-            ReplaceCurrentPhotos(_originalPhotos.Select(b => MakeBlackWhite((Bitmap)b.Clone())).ToList());
-            UpdateFinalBitmap();
-            SetActiveFilter(FilterMode.BlackWhite);
-            ResaveCurrentCollageIfPossible();
+            await ApplyFilterAsync(FilterMode.BlackWhite, MakeBlackWhite, "Schwarz-Weiß-Filter wird angewendet...");
         }
 
-        private void FilterSepia_Click(object sender, RoutedEventArgs e)
+        private async void FilterSepia_Click(object sender, RoutedEventArgs e)
         {
-            ReplaceCurrentPhotos(_originalPhotos.Select(b => MakeSepia((Bitmap)b.Clone())).ToList());
-            UpdateFinalBitmap();
-            SetActiveFilter(FilterMode.Sepia);
-            ResaveCurrentCollageIfPossible();
+            await ApplyFilterAsync(FilterMode.Sepia, MakeSepia, "Sepia-Filter wird angewendet...");
         }
 
         private void ReplaceCurrentPhotos(List<Bitmap> newPhotos)
         {
             DisposeBitmapList(_currentPhotos);
             _currentPhotos = newPhotos ?? new List<Bitmap>();
+        }
+
+        private async Task ApplyFilterAsync(FilterMode mode, Func<Bitmap, Bitmap> transform, string statusMessage)
+        {
+            if (_isApplyingFilter)
+            {
+                return;
+            }
+
+            _isApplyingFilter = true;
+            ShowProcessingOverlay(string.IsNullOrWhiteSpace(statusMessage) ? "Filter wird angewendet..." : statusMessage);
+
+            try
+            {
+                var filteredPhotos = await Task.Run(() =>
+                    _originalPhotos
+                        .Select(original =>
+                        {
+                            var clone = (Bitmap)original.Clone();
+                            return transform(clone);
+                        })
+                        .ToList());
+
+                ReplaceCurrentPhotos(filteredPhotos);
+                await UpdateFinalBitmapAsync();
+                SetActiveFilter(mode);
+                ResaveCurrentCollageIfPossible();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Der Filter konnte nicht angewendet werden:\n{ex.Message}", "Filterfehler",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                HideProcessingOverlay();
+                _isApplyingFilter = false;
+            }
         }
 
         private void SetActiveFilter(FilterMode mode)
@@ -339,12 +372,20 @@ namespace FotoboxApp.Views
             });
         }
 
-        private void UpdateFinalBitmap()
+        private async Task UpdateFinalBitmapAsync()
         {
-            var newBitmap = ComposeFinalBitmap(_currentPhotos, _overlayBitmap, _templateDef);
-            _finalBitmap?.Dispose();
-            _finalBitmap = newBitmap;
-            ImgResult.Source = ConvertBitmapToBitmapImage(_finalBitmap);
+            if (_overlayBitmap == null || _templateDef == null)
+                return;
+
+            var newBitmap = await Task.Run(() => ComposeFinalBitmap(_currentPhotos, _overlayBitmap, _templateDef));
+            var imageSource = ConvertBitmapToBitmapImage(newBitmap);
+
+            await Dispatcher.InvokeAsync(() =>
+            {
+                _finalBitmap?.Dispose();
+                _finalBitmap = newBitmap;
+                ImgResult.Source = imageSource;
+            }, DispatcherPriority.Render);
         }
 
         private void ResaveCurrentCollageIfPossible()
@@ -398,33 +439,84 @@ namespace FotoboxApp.Views
             return bmp;
         }
 
-        private Bitmap MakeBlackWhite(Bitmap bmp)
+        private static Bitmap MakeBlackWhite(Bitmap bmp)
         {
-            for (int y = 0; y < bmp.Height; y++)
-                for (int x = 0; x < bmp.Width; x++)
-                {
-                    var c = bmp.GetPixel(x, y);
-                    int l = (int)(c.R * .299 + c.G * .587 + c.B * .114);
-                    bmp.SetPixel(x, y, System.Drawing.Color.FromArgb(l, l, l));
-                }
-            return bmp;
+            return ApplyPixelTransform(bmp, static (r, g, b) =>
+            {
+                var luminance = (byte)Math.Clamp((int)(r * 0.299 + g * 0.587 + b * 0.114), 0, 255);
+                return (luminance, luminance, luminance);
+            });
         }
 
-        private Bitmap MakeSepia(Bitmap bmp)
+        private static Bitmap MakeSepia(Bitmap bmp)
         {
-            for (int y = 0; y < bmp.Height; y++)
-                for (int x = 0; x < bmp.Width; x++)
+            return ApplyPixelTransform(bmp, static (r, g, b) =>
+            {
+                int tr = (int)(0.393 * r + 0.769 * g + 0.189 * b);
+                int tg = (int)(0.349 * r + 0.686 * g + 0.168 * b);
+                int tb = (int)(0.272 * r + 0.534 * g + 0.131 * b);
+
+                byte nr = (byte)Math.Clamp(tr, 0, 255);
+                byte ng = (byte)Math.Clamp(tg, 0, 255);
+                byte nb = (byte)Math.Clamp(tb, 0, 255);
+                return (nr, ng, nb);
+            });
+        }
+
+        private unsafe static Bitmap ApplyPixelTransform(Bitmap bitmap, Func<byte, byte, byte, (byte r, byte g, byte b)> transform)
+        {
+            bitmap = EnsureEditableFormat(bitmap);
+            var rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
+            var data = bitmap.LockBits(rect, ImageLockMode.ReadWrite, bitmap.PixelFormat);
+
+            try
+            {
+                int height = data.Height;
+                int width = data.Width;
+                int stride = data.Stride;
+                int pixelSize = System.Drawing.Image.GetPixelFormatSize(bitmap.PixelFormat) / 8;
+
+                byte* scan0 = (byte*)data.Scan0;
+                Parallel.For(0, height, y =>
                 {
-                    var c = bmp.GetPixel(x, y);
-                    int tr = (int)(.393 * c.R + .769 * c.G + .189 * c.B);
-                    int tg = (int)(.349 * c.R + .686 * c.G + .168 * c.B);
-                    int tb = (int)(.272 * c.R + .534 * c.G + .131 * c.B);
-                    bmp.SetPixel(x, y, System.Drawing.Color.FromArgb(
-                        Math.Min(tr, 255),
-                        Math.Min(tg, 255),
-                        Math.Min(tb, 255)));
-                }
-            return bmp;
+                    byte* row = scan0 + y * stride;
+                    for (int x = 0; x < width; x++)
+                    {
+                        byte* pixel = row + x * pixelSize;
+                        var (r, g, b) = transform(pixel[2], pixel[1], pixel[0]);
+                        pixel[2] = r;
+                        pixel[1] = g;
+                        pixel[0] = b;
+                    }
+                });
+            }
+            finally
+            {
+                bitmap.UnlockBits(data);
+            }
+
+            return bitmap;
+        }
+
+        private static Bitmap EnsureEditableFormat(Bitmap bitmap)
+        {
+            var format = bitmap.PixelFormat;
+            if (format == DrawingPixelFormat.Format24bppRgb
+                || format == DrawingPixelFormat.Format32bppArgb
+                || format == DrawingPixelFormat.Format32bppPArgb
+                || format == DrawingPixelFormat.Format32bppRgb)
+            {
+                return bitmap;
+            }
+
+            var converted = new Bitmap(bitmap.Width, bitmap.Height, DrawingPixelFormat.Format32bppArgb);
+            using (var g = Graphics.FromImage(converted))
+            {
+                g.DrawImage(bitmap, 0, 0, bitmap.Width, bitmap.Height);
+            }
+
+            bitmap.Dispose();
+            return converted;
         }
 
         private string SaveToGallery(Bitmap bmp, bool forceNewFile = false)

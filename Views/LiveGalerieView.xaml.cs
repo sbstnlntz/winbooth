@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Windows;
@@ -30,9 +31,14 @@ namespace FotoboxApp.Views
 
             if (Directory.Exists(galerieDir))
             {
-                foreach (var file in Directory.GetFiles(galerieDir, "*.jpg"))
+                var files = new DirectoryInfo(galerieDir)
+                    .GetFiles("*.jpg", SearchOption.TopDirectoryOnly)
+                    .OrderBy(f => f.CreationTimeUtc)
+                    .ThenBy(f => f.FullName, StringComparer.OrdinalIgnoreCase);
+
+                foreach (var file in files)
                 {
-                    _images.Add(LoadBitmapImage(file));
+                    _images.Add(LoadBitmapImage(file.FullName));
                 }
             }
 
@@ -40,7 +46,8 @@ namespace FotoboxApp.Views
             System.Diagnostics.Debug.WriteLine("Images geladen und ItemsSource gesetzt: " + _images.Count); // Debug 2
 
             // Der wichtige Trick:
-            GalleryItems.AddHandler(Image.PreviewMouseLeftButtonUpEvent, new MouseButtonEventHandler(Image_MouseLeftButtonUp), true);
+            GalleryItems.AddHandler(UIElement.TouchUpEvent, new EventHandler<TouchEventArgs>(Image_TouchUp), true);
+            GalleryItems.AddHandler(UIElement.MouseLeftButtonUpEvent, new MouseButtonEventHandler(Image_MouseLeftButtonUp), true);
             System.Diagnostics.Debug.WriteLine("AddHandler gesetzt!"); // Debug 3
 
             UpdateNavigationButtons();
@@ -70,21 +77,41 @@ namespace FotoboxApp.Views
             return img;
         }
 
-        private void Image_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private bool TryOpenImageFromSource(object source)
         {
-            System.Diagnostics.Debug.WriteLine("Klick auf Bild erkannt!"); // Debug 5
-            if (e.OriginalSource is Image img && img.Source is BitmapImage bitmap)
+            if (source is FrameworkElement element && element.DataContext is BitmapImage bitmap)
             {
-                System.Diagnostics.Debug.WriteLine("ModalOverlay sichtbar gemacht!"); // Debug 6
                 int index = _images.IndexOf(bitmap);
                 if (index >= 0)
                 {
                     ShowImageAt(index);
+                    return true;
                 }
+            }
+
+            return false;
+        }
+
+        private void Image_TouchUp(object sender, TouchEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("Touch auf Bild erkannt!"); // Debug 5
+            if (TryOpenImageFromSource(e.OriginalSource))
+            {
+                System.Diagnostics.Debug.WriteLine("ModalOverlay sichtbar gemacht!"); // Debug 6
+                e.Handled = true;
             }
             else
             {
                 System.Diagnostics.Debug.WriteLine("e.OriginalSource ist KEIN Image! Typ: " + e.OriginalSource.GetType().Name); // Debug 7
+            }
+        }
+
+        private void Image_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (TryOpenImageFromSource(e.OriginalSource))
+            {
+                System.Diagnostics.Debug.WriteLine("ModalOverlay per Maus geöffnet."); // Debug
+                e.Handled = true;
             }
         }
 
@@ -107,8 +134,6 @@ namespace FotoboxApp.Views
             _currentIndex = index;
             ModalImage.Source = _images[index];
             ModalOverlay.Visibility = Visibility.Visible;
-            ModalOverlay.Focus();
-            Keyboard.Focus(ModalOverlay);
             UpdateNavigationButtons();
         }
 
@@ -149,32 +174,6 @@ namespace FotoboxApp.Views
         private void PreviousButton_Click(object sender, RoutedEventArgs e) => NavigateBy(-1);
 
         private void NextButton_Click(object sender, RoutedEventArgs e) => NavigateBy(1);
-
-        private void ModalOverlay_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            if (ModalOverlay.Visibility != Visibility.Visible)
-            {
-                return;
-            }
-
-            switch (e.Key)
-            {
-                case Key.Left:
-                case Key.A:
-                    NavigateBy(-1);
-                    e.Handled = true;
-                    break;
-                case Key.Right:
-                case Key.D:
-                    NavigateBy(1);
-                    e.Handled = true;
-                    break;
-                case Key.Escape:
-                    ModalClose_Click(sender, e);
-                    e.Handled = true;
-                    break;
-            }
-        }
 
         private void ModalOverlay_ManipulationCompleted(object sender, ManipulationCompletedEventArgs e)
         {

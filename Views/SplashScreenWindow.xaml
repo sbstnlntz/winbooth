@@ -11,13 +11,12 @@
         SizeToContent="Manual"
         WindowStartupLocation="CenterScreen"
         Title="Fotobox startet"
-        MaxHeight="{x:Static sys:SystemParameters.MaximizedPrimaryScreenHeight}"
-        MaxWidth="{x:Static sys:SystemParameters.MaximizedPrimaryScreenWidth}">
+        MaxHeight="{x:Static sys:SystemParameters.FullPrimaryScreenHeight}"
+        MaxWidth="{x:Static sys:SystemParameters.FullPrimaryScreenWidth}">
     <Grid Background="{DynamicResource FB_WhiteBrush}">
         <Viewbox Stretch="Uniform" StretchDirection="Both">
             <Grid Width="960" Height="600">
-                <Border Background="{DynamicResource FB_OverlayBrush}"
-                        Opacity="0.12"/>
+                <Border Background="Transparent"/>
                 <Grid Margin="60"
                       Panel.ZIndex="1">
                     <Grid.RowDefinitions>

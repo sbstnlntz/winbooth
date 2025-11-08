@@ -76,20 +76,19 @@ namespace FotoboxApp.Services
             File.Delete(backupFilePath);
         }
 
-        public static void RestoreBackup(string backupFilePath, string targetGalleryName)
+        public static void RestoreBackup(string backupFilePath, string targetDirectory)
         {
             if (string.IsNullOrWhiteSpace(backupFilePath))
                 throw new ArgumentException("Backup-Pfad ist leer", nameof(backupFilePath));
             if (!File.Exists(backupFilePath))
                 throw new FileNotFoundException("Backup-Datei nicht gefunden", backupFilePath);
-            if (string.IsNullOrWhiteSpace(targetGalleryName))
-                throw new ArgumentException("Galerie-Name ist leer", nameof(targetGalleryName));
+            if (string.IsNullOrWhiteSpace(targetDirectory))
+                throw new ArgumentException("Zielordner ist leer", nameof(targetDirectory));
 
-            var targetDir = Path.Combine(PicturesRoot, targetGalleryName);
+            var targetDir = Path.GetFullPath(targetDirectory);
 
             if (Directory.Exists(targetDir))
-                Directory.Delete(targetDir, true);
-
+                DeleteDirectorySafe(targetDir);
             Directory.CreateDirectory(targetDir);
             ZipFile.ExtractToDirectory(backupFilePath, targetDir, overwriteFiles: true);
         }

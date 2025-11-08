@@ -66,15 +66,10 @@
 
         <!-- Schließen-Knopf oben rechts -->
         <Button Grid.Row="0" Grid.Column="2"
-                Content="✕"
-                Width="48" Height="48"
-                FontSize="28"
-                Style="{StaticResource FB_ElegantButton}"
-                Background="{StaticResource FB_WhiteBrush}"
-                Foreground="{StaticResource FB_AccentBrush}"
-                BorderBrush="{StaticResource FB_AccentBrush}"
-                BorderThickness="2"
+                Style="{StaticResource FB_DialogCloseButtonStyle}"
                 Margin="24"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
                 Click="Close_Click"/>
     </Grid>
 </Window>

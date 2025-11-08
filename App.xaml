@@ -119,6 +119,89 @@
 				</Setter>
 			</Style>
 
+			<Style x:Key="FB_DialogCloseButtonStyle" TargetType="Button">
+				<Setter Property="Width" Value="60"/>
+				<Setter Property="Height" Value="60"/>
+				<Setter Property="FontSize" Value="26"/>
+				<Setter Property="FontWeight" Value="Bold"/>
+				<Setter Property="Content" Value="X"/>
+				<Setter Property="Foreground" Value="White"/>
+				<Setter Property="Background" Value="#D93030"/>
+				<Setter Property="BorderBrush" Value="#B02020"/>
+				<Setter Property="BorderThickness" Value="2"/>
+				<Setter Property="Cursor" Value="Hand"/>
+				<Setter Property="Template">
+					<Setter.Value>
+						<ControlTemplate TargetType="Button">
+							<Border x:Name="Border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="18"
+                                    SnapsToDevicePixels="True">
+								<ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+							</Border>
+							<ControlTemplate.Triggers>
+								<Trigger Property="IsPressed" Value="True">
+									<Setter TargetName="Border" Property="Background" Value="#C42424"/>
+									<Setter TargetName="Border" Property="BorderBrush" Value="#951616"/>
+								</Trigger>
+								<Trigger Property="IsEnabled" Value="False">
+									<Setter TargetName="Border" Property="Opacity" Value="0.4"/>
+								</Trigger>
+							</ControlTemplate.Triggers>
+						</ControlTemplate>
+					</Setter.Value>
+				</Setter>
+			</Style>
+
+			<Style x:Key="FB_CheckBoxBaseStyle" TargetType="CheckBox">
+				<Setter Property="FontSize" Value="{StaticResource FB_FontSizeNormal}"/>
+				<Setter Property="Foreground" Value="{StaticResource FB_TextBrush}"/>
+				<Setter Property="Margin" Value="0,6,0,6"/>
+				<Setter Property="Template">
+					<Setter.Value>
+						<ControlTemplate TargetType="CheckBox">
+							<BulletDecorator Background="Transparent"
+                                             VerticalAlignment="Center">
+								<BulletDecorator.Bullet>
+									<Border x:Name="Box"
+                                            Width="28"
+                                            Height="28"
+                                            CornerRadius="6"
+                                            BorderBrush="#555"
+                                            BorderThickness="2"
+                                            Background="White"
+                                            Margin="0,0,12,0">
+										<Path x:Name="CheckMark"
+                                              Data="M6,14 L12,20 22,8"
+                                              Stroke="White"
+                                              StrokeThickness="3"
+                                              StrokeEndLineCap="Round"
+                                              StrokeStartLineCap="Round"
+                                              Visibility="Collapsed"/>
+									</Border>
+								</BulletDecorator.Bullet>
+								<ContentPresenter VerticalAlignment="Center"/>
+							</BulletDecorator>
+							<ControlTemplate.Triggers>
+								<Trigger Property="IsChecked" Value="True">
+									<Setter TargetName="Box" Property="Background" Value="#FF2196F3"/>
+									<Setter TargetName="Box" Property="BorderBrush" Value="#FF0B66CC"/>
+									<Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
+								</Trigger>
+								<Trigger Property="IsEnabled" Value="False">
+									<Setter TargetName="Box" Property="Opacity" Value="0.4"/>
+									<Setter Property="Foreground" Value="#77000000"/>
+								</Trigger>
+							</ControlTemplate.Triggers>
+						</ControlTemplate>
+					</Setter.Value>
+				</Setter>
+			</Style>
+			<Style TargetType="CheckBox" BasedOn="{StaticResource FB_CheckBoxBaseStyle}"/>
+
 			<!-- Merged Dictionaries immer am Ende -->
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="Themes/Styles.xaml"/>

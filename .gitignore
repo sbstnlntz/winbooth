@@ -6,4 +6,7 @@ publish/
 
 .vs/
 bin/
+dist/
 obj/
+build.log
+temp*
