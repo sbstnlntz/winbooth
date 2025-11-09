@@ -4,6 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:sys="clr-namespace:System.Windows;assembly=PresentationFramework"
         Title="Fotobox"
+        Icon="Assets/logo.png"
         WindowStyle="None"
         WindowState="Normal"
         ResizeMode="NoResize"
@@ -11,16 +12,15 @@
         MaxWidth="{x:Static sys:SystemParameters.FullPrimaryScreenWidth}">
 
 	<!-- 
-         Wir definieren aus historischen Gründen zwei Spalten, 
-         aber der Frame darin belegt BEIDE Spalten und füllt 
-         so immer das ganze Fenster aus.
+         We historically kept two columns, but the frame spans both,
+         ensuring it always fills the entire window.
     -->
 	<Grid Background="{DynamicResource FB_BackgroundBrush}">
         <Viewbox Stretch="Uniform" StretchDirection="Both">
             <Grid Width="1280" Height="800" Background="{DynamicResource FB_BackgroundBrush}">
                 <!-- 
-                     Der zentrale Frame, in den wir CameraView, CollageView etc. 
-                     rein navigieren. Er füllt den gesamten designierten Bereich.
+                     Central frame hosting CameraView, CollageView, etc.
+                     It always occupies the full designated area.
                 -->
                 <Frame x:Name="MainFrame"
                        NavigationUIVisibility="Hidden"
