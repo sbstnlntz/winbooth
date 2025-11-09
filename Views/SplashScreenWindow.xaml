@@ -76,7 +76,7 @@
                             </Border>
                             <TextBlock x:Name="ProgressLabel"
                                        Text="{Binding ElementName=LoadingProgressBar, Path=Value, StringFormat={}{0:0} %}"
-                                       FontFamily="{DynamicResource FB_FontFamily}"
+                                       FontFamily="Segoe UI"
                                        FontSize="{DynamicResource FB_FontSizeSmall}"
                                        Foreground="{DynamicResource FB_TextBrush}"
                                        HorizontalAlignment="Center"
@@ -87,7 +87,7 @@
                         <TextBlock Grid.Row="3"
                                    x:Name="StatusTextBlock"
                                    Text="Initialisiere Komponenten..."
-                                   FontFamily="{DynamicResource FB_FontFamily}"
+                                   FontFamily="Segoe UI"
                                    FontSize="{DynamicResource FB_FontSizeNormal}"
                                    Foreground="{DynamicResource FB_TextBrush}"
                                    TextAlignment="Center"
@@ -102,7 +102,7 @@
                         </Grid.ColumnDefinitions>
 
                         <TextBlock x:Name="FooterCopyrightText"
-                                   FontFamily="{DynamicResource FB_FontFamily}"
+                                   FontFamily="Segoe UI"
                                    FontSize="12"
                                    Foreground="{DynamicResource FB_TextBrush}"
                                    HorizontalAlignment="Left"
@@ -111,7 +111,7 @@
 
                         <TextBlock x:Name="FooterVersionText"
                                    Grid.Column="1"
-                                   FontFamily="{DynamicResource FB_FontFamily}"
+                                   FontFamily="Segoe UI"
                                    FontSize="12"
                                    Foreground="{DynamicResource FB_TextBrush}"
                                    HorizontalAlignment="Right"
