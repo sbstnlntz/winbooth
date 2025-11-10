@@ -11,10 +11,13 @@ namespace winbooth.ViewModels
         private readonly List<string> _allowedCameraNames = new();
         private readonly List<string> _allowedPrinterNames = new();
         private readonly List<string> _allowedTemplateNames = new();
+        private readonly List<string> _allowedDefaultTemplateNames = new();
+        private bool _defaultTemplatePermissionsConfigured;
 
         public IReadOnlyList<string> AllowedCameraNames => _allowedCameraNames;
         public IReadOnlyList<string> AllowedPrinterNames => _allowedPrinterNames;
         public IReadOnlyList<string> AllowedTemplateNames => _allowedTemplateNames;
+        public IReadOnlyList<string> AllowedDefaultTemplateNames => _allowedDefaultTemplateNames;
 
         public string AllowedCamerasSummary => BuildAllowedSummary(_allowedCameraNames, AvailableCameras, "Keine Geräte gefunden");
         public string AllowedPrintersSummary => BuildAllowedSummary(_allowedPrinterNames, AvailablePrinters, "Keine Geräte gefunden");

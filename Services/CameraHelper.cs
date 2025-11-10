@@ -1,5 +1,6 @@
 // Wraps WIA camera enumeration and provides helper methods for safer access and formatting.
 
+using System;
 using System.Collections.Generic;
 using System.Management;
 using Emgu.CV;
@@ -11,21 +12,58 @@ namespace winbooth.Services
         public static List<string> GetAllCameraNames()
         {
             var names = new List<string>();
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            static bool ContainsKeyword(string source)
+            {
+                if (string.IsNullOrWhiteSpace(source))
+                    return false;
+
+                var lower = source.ToLowerInvariant();
+                return lower.Contains("camera") ||
+                       lower.Contains("imaging") ||
+                       lower.Contains("video") ||
+                       lower.Contains("webcam");
+            }
+
+            const string ImagingGuid = "{6BDD1FC6-810F-11D0-BEC7-08002BE2092F}";
+
             try
             {
                 using (var searcher = new ManagementObjectSearcher(
-                    "SELECT * FROM Win32_PnPEntity WHERE " +
+                    "SELECT Caption, Description, PNPClass, ClassGuid, Service FROM Win32_PnPEntity WHERE " +
                     "(Description LIKE '%Camera%' OR " +
                     "Description LIKE '%Imaging%' OR " +
+                    "Description LIKE '%Webcam%' OR " +
                     "Caption LIKE '%Camera%' OR " +
                     "Caption LIKE '%Imaging%' OR " +
-                    "Caption LIKE '%Video%')"))
+                    "Caption LIKE '%Webcam%' OR " +
+                    "Caption LIKE '%Video%' OR " +
+                    "PNPClass = 'Camera' OR " +
+                    "PNPClass = 'Image' OR " +
+                    "Service = 'usbvideo' OR " +
+                    "ClassGuid = '{6BDD1FC6-810F-11D0-BEC7-08002BE2092F}')"))
                 {
                     foreach (var device in searcher.Get())
                     {
-                        string name = device["Caption"]?.ToString() ?? "Unbekanntes Ger�t";
-                        if (!names.Contains(name))
-                            names.Add(name);
+                        string caption = device["Caption"]?.ToString();
+                        string description = device["Description"]?.ToString();
+                        string pnpClass = device["PNPClass"]?.ToString();
+                        string classGuid = device["ClassGuid"]?.ToString();
+                        string service = device["Service"]?.ToString();
+
+                        bool matchesKeyword = ContainsKeyword(caption) || ContainsKeyword(description);
+                        bool matchesClass = string.Equals(pnpClass, "Camera", StringComparison.OrdinalIgnoreCase) ||
+                                            string.Equals(pnpClass, "Image", StringComparison.OrdinalIgnoreCase);
+                        bool matchesGuid = string.Equals(classGuid, ImagingGuid, StringComparison.OrdinalIgnoreCase);
+                        bool matchesService = string.Equals(service, "usbvideo", StringComparison.OrdinalIgnoreCase);
+
+                        if (matchesKeyword || matchesClass || matchesGuid || matchesService)
+                        {
+                            string name = caption ?? description ?? "Unbekanntes Gerät";
+                            if (seen.Add(name))
+                                names.Add(name);
+                        }
                     }
                 }
             }
@@ -40,7 +78,9 @@ namespace winbooth.Services
                     {
                         if (cap.IsOpened)
                         {
-                            names.Add("Standard-Kamera (Video0)");
+                            const string fallback = "Standard-Kamera (Video0)";
+                            if (seen.Add(fallback))
+                                names.Add(fallback);
                         }
                     }
                 }

@@ -10,67 +10,90 @@
         Topmost="True"
         ShowInTaskbar="False">
 
-    <Grid>
+    <Grid MouseDown="OverlayBackground_OnMouseDown">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="3*" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="0.75*" />
+            <ColumnDefinition Width="4.5*" />
+            <ColumnDefinition Width="0.75*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <RowDefinition Height="3*" />
+            <RowDefinition Height="5*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!-- Central content panel -->
-        <Border Grid.Row="1" Grid.Column="1"
-            Background="{StaticResource FB_BackgroundBrush}"
-            CornerRadius="16"
-            Padding="28"
-            BorderBrush="{StaticResource FB_AccentBrush}"
-            BorderThickness="2">
-            <ScrollViewer Padding="10"
-                    VerticalScrollBarVisibility="Hidden"
-                    HorizontalScrollBarVisibility="Disabled"
-                    PanningMode="VerticalOnly"
-                    Background="Transparent">
-                <ItemsControl ItemsSource="{Binding}">
-                    <ItemsControl.ItemsPanel>
+        <Border x:Name="ContentBorder"
+                Grid.Row="1" Grid.Column="1"
+                Background="{StaticResource FB_BackgroundBrush}"
+                CornerRadius="16"
+                Padding="28"
+                BorderBrush="{StaticResource FB_AccentBrush}"
+                BorderThickness="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <DockPanel Grid.Row="0" Margin="0,0,0,16" LastChildFill="True">
+                    <Button Style="{StaticResource FB_DialogCloseButtonStyle}"
+                            Width="48"
+                            Height="48"
+                            Margin="12,0,0,0"
+                            DockPanel.Dock="Right"
+                            Click="Close_Click"/>
+                    <Button Content="Eigenes Design hochladen"
+                            Width="240"
+                            Height="46"
+                            Margin="12,0,0,0"
+                            HorizontalAlignment="Right"
+                            DockPanel.Dock="Right"
+                            Click="UploadTemplate_Click"/>
+                    <TextBlock Text="Design auswählen"
+                               FontSize="26"
+                               FontWeight="Bold"
+                               Foreground="White"
+                               VerticalAlignment="Center"/>
+                </DockPanel>
+
+                <ScrollViewer Grid.Row="1"
+                              Padding="10"
+                              VerticalScrollBarVisibility="Hidden"
+                              HorizontalScrollBarVisibility="Disabled"
+                              PanningMode="VerticalOnly"
+                              Background="Transparent">
+                    <ItemsControl x:Name="TemplatesItemsControl">
+                        <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Columns="2"/>
+                            <UniformGrid Columns="3"/>
                         </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button Width="240" Height="240"
-                                    Margin="15"
-                                    Background="Transparent"
-                                    BorderThickness="0"
-                                    Click="Template_Click"
-                                    Tag="{Binding}">
-                                <Border Background="#232323"
-                                        CornerRadius="12"
-                                        Padding="8"
-                                        BorderBrush="{StaticResource FB_AccentBrush}"
-                                        BorderThickness="2">
-                                    <Image Source="{Binding PreviewImage}"
-                                           Stretch="Uniform"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"/>
-                                </Border>
-                            </Button>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Width="260" Height="300"
+                                        Margin="15"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Click="Template_Click"
+                                        Tag="{Binding}">
+                                    <Border Background="#232323"
+                                            CornerRadius="12"
+                                            Padding="8"
+                                            BorderBrush="{StaticResource FB_AccentBrush}"
+                                            BorderThickness="2">
+                                        <Image Source="{Binding PreviewImage}"
+                                               Stretch="Uniform"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                    </Border>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
         </Border>
 
-        <!-- Close button in the top right corner -->
-        <Button Grid.Row="0" Grid.Column="2"
-                Style="{StaticResource FB_DialogCloseButtonStyle}"
-                Margin="24"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Click="Close_Click"/>
     </Grid>
 </Window>

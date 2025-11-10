@@ -284,6 +284,7 @@ namespace winbooth.ViewModels
                             ApplyTemplateSnapshot(DefaultTemplates, defaultSnapshot);
                             EnsureDefaultTemplateValid();
                             NotifyDefaultTemplateChanged();
+                            NormalizeAllowedDefaultTemplates();
                         }
                     });
                 }
@@ -959,6 +960,20 @@ namespace winbooth.ViewModels
                 _allowedTemplateNames.AddRange(settingsSnapshot.AllowedTemplates);
             else
                 TryPopulateList(_allowedTemplateNames, SettingsService.LoadAllowedTemplates);
+
+            bool defaultTemplatesConfigured = false;
+            if (settingsSnapshot?.AllowedDefaultTemplates?.Count > 0)
+            {
+                _allowedDefaultTemplateNames.AddRange(settingsSnapshot.AllowedDefaultTemplates);
+                defaultTemplatesConfigured = true;
+            }
+            else
+            {
+                TryPopulateList(_allowedDefaultTemplateNames, SettingsService.LoadAllowedDefaultTemplates);
+                if (_allowedDefaultTemplateNames.Count > 0)
+                    defaultTemplatesConfigured = true;
+            }
+            _defaultTemplatePermissionsConfigured = defaultTemplatesConfigured;
 
             _defaultTemplateName = settingsSnapshot?.DefaultTemplateName ?? SafeLoad(() => SettingsService.LoadDefaultTemplateName() ?? string.Empty, string.Empty);
             NotifyDefaultTemplateChanged();

@@ -25,6 +25,7 @@ namespace winbooth.Services
             public IReadOnlyList<string> AllowedCameras { get; init; } = Array.Empty<string>();
             public IReadOnlyList<string> AllowedPrinters { get; init; } = Array.Empty<string>();
             public IReadOnlyList<string> AllowedTemplates { get; init; } = Array.Empty<string>();
+            public IReadOnlyList<string> AllowedDefaultTemplates { get; init; } = Array.Empty<string>();
             public string DefaultTemplateName { get; init; }
             public bool CameraRotate180 { get; init; }
             public string UsbDrivePath { get; init; }
@@ -52,6 +53,7 @@ namespace winbooth.Services
             public List<string> AllowedCameras { get; set; } = new();
             public List<string> AllowedPrinters { get; set; } = new();
             public List<string> AllowedTemplates { get; set; } = new();
+            public List<string> AllowedDefaultTemplates { get; set; } = new();
             public string DefaultTemplateName { get; set; } = string.Empty;
             public bool CameraRotate180 { get; set; }
             public string UsbDrivePath { get; set; } = string.Empty;
@@ -256,6 +258,7 @@ namespace winbooth.Services
                 AllowedCameras = (model.AllowedCameras ?? new List<string>()).ToArray(),
                 AllowedPrinters = (model.AllowedPrinters ?? new List<string>()).ToArray(),
                 AllowedTemplates = (model.AllowedTemplates ?? new List<string>()).ToArray(),
+                AllowedDefaultTemplates = (model.AllowedDefaultTemplates ?? new List<string>()).ToArray(),
                 DefaultTemplateName = model.DefaultTemplateName,
                 CameraRotate180 = model.CameraRotate180,
                 UsbDrivePath = model.UsbDrivePath,
@@ -360,6 +363,14 @@ namespace winbooth.Services
             lock (ModelLock)
             {
                 return EnsureModel().AllowedTemplates.ToArray();
+            }
+        }
+
+        public static IReadOnlyList<string> LoadAllowedDefaultTemplates()
+        {
+            lock (ModelLock)
+            {
+                return EnsureModel().AllowedDefaultTemplates.ToArray();
             }
         }
 
@@ -486,6 +497,18 @@ namespace winbooth.Services
             lock (ModelLock)
             {
                 EnsureModel().AllowedTemplates = templates?
+                    .Where(t => !string.IsNullOrWhiteSpace(t))
+                    .Distinct(StringComparer.Ordinal)
+                    .ToList() ?? new List<string>();
+                SchedulePersistLocked();
+            }
+        }
+
+        public static void SaveAllowedDefaultTemplates(IEnumerable<string> templates)
+        {
+            lock (ModelLock)
+            {
+                EnsureModel().AllowedDefaultTemplates = templates?
                     .Where(t => !string.IsNullOrWhiteSpace(t))
                     .Distinct(StringComparer.Ordinal)
                     .ToList() ?? new List<string>();

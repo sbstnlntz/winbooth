@@ -84,23 +84,101 @@
                                     HorizontalAlignment="Left"
                                     Margin="0,0,0,12"
                                     Click="OpenDelaySettings_Click"/>
-                            <Button Content="Standard-Design"
+                            <Button Content="Designs/Templates"
                                     Style="{StaticResource AdminActionButtonStyle}"
                                     Margin="0,0,0,8"
                                     HorizontalAlignment="Left"
                                     Click="OpenDefaultTemplate_Click"/>
-                            <Button Content="Grafiken bearbeiten"
+                            <Button Content="Hintergrundgrafik bearbeiten"
                                     Style="{StaticResource AdminActionButtonStyle}"
                                     Margin="0,0,0,8"
                                     HorizontalAlignment="Left"
                                     Click="OpenGraphicsManager_Click"/>
-                            <Button Content="Designs / Templates"
-                                    Style="{StaticResource AdminActionButtonStyle}"
-                                    Margin="0,0,0,8"
-                                    HorizontalAlignment="Left"
-                                    Click="OpenDesignSettings_Click"/>
                         </StackPanel>
                     </ScrollViewer>
+
+                    <!-- Statistics -->
+                    <Border Grid.Row="1"
+                            Margin="0,16,0,0"
+                            Padding="10"
+                            Width="300"
+                            Background="#F9F9F9"
+                            BorderBrush="#E0E0E0"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Bottom">
+                        <StackPanel>
+                            <TextBlock Text="Statistik"
+                                       FontSize="16"
+                                       FontWeight="Bold"
+                                       Margin="0,0,0,6"/>
+                            <TextBlock Text="{Binding CurrentGalleryDisplayName, StringFormat='Aktuelle Galerie: {0}'}"
+                                       FontSize="12"
+                                       Foreground="#555"
+                                       Margin="0,0,0,6"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="1"
+                                           Text="Gesamt"
+                                           FontWeight="Bold"
+                                           FontSize="12"
+                                           Margin="8,0,0,2"/>
+                                <TextBlock Grid.Row="0" Grid.Column="2"
+                                           Text="Event"
+                                           FontWeight="Bold"
+                                           FontSize="12"
+                                           Margin="16,0,0,2"/>
+
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Einzelfotos" FontSize="12"/>
+                                <TextBlock Grid.Row="1" Grid.Column="1"
+                                           Text="{Binding TotalSinglePhotos}"
+                                           FontSize="16"
+                                           FontWeight="Bold"
+                                           Margin="8,0,0,0"/>
+                                <TextBlock Grid.Row="1" Grid.Column="2"
+                                           Text="{Binding EventSinglePhotos}"
+                                           FontSize="16"
+                                           FontWeight="Bold"
+                                           Margin="16,0,0,0"/>
+
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Collagen erstellt" FontSize="12" Margin="0,4,0,0"/>
+                                <TextBlock Grid.Row="2" Grid.Column="1"
+                                           Text="{Binding TotalCollagesCreated}"
+                                           FontSize="16"
+                                           FontWeight="Bold"
+                                           Margin="8,4,0,0"/>
+                                <TextBlock Grid.Row="2" Grid.Column="2"
+                                           Text="{Binding EventCollagesCreated}"
+                                           FontSize="16"
+                                           FontWeight="Bold"
+                                           Margin="16,4,0,0"/>
+
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Collagen gedruckt" FontSize="12" Margin="0,4,0,0"/>
+                                <TextBlock Grid.Row="3" Grid.Column="1"
+                                           Text="{Binding TotalCollagesPrinted}"
+                                           FontSize="16"
+                                           FontWeight="Bold"
+                                           Margin="8,4,0,0"/>
+                                <TextBlock Grid.Row="3" Grid.Column="2"
+                                           Text="{Binding EventCollagesPrinted}"
+                                           FontSize="16"
+                                           FontWeight="Bold"
+                                           Margin="16,4,0,0"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
                 </Grid>
 
                 <!-- Right column with device information and stats -->
@@ -175,102 +253,210 @@
                         </StackPanel>
                     </StackPanel>
 
+                    
                     <StackPanel Grid.Row="2" HorizontalAlignment="Right" Margin="0,24,0,0">
                         <Button Content="Neues Event"
                                 Style="{StaticResource AdminActionButtonStyle}"
+                                Background="#2E8B57"
+                                BorderBrush="#1F5D3A"
+                                Foreground="White"
                                 Click="NewEvent_Click"/>
-                        <Button Content="Archiv öffnen"
+                        <Button Content="Backup"
                                 Style="{StaticResource AdminActionButtonStyle}"
                                 Click="OpenArchive_Click"/>
-                        <Button Content="Backup jetzt"
+                        <Button Content="WINBOOTH beenden"
                                 Style="{StaticResource AdminActionButtonStyle}"
-                                Click="BackupNow_Click"/>
-                        <Button Content="Programm beenden"
-                                Style="{StaticResource AdminActionButtonStyle}"
+                                Background="#D93030"
+                                BorderBrush="#A32222"
+                                Foreground="White"
                                 Click="ShutdownApp_Click"/>
-                        <Button Content="Fotobox ausschalten"
+                        <Button Content="FOTOBOX ausschalten"
                                 Style="{StaticResource AdminActionButtonStyle}"
+                                Background="#D93030"
+                                BorderBrush="#A32222"
+                                Foreground="White"
                                 Click="ShutdownSystem_Click"/>
                     </StackPanel>
 
-                    <Border Grid.Row="3"
-                            Margin="0,20,0,0"
-                            Padding="16"
-                            Background="#F7F7F7"
-                            BorderBrush="#E0E0E0"
-                            BorderThickness="1"
-                            CornerRadius="12">
-                        <StackPanel>
-                            <TextBlock Text="Statistik"
-                                       FontSize="22"
+                    <!-- Bottom row: template selection -->
+                    <Grid Grid.Row="3"
+                          Margin="0,24,0,0">
+                        <StackPanel HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom">
+                            <TextBlock Text="Foto Design"
                                        FontWeight="Bold"
-                                       Margin="0,0,0,12"/>
-                            <TextBlock Text="{Binding CurrentGalleryDisplayName, StringFormat='Aktuelle Galerie: {0}'}"
-                                       FontSize="15"
-                                       Foreground="#555"
-                                       Margin="0,0,0,12"/>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-
-                                <TextBlock Grid.Row="0" Grid.Column="1"
-                                           Text="Gesamt"
-                                           FontWeight="Bold"
-                                           FontSize="16"
-                                           Margin="12,0,0,6"/>
-                                <TextBlock Grid.Row="0" Grid.Column="2"
-                                           Text="Event"
-                                           FontWeight="Bold"
-                                           FontSize="16"
-                                           Margin="24,0,0,6"/>
-
-                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Einzelfotos" FontSize="16"/>
-                                <TextBlock Grid.Row="1" Grid.Column="1"
-                                           Text="{Binding TotalSinglePhotos}"
-                                           FontSize="22"
-                                           FontWeight="Bold"
-                                           Margin="12,0,0,0"/>
-                                <TextBlock Grid.Row="1" Grid.Column="2"
-                                           Text="{Binding EventSinglePhotos}"
-                                           FontSize="22"
-                                           FontWeight="Bold"
-                                           Margin="24,0,0,0"/>
-
-                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Collagen erstellt" FontSize="16" Margin="0,8,0,0"/>
-                                <TextBlock Grid.Row="2" Grid.Column="1"
-                                           Text="{Binding TotalCollagesCreated}"
-                                           FontSize="22"
-                                           FontWeight="Bold"
-                                           Margin="12,8,0,0"/>
-                                <TextBlock Grid.Row="2" Grid.Column="2"
-                                           Text="{Binding EventCollagesCreated}"
-                                           FontSize="22"
-                                           FontWeight="Bold"
-                                           Margin="24,8,0,0"/>
-
-                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Collagen gedruckt" FontSize="16" Margin="0,8,0,0"/>
-                                <TextBlock Grid.Row="3" Grid.Column="1"
-                                           Text="{Binding TotalCollagesPrinted}"
-                                           FontSize="22"
-                                           FontWeight="Bold"
-                                           Margin="12,8,0,0"/>
-                                <TextBlock Grid.Row="3" Grid.Column="2"
-                                           Text="{Binding EventCollagesPrinted}"
-                                           FontSize="22"
-                                           FontWeight="Bold"
-                                           Margin="24,8,0,0"/>
+                                       FontSize="22"
+                                       Margin="0,0,0,10"
+                                       HorizontalAlignment="Right"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <!-- Slot 1 -->
+                                <Grid HorizontalAlignment="Right"
+                                      Margin="0,0,12,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                <Grid Width="170" Height="120">
+                                    <Rectangle Stroke="#222" StrokeThickness="2" RadiusX="7" RadiusY="7"
+                                               StrokeDashArray="4,3" Fill="White"/>
+                                    <Grid>
+                                        <Image Width="150" Height="90"
+                                               Stretch="Uniform"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Center">
+                                            <Image.Source>
+                                                <Binding Path="TemplateSlot1Preview" TargetNullValue="{x:Null}"/>
+                                            </Image.Source>
+                                            <Image.Style>
+                                                <Style TargetType="Image">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding TemplateSlot1Template}" Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Image.Style>
+                                        </Image>
+                                        <Button Background="Transparent"
+                                                BorderThickness="0"
+                                                Click="AdminSelectTemplateBtn1_Click"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch"/>
+                                        <TextBlock Text="+"
+                                                   FontSize="55"
+                                                   FontWeight="Bold"
+                                                   Foreground="#FF8600"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding TemplateSlot1Template}" Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
+                                </Grid>
+                                <Button Grid.Column="1"
+                                        Width="40"
+                                        Height="40"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Background="Transparent"
+                                        BorderBrush="Transparent"
+                                        ToolTip="Design löschen"
+                                        Click="AdminDeleteTemplateBtn1_Click">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="IsEnabled" Value="True"/>
+                                            <Setter Property="Opacity" Value="1"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SelectedTemplate1}" Value="{x:Null}">
+                                                    <Setter Property="IsEnabled" Value="False"/>
+                                                    <Setter Property="Opacity" Value="0.4"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" FontSize="22" Foreground="#444"/>
+                                </Button>
                             </Grid>
+
+                                <!-- Slot 2 -->
+                                <Grid HorizontalAlignment="Right">
+                                    <Grid.Style>
+                                        <Style TargetType="Grid">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding AllowTwoTemplates}" Value="False">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Grid.Style>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                <Grid Width="170" Height="120">
+                                    <Rectangle Stroke="#222" StrokeThickness="2" RadiusX="7" RadiusY="7"
+                                               StrokeDashArray="4,3" Fill="White"/>
+                                    <Grid>
+                                        <Image Width="150" Height="90"
+                                               Stretch="Uniform"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Center">
+                                            <Image.Source>
+                                                <Binding Path="TemplateSlot2Preview" TargetNullValue="{x:Null}"/>
+                                            </Image.Source>
+                                            <Image.Style>
+                                                <Style TargetType="Image">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding TemplateSlot2Template}" Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Image.Style>
+                                        </Image>
+                                        <Button Background="Transparent"
+                                                BorderThickness="0"
+                                                Click="AdminSelectTemplateBtn2_Click"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"/>
+                                        <TextBlock Text="+"
+                                                   FontSize="55"
+                                                   FontWeight="Bold"
+                                                   Foreground="#FF8600"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SelectedTemplate2}" Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
+                                </Grid>
+                                <Button Grid.Column="1"
+                                        Width="40"
+                                        Height="40"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Background="Transparent"
+                                        BorderBrush="Transparent"
+                                        ToolTip="Design löschen"
+                                        Click="AdminDeleteTemplateBtn2_Click">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="IsEnabled" Value="True"/>
+                                            <Setter Property="Opacity" Value="1"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SelectedTemplate2}" Value="{x:Null}">
+                                                    <Setter Property="IsEnabled" Value="False"/>
+                                                    <Setter Property="Opacity" Value="0.4"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" FontSize="22" Foreground="#444"/>
+                                    </Button>
+                                </Grid>
+                            </StackPanel>
                         </StackPanel>
-                    </Border>
+                    </Grid>
+
                 </Grid>
             </Grid>
 
@@ -331,9 +517,23 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <Button Style="{StaticResource FB_DialogCloseButtonStyle}"
-                                HorizontalAlignment="Right" VerticalAlignment="Top"
-                                Click="CloseBackups_Click"/>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="1"
+                                    Content="Backup jetzt"
+                                    Style="{StaticResource AdminActionButtonStyle}"
+                                    Margin="0,0,12,0"
+                                    Click="BackupNow_Click"/>
+                            <Button Grid.Column="2"
+                                    Style="{StaticResource FB_DialogCloseButtonStyle}"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Top"
+                                    Click="CloseBackups_Click"/>
+                        </Grid>
                         <Grid Grid.Row="1" MinWidth="480" MinHeight="320" Margin="0,20,0,0">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>

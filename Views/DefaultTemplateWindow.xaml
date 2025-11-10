@@ -72,11 +72,7 @@
             <StackPanel Grid.Column="1"
                         Orientation="Horizontal"
                         HorizontalAlignment="Right">
-                <Button Content="Ordner öffnen"
-                        Margin="0,0,8,0"
-                        Style="{StaticResource DialogButtonStyle}"
-                        Click="OpenDefaultTemplatesFolder_Click"/>
-                <Button Content="Design importieren"
+                <Button Content="Design hinzufügen"
                         Style="{StaticResource DialogButtonStyle}"
                         Click="ImportDesign_Click"/>
             </StackPanel>
@@ -101,20 +97,30 @@
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <RadioButton Grid.Column="0"
+                                        <CheckBox Grid.Column="0"
+                                                  Margin="0,0,12,0"
+                                                  VerticalAlignment="Center"
+                                                  IsChecked="{Binding IsLibraryEnabled}"
+                                                  Checked="TemplateAvailabilityChanged"
+                                                  Unchecked="TemplateAvailabilityChanged"
+                                                  ToolTip="In der User-Auswahl anzeigen"/>
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="{Binding Name}"
+                                                       FontSize="16"
+                                                       FontWeight="Bold"
+                                                       VerticalAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+                                        <RadioButton Grid.Column="2"
                                                      GroupName="DefaultTemplateGroup"
                                                      Margin="0,0,12,0"
                                                      VerticalAlignment="Center"
+                                                     Content="Standard"
                                                      IsChecked="{Binding IsSelected}"
                                                      Checked="TemplateSelected_Checked"/>
-                                        <TextBlock Grid.Column="1"
-                                                   Text="{Binding Name}"
-                                                   FontSize="16"
-                                                   FontWeight="Bold"
-                                                   VerticalAlignment="Center"
-                                                   TextTrimming="CharacterEllipsis"/>
-                                        <Button Grid.Column="2"
+                                        <Button Grid.Column="3"
                                                 Style="{StaticResource IconButtonStyle}"
                                                 Tag="{Binding Template}"
                                                 ToolTip="Design löschen"
@@ -153,3 +159,6 @@
 
     </Grid>
 </Window>
+
+
+

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using winbooth.Services;
@@ -123,6 +124,201 @@ namespace winbooth.Views
             window.ShowDialog();
         }
 
+        private async void AdminSelectTemplateBtn1_Click(object sender, RoutedEventArgs e)
+            => await ImportTemplateFromExplorerAsync(1);
+
+        private async void AdminSelectTemplateBtn2_Click(object sender, RoutedEventArgs e)
+            => await ImportTemplateFromExplorerAsync(2);
+
+        private void AdminDeleteTemplateBtn1_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is not StartViewModel vm)
+                return;
+
+            if (vm.ActiveTemplate == vm.SelectedTemplate1)
+                vm.ActiveTemplate = vm.SelectedTemplate2;
+
+            vm.SelectedTemplate1 = null;
+        }
+
+        private void AdminDeleteTemplateBtn2_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is not StartViewModel vm)
+                return;
+
+            if (vm.ActiveTemplate == vm.SelectedTemplate2)
+                vm.ActiveTemplate = vm.SelectedTemplate1;
+
+            vm.SelectedTemplate2 = null;
+        }
+
+        private async Task ImportTemplateFromExplorerAsync(int slotIndex)
+        {
+            if (DataContext is not StartViewModel vm)
+                return;
+
+            if (slotIndex == 2 && !vm.AllowTwoTemplates)
+            {
+                MessageBox.Show("Im Admin-Menü ist nur ein Design-Slot aktiv.", "Design-Auswahl",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var dialog = new OpenFileDialog
+            {
+                Filter = "Design-Pakete (*.zip)|*.zip",
+                Multiselect = false,
+                CheckFileExists = true,
+                Title = slotIndex == 1 ? "Design für Slot 1 auswählen" : "Design für Slot 2 auswählen"
+            };
+
+            var owner = Window.GetWindow(this);
+            if (dialog.ShowDialog(owner) != true)
+                return;
+
+            var result = await vm.ImportTemplatesFromFilesAsync(new[] { dialog.FileName });
+            if (result == null || !result.HasChanges)
+                return;
+
+            await vm.WaitForTemplateReloadAsync();
+
+            var templateName = Path.GetFileNameWithoutExtension(dialog.FileName);
+            var template = vm.FindTemplateByName(templateName);
+
+            if (template == null)
+            {
+                foreach (var name in result.ImportedTemplates.Concat(result.UpdatedTemplates))
+                {
+                    template = vm.FindTemplateByName(name);
+                    if (template != null)
+                        break;
+                }
+            }
+
+            if (template == null)
+            {
+                MessageBox.Show("Design konnte nicht übernommen werden.", "Import", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (slotIndex == 1)
+            {
+                if (vm.SelectedTemplate2 != null &&
+                    string.Equals(template.ZipPath, vm.SelectedTemplate2.ZipPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageBox.Show("Dieses Design ist bereits im zweiten Slot ausgewählt!", "Doppelte Auswahl",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                vm.SelectedTemplate1 = template;
+            }
+            else
+            {
+                if (vm.SelectedTemplate1 != null &&
+                    string.Equals(template.ZipPath, vm.SelectedTemplate1.ZipPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageBox.Show("Dieses Design ist bereits im ersten Slot ausgewählt!", "Doppelte Auswahl",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                vm.SelectedTemplate2 = template;
+            }
+
+            if (vm.ActiveTemplate == null)
+                vm.ActiveTemplate = template;
+        }
+
+        private async Task SelectTemplateFromLibraryAsync(int slotIndex)
+        {
+            if (DataContext is not StartViewModel vm)
+                return;
+
+            if (slotIndex == 2 && !vm.AllowTwoTemplates)
+            {
+                MessageBox.Show("Im Admin-Menü ist nur ein Foto-Design freigeschaltet.", "Zweiter Slot deaktiviert",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var templates = vm.GetTemplateLibraryTemplates();
+            if (templates == null || templates.Count == 0)
+            {
+                MessageBox.Show("Es wurden keine Standard-Designs gefunden. Bitte im Dialog \"Designs/Templates\" ein Design hinterlegen.",
+                    "Design-Bibliothek", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var dialog = new TemplateSelectionWindow(vm)
+            {
+                Owner = Window.GetWindow(this),
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+
+            if (dialog.ShowDialog() == true && dialog.SelectedTemplate != null)
+            {
+                await ImportTemplateFromLibraryAsync(vm, dialog.SelectedTemplate.ZipPath, slotIndex);
+            }
+        }
+
+        private async Task ImportTemplateFromLibraryAsync(StartViewModel vm, string sourceZipPath, int slotIndex)
+        {
+            var result = await vm.ImportTemplatesFromFilesAsync(new[] { sourceZipPath });
+            if (result == null || !result.HasChanges)
+                return;
+
+            await vm.WaitForTemplateReloadAsync();
+
+            var templateName = Path.GetFileNameWithoutExtension(sourceZipPath);
+            var template = vm.FindTemplateByName(templateName);
+
+            if (template == null)
+            {
+                foreach (var name in result.ImportedTemplates.Concat(result.UpdatedTemplates))
+                {
+                    template = vm.FindTemplateByName(name);
+                    if (template != null)
+                        break;
+                }
+            }
+
+            if (template == null)
+            {
+                MessageBox.Show("Das Design konnte nicht übernommen werden.", "Design-Auswahl",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (slotIndex == 1)
+            {
+                if (vm.SelectedTemplate2 != null &&
+                    string.Equals(template.ZipPath, vm.SelectedTemplate2.ZipPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageBox.Show("Dieses Design ist bereits im zweiten Slot ausgewählt!", "Doppelte Auswahl",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                vm.SelectedTemplate1 = template;
+            }
+            else
+            {
+                if (vm.SelectedTemplate1 != null &&
+                    string.Equals(template.ZipPath, vm.SelectedTemplate1.ZipPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageBox.Show("Dieses Design ist bereits im ersten Slot ausgewählt!", "Doppelte Auswahl",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                vm.SelectedTemplate2 = template;
+            }
+
+            if (vm.ActiveTemplate == null)
+                vm.ActiveTemplate = template;
+        }
+
         private void CameraSettingsAdmin_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is not StartViewModel vm)
@@ -201,20 +397,6 @@ namespace winbooth.Views
             {
                 vm.UpdateAllowedPrinters(dialog.SelectedItems);
             }
-        }
-
-        private void OpenDesignSettings_Click(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is not StartViewModel vm)
-                return;
-
-            var window = new DesignManagementWindow(vm)
-            {
-                Owner = Window.GetWindow(this),
-                WindowStartupLocation = WindowStartupLocation.CenterOwner
-            };
-
-            window.ShowDialog();
         }
 
         private void ToggleCameraRotation_Click(object sender, RoutedEventArgs e)

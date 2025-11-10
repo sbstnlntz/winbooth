@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -26,11 +25,13 @@ namespace winbooth.Views
         public sealed class TemplateOption : INotifyPropertyChanged
         {
             private bool _isSelected;
+            private bool _isLibraryEnabled;
 
-            public TemplateOption(TemplateItem template, bool isSelected)
+            public TemplateOption(TemplateItem template, bool isSelected, bool isLibraryEnabled)
             {
                 Template = template;
                 _isSelected = isSelected;
+                _isLibraryEnabled = isLibraryEnabled;
             }
 
             public TemplateItem Template { get; }
@@ -45,6 +46,19 @@ namespace winbooth.Views
 
                     _isSelected = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsSelected)));
+                }
+            }
+
+            public bool IsLibraryEnabled
+            {
+                get => _isLibraryEnabled;
+                set
+                {
+                    if (_isLibraryEnabled == value)
+                        return;
+
+                    _isLibraryEnabled = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsLibraryEnabled)));
                 }
             }
 
@@ -67,13 +81,16 @@ namespace winbooth.Views
         {
             var defaultName = _viewModel.DefaultTemplateName ?? string.Empty;
             var selectedNameLookup = new HashSet<string>(StringComparer.Ordinal) { defaultName };
+            var allowedLookup = new HashSet<string>(_viewModel.AllowedDefaultTemplateNames ?? Array.Empty<string>(), StringComparer.Ordinal);
+            var treatAllAllowed = allowedLookup.Count == 0;
 
             _suppressSelectionUpdates = true;
             TemplateOptions.Clear();
             foreach (var template in _viewModel.DefaultTemplates)
             {
                 var isSelected = selectedNameLookup.Contains(template.Name);
-                TemplateOptions.Add(new TemplateOption(template, isSelected));
+                var isEnabled = treatAllAllowed || allowedLookup.Contains(template.Name);
+                TemplateOptions.Add(new TemplateOption(template, isSelected, isEnabled));
             }
             _suppressSelectionUpdates = false;
         }
@@ -134,32 +151,23 @@ namespace winbooth.Views
                 return;
 
             var result = await _viewModel.ImportDefaultTemplatesFromFilesAsync(dialog.FileNames);
+            await _viewModel.WaitForTemplateReloadAsync();
             SyncTemplateOptions();
             ShowTemplateImportResult(result);
         }
 
-        private void OpenDefaultTemplatesFolder_Click(object sender, RoutedEventArgs e)
+        private void TemplateAvailabilityChanged(object sender, RoutedEventArgs e)
         {
-            try
+            if (sender is not CheckBox checkBox ||
+                checkBox.DataContext is not TemplateOption option ||
+                option.Template == null)
             {
-                var folder = StartViewModel.GetDefaultTemplatesRootPath();
-                if (!Directory.Exists(folder))
-                {
-                    Directory.CreateDirectory(folder);
-                }
+                return;
+            }
 
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = folder,
-                    UseShellExecute = true,
-                    Verb = "open"
-                });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ordner konnte nicht geöffnet werden:\n{ex.Message}", "Standard-Design",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
+            var enabled = checkBox.IsChecked == true;
+            option.IsLibraryEnabled = enabled;
+            _viewModel.SetDefaultTemplateAvailability(option.Template.Name, enabled);
         }
 
         private static void ShowTemplateImportResult(TemplateImportResult result)
