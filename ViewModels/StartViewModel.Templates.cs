@@ -204,14 +204,6 @@ namespace winbooth.ViewModels
             return DefaultTemplates.FirstOrDefault(t => string.Equals(t.Name, templateName, StringComparison.Ordinal));
         }
 
-        private TemplateItem FindTemplateByName(string templateName)
-        {
-            if (string.IsNullOrWhiteSpace(templateName))
-                return null;
-
-            return Templates.FirstOrDefault(t => string.Equals(t.Name, templateName, StringComparison.Ordinal));
-        }
-
         private void UpdateDefaultTemplate(string templateName, bool persist)
         {
             var resolved = FindDefaultTemplateByName(templateName);
@@ -389,6 +381,48 @@ namespace winbooth.ViewModels
             EnsureSelectedTemplatesValid();
         }
 
+        public void UpdateAllowedDefaultTemplates(IEnumerable<string> selectedNames)
+        {
+            ApplyAllowedSelection(_allowedDefaultTemplateNames, selectedNames, DefaultTemplates.Select(t => t.Name));
+            _defaultTemplatePermissionsConfigured = true;
+            try { SettingsService.SaveAllowedDefaultTemplates(_allowedDefaultTemplateNames); } catch { }
+        }
+
+        public void SetDefaultTemplateAvailability(string templateName, bool isEnabled)
+        {
+            if (string.IsNullOrWhiteSpace(templateName))
+            {
+                return;
+            }
+
+            _defaultTemplatePermissionsConfigured = true;
+
+            if (_allowedDefaultTemplateNames.Count == 0 && DefaultTemplates.Count > 0)
+            {
+                _allowedDefaultTemplateNames.AddRange(DefaultTemplates.Select(t => t.Name));
+            }
+
+            var changed = false;
+            if (isEnabled)
+            {
+                if (!_allowedDefaultTemplateNames.Any(name => string.Equals(name, templateName, StringComparison.Ordinal)))
+                {
+                    _allowedDefaultTemplateNames.Add(templateName);
+                    changed = true;
+                }
+            }
+            else
+            {
+                var removed = _allowedDefaultTemplateNames.RemoveAll(name => string.Equals(name, templateName, StringComparison.Ordinal));
+                changed = removed > 0;
+            }
+
+            if (changed)
+            {
+                try { SettingsService.SaveAllowedDefaultTemplates(_allowedDefaultTemplateNames); } catch { }
+            }
+        }
+
         public async Task<TemplateImportResult> ImportTemplatesFromFilesAsync(IEnumerable<string> filePaths, CancellationToken token = default)
         {
             var result = await ImportTemplatesInternalAsync(filePaths, GetTemplatesRootPath(), autoAllow: true, token);
@@ -404,6 +438,11 @@ namespace winbooth.ViewModels
             var result = await ImportTemplatesInternalAsync(filePaths, GetDefaultTemplatesRootPath(), autoAllow: false, token);
             if (result.HasChanges)
             {
+                foreach (var templateName in result.ImportedTemplates.Concat(result.UpdatedTemplates))
+                {
+                    EnsureDefaultTemplateAllowedByName(templateName);
+                }
+
                 _ = QueueTemplateReloadAsync(reloadUserTemplates: false, reloadDefaultTemplates: true);
             }
             return result;
@@ -489,6 +528,9 @@ namespace winbooth.ViewModels
                 errorMessage = $"Löschen fehlgeschlagen: {ex.Message}";
                 return false;
             }
+
+            _allowedDefaultTemplateNames.RemoveAll(name => string.Equals(name, template.Name, StringComparison.Ordinal));
+            try { SettingsService.SaveAllowedDefaultTemplates(_allowedDefaultTemplateNames); } catch { }
 
             _ = QueueTemplateReloadAsync(reloadUserTemplates: false, reloadDefaultTemplates: true);
             return true;
@@ -823,12 +865,27 @@ namespace winbooth.ViewModels
             try { snapshot = SettingsService.CaptureSnapshot(); } catch { }
             LoadPendingTemplateSelections(snapshot);
             LoadAdminAndUserSettingsFromStorage(snapshot);
-            SelectedTemplate1 = null;
-            SelectedTemplate2 = null;
-            ActiveTemplate = null;
+            ClearManualTemplateSelections();
             EnsureSelectedTemplatesValid();
-            PersistSelectedTemplates();
             RefreshStatistics();
+        }
+
+        public void ClearManualTemplateSelections()
+        {
+            var wasSuspended = _suspendTemplatePersistence;
+            _suspendTemplatePersistence = true;
+            try
+            {
+                SelectedTemplate1 = null;
+                SelectedTemplate2 = null;
+                ActiveTemplate = null;
+            }
+            finally
+            {
+                _suspendTemplatePersistence = wasSuspended;
+            }
+
+            PersistSelectedTemplates();
         }
 
         public void HandleGalleryFileSaved(string sourceFile)
@@ -1019,10 +1076,55 @@ namespace winbooth.ViewModels
             OnPropertyChanged(nameof(TemplateSlot2Preview));
         }
 
+        public IReadOnlyList<TemplateItem> GetTemplateLibraryTemplates()
+        {
+            if (DefaultTemplates.Count == 0)
+            {
+                return Array.Empty<TemplateItem>();
+            }
+
+            var allTemplates = DefaultTemplates.ToList();
+            if (_allowedDefaultTemplateNames.Count == 0)
+            {
+                return allTemplates;
+            }
+
+            var allowedLookup = new HashSet<string>(_allowedDefaultTemplateNames, StringComparer.Ordinal);
+            var filtered = allTemplates.Where(t => allowedLookup.Contains(t.Name)).ToList();
+            return filtered.Count > 0 ? filtered : allTemplates;
+        }
+
+        public TemplateItem FindTemplateByName(string templateName)
+        {
+            if (string.IsNullOrWhiteSpace(templateName))
+                return null;
+
+            return Templates.FirstOrDefault(t => string.Equals(t.Name, templateName, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public Task WaitForTemplateReloadAsync()
+        {
+            var task = _templateReloadTask;
+            return task ?? Task.CompletedTask;
+        }
+
         private void NormalizeAllowedTemplates()
         {
             NormalizeAllowedDevices(_allowedTemplateNames, Templates.Select(t => t.Name));
             OnPropertyChanged(nameof(AllowedTemplatesSummary));
+        }
+
+        private void NormalizeAllowedDefaultTemplates()
+        {
+            NormalizeAllowedDevices(_allowedDefaultTemplateNames, DefaultTemplates.Select(t => t.Name));
+
+            if (!_defaultTemplatePermissionsConfigured && _allowedDefaultTemplateNames.Count == 0 && DefaultTemplates.Count > 0)
+            {
+                _allowedDefaultTemplateNames.AddRange(DefaultTemplates.Select(t => t.Name));
+                _defaultTemplatePermissionsConfigured = true;
+            }
+
+            try { SettingsService.SaveAllowedDefaultTemplates(_allowedDefaultTemplateNames); } catch { }
         }
 
         private void NotifyDefaultTemplateChanged()
@@ -1032,6 +1134,8 @@ namespace winbooth.ViewModels
             OnPropertyChanged(nameof(HasDefaultTemplate));
             OnPropertyChanged(nameof(DefaultTemplateDisplayName));
             OnPropertyChanged(nameof(DefaultTemplatePreview));
+            OnPropertyChanged(nameof(TemplateSlot1Template));
+            OnPropertyChanged(nameof(TemplateSlot1Preview));
         }
 
         private void EnsureDefaultTemplateValid()
@@ -1068,6 +1172,23 @@ namespace winbooth.ViewModels
 
             _allowedTemplateNames.Add(templateName);
             OnPropertyChanged(nameof(AllowedTemplatesSummary));
+        }
+
+        private void EnsureDefaultTemplateAllowedByName(string templateName)
+        {
+            if (string.IsNullOrWhiteSpace(templateName))
+            {
+                return;
+            }
+
+            if (_allowedDefaultTemplateNames.Any(name => string.Equals(name, templateName, StringComparison.Ordinal)))
+            {
+                return;
+            }
+
+            _allowedDefaultTemplateNames.Add(templateName);
+            _defaultTemplatePermissionsConfigured = true;
+            try { SettingsService.SaveAllowedDefaultTemplates(_allowedDefaultTemplateNames); } catch { }
         }
 
     }

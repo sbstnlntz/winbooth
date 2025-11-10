@@ -1,17 +1,14 @@
 // Connects the user menu view with the main view model and manages command handlers, file pickers, and overlay toggles.
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.Win32;
-using winbooth.Models;
+using System.Threading.Tasks;
 using winbooth.ViewModels;
-using winbooth.Services;
 
 namespace winbooth.Views
 {
@@ -40,33 +37,8 @@ namespace winbooth.Views
                 window.MainFrame.Navigate(new StartView(_mainViewModel));
         }
 
-        private void SelectTemplateBtn1_Click(object sender, RoutedEventArgs e)
-        {
-            var templates = _mainViewModel.GetSelectableTemplates();
-            if (templates.Count == 0)
-            {
-                MessageBox.Show("Es sind keine Designs freigegeben. Bitte im Admin-Menü Designs auswählen.", "Design-Auswahl", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-            var dialog = new TemplateSelectionWindow(templates)
-            {
-                Owner = Window.GetWindow(this),
-                WindowStartupLocation = WindowStartupLocation.CenterOwner
-            };
-            if (dialog.ShowDialog() == true && dialog.SelectedTemplate != null)
-            {
-                if (_mainViewModel.SelectedTemplate2 != null &&
-                    dialog.SelectedTemplate.ZipPath == _mainViewModel.SelectedTemplate2.ZipPath)
-                {
-                    MessageBox.Show("Dieses Design ist bereits im zweiten Slot ausgewählt!", "Doppelte Auswahl", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-                _mainViewModel.SelectedTemplate1 = dialog.SelectedTemplate;
-                if (_mainViewModel.ActiveTemplate == null)
-                    _mainViewModel.ActiveTemplate = dialog.SelectedTemplate;
-                UpdateTemplateButtons();
-            }
-        }
+        private async void SelectTemplateBtn1_Click(object sender, RoutedEventArgs e)
+            => await SelectTemplateFromLibraryAsync(slotIndex: 1);
 
         private void DeleteTemplateBtn1_Click(object sender, RoutedEventArgs e)
         {
@@ -81,40 +53,8 @@ namespace winbooth.Views
             _mainViewModel.CameraRotate180 = !_mainViewModel.CameraRotate180;
         }
 
-        private void SelectTemplateBtn2_Click(object sender, RoutedEventArgs e)
-        {
-            if (!_mainViewModel.AllowTwoTemplates)
-            {
-                MessageBox.Show("Im Admin-Menü ist nur ein Foto-Design freigeschaltet.", "Zweiter Slot deaktiviert",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-
-            var templates = _mainViewModel.GetSelectableTemplates();
-            if (templates.Count == 0)
-            {
-                MessageBox.Show("Es sind keine Designs freigegeben. Bitte im Admin-Menü Designs auswählen.", "Design-Auswahl", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-            var dialog = new TemplateSelectionWindow(templates)
-            {
-                Owner = Window.GetWindow(this),
-                WindowStartupLocation = WindowStartupLocation.CenterOwner
-            };
-            if (dialog.ShowDialog() == true && dialog.SelectedTemplate != null)
-            {
-                if (_mainViewModel.SelectedTemplate1 != null &&
-                    dialog.SelectedTemplate.ZipPath == _mainViewModel.SelectedTemplate1.ZipPath)
-                {
-                    MessageBox.Show("Dieses Design ist bereits im ersten Slot ausgewählt!", "Doppelte Auswahl", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-                _mainViewModel.SelectedTemplate2 = dialog.SelectedTemplate;
-                if (_mainViewModel.ActiveTemplate == null)
-                    _mainViewModel.ActiveTemplate = dialog.SelectedTemplate;
-                UpdateTemplateButtons();
-            }
-        }
+        private async void SelectTemplateBtn2_Click(object sender, RoutedEventArgs e)
+            => await SelectTemplateFromLibraryAsync(slotIndex: 2);
 
         private void DeleteTemplateBtn2_Click(object sender, RoutedEventArgs e)
         {
@@ -124,177 +64,90 @@ namespace winbooth.Views
             UpdateTemplateButtons();
         }
 
-        private async void UploadTemplate_Click(object sender, RoutedEventArgs e)
+        private async Task SelectTemplateFromLibraryAsync(int slotIndex)
         {
-            var dialog = new OpenFileDialog
+            if (slotIndex == 2 && !_mainViewModel.AllowTwoTemplates)
             {
-                Title = "Design hinzufügen",
-                Filter = "Design-Pakete (*.zip)|*.zip",
-                Multiselect = true,
-                CheckFileExists = true
+                MessageBox.Show("Im Admin-Menü ist nur ein Foto-Design freigeschaltet.", "Zweiter Slot deaktiviert",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var templates = _mainViewModel.GetTemplateLibraryTemplates();
+            if (templates == null || templates.Count == 0)
+            {
+                MessageBox.Show("Es wurden keine Standard-Designs gefunden. Bitte im Admin-Menü unter \"Standard-Design\" ein Design hinzufügen.",
+                    "Design-Bibliothek", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var dialog = new TemplateSelectionWindow(_mainViewModel)
+            {
+                Owner = Window.GetWindow(this),
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
             };
 
-            try
+            if (dialog.ShowDialog() == true && dialog.SelectedTemplate != null)
             {
-                var templatesRoot = StartViewModel.GetTemplatesRootPath();
-                if (!string.IsNullOrWhiteSpace(templatesRoot) && Directory.Exists(templatesRoot))
+                await ImportTemplateFromLibraryAsync(dialog.SelectedTemplate.ZipPath, slotIndex);
+            }
+        }
+
+        private async Task ImportTemplateFromLibraryAsync(string sourceZipPath, int slotIndex)
+        {
+            var result = await _mainViewModel.ImportTemplatesFromFilesAsync(new[] { sourceZipPath });
+            if (result == null || !result.HasChanges)
+                return;
+
+            await _mainViewModel.WaitForTemplateReloadAsync();
+
+            var templateName = Path.GetFileNameWithoutExtension(sourceZipPath);
+            var template = _mainViewModel.FindTemplateByName(templateName);
+
+            if (template == null)
+            {
+                foreach (var name in result.ImportedTemplates.Concat(result.UpdatedTemplates))
                 {
-                    dialog.InitialDirectory = templatesRoot;
+                    template = _mainViewModel.FindTemplateByName(name);
+                    if (template != null)
+                        break;
                 }
             }
-            catch
-            {
-                // Initial directory fallback is best-effort.
-            }
 
-            var owner = Window.GetWindow(this);
-            if (dialog.ShowDialog(owner) != true)
+            if (template == null)
             {
+                MessageBox.Show("Das Design konnte nicht übernommen werden.", "Design-Auswahl",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            var result = await _mainViewModel.ImportTemplatesFromFilesAsync(dialog.FileNames);
+            if (slotIndex == 1 &&
+                _mainViewModel.SelectedTemplate2 != null &&
+                string.Equals(template.ZipPath, _mainViewModel.SelectedTemplate2.ZipPath, StringComparison.OrdinalIgnoreCase))
+            {
+                MessageBox.Show("Dieses Design ist bereits im zweiten Slot ausgewählt!", "Doppelte Auswahl",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
-            AssignImportedTemplateToEmptySlot(result);
+            if (slotIndex == 2 &&
+                _mainViewModel.SelectedTemplate1 != null &&
+                string.Equals(template.ZipPath, _mainViewModel.SelectedTemplate1.ZipPath, StringComparison.OrdinalIgnoreCase))
+            {
+                MessageBox.Show("Dieses Design ist bereits im ersten Slot ausgewählt!", "Doppelte Auswahl",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (slotIndex == 1)
+                _mainViewModel.SelectedTemplate1 = template;
+            else
+                _mainViewModel.SelectedTemplate2 = template;
+
+            if (_mainViewModel.ActiveTemplate == null)
+                _mainViewModel.ActiveTemplate = template;
+
             UpdateTemplateButtons();
-            ShowTemplateImportFeedback(result);
-        }
-
-        private void AssignImportedTemplateToEmptySlot(TemplateImportResult result)
-        {
-            if (result == null || result.ImportedTemplates.Count == 0)
-            {
-                return;
-            }
-
-            var importedLookup = new HashSet<string>(result.ImportedTemplates, StringComparer.Ordinal);
-            var importedTemplate = _mainViewModel.Templates
-                .FirstOrDefault(t => importedLookup.Contains(t.Name));
-
-            if (importedTemplate == null)
-            {
-                return;
-            }
-
-            if (_mainViewModel.SelectedTemplate1 == null)
-            {
-                _mainViewModel.SelectedTemplate1 = importedTemplate;
-                if (_mainViewModel.ActiveTemplate == null)
-                {
-                    _mainViewModel.ActiveTemplate = importedTemplate;
-                }
-                return;
-            }
-
-            var alreadyUsed =
-                string.Equals(_mainViewModel.SelectedTemplate1?.ZipPath, importedTemplate.ZipPath, StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(_mainViewModel.SelectedTemplate2?.ZipPath, importedTemplate.ZipPath, StringComparison.OrdinalIgnoreCase);
-
-            if (alreadyUsed || !_mainViewModel.AllowTwoTemplates)
-            {
-                return;
-            }
-
-            if (_mainViewModel.SelectedTemplate2 == null)
-            {
-                _mainViewModel.SelectedTemplate2 = importedTemplate;
-                if (_mainViewModel.ActiveTemplate == null)
-                {
-                    _mainViewModel.ActiveTemplate = importedTemplate;
-                }
-            }
-        }
-
-        private static void ShowTemplateImportFeedback(TemplateImportResult result)
-        {
-            if (result == null)
-            {
-                return;
-            }
-
-            var messages = new List<string>();
-
-            if (result.ImportedTemplates.Count > 0)
-            {
-                messages.Add(result.ImportedTemplates.Count == 1
-                    ? $"1 neues Design importiert: {result.ImportedTemplates[0]}"
-                    : $"{result.ImportedTemplates.Count} neue Designs importiert.");
-            }
-
-            if (result.UpdatedTemplates.Count > 0)
-            {
-                messages.Add(result.UpdatedTemplates.Count == 1
-                    ? $"1 vorhandenes Design aktualisiert: {result.UpdatedTemplates[0]}"
-                    : $"{result.UpdatedTemplates.Count} vorhandene Designs aktualisiert.");
-            }
-
-            if (result.InvalidFiles.Count > 0)
-            {
-                var invalidNames = result.InvalidFiles
-                    .Select(Path.GetFileName)
-                    .Where(n => !string.IsNullOrWhiteSpace(n))
-                    .ToList();
-
-                if (invalidNames.Count > 0)
-                {
-                    const int maxListEntries = 3;
-                    var displayNames = invalidNames.Take(maxListEntries).ToList();
-                    var remainder = invalidNames.Count - displayNames.Count;
-                    var summary = string.Join(", ", displayNames);
-                    if (remainder > 0)
-                    {
-                        summary += $" +{remainder}";
-                    }
-
-                    messages.Add(result.InvalidFiles.Count == 1
-                        ? $"1 Datei übersprungen (kein ZIP): {summary}"
-                        : $"{result.InvalidFiles.Count} Dateien übersprungen (kein ZIP): {summary}");
-                }
-                else
-                {
-                    messages.Add(result.InvalidFiles.Count == 1
-                        ? "1 Datei übersprungen (kein ZIP)."
-                        : $"{result.InvalidFiles.Count} Dateien übersprungen (kein ZIP).");
-                }
-            }
-
-            if (result.FailedFiles.Count > 0)
-            {
-                var failedNames = result.FailedFiles
-                    .Select(f => Path.GetFileName(f.File))
-                    .Where(n => !string.IsNullOrWhiteSpace(n))
-                    .ToList();
-
-                if (failedNames.Count > 0)
-                {
-                    const int maxListEntries = 3;
-                    var displayNames = failedNames.Take(maxListEntries).ToList();
-                    var remainder = failedNames.Count - displayNames.Count;
-                    var summary = string.Join(", ", displayNames);
-                    if (remainder > 0)
-                    {
-                        summary += $" +{remainder}";
-                    }
-
-                    messages.Add(result.FailedFiles.Count == 1
-                        ? $"1 Datei konnte nicht übernommen werden: {summary}"
-                        : $"{result.FailedFiles.Count} Dateien konnten nicht übernommen werden: {summary}");
-                }
-                else
-                {
-                    messages.Add(result.FailedFiles.Count == 1
-                        ? "1 Datei konnte nicht übernommen werden."
-                        : $"{result.FailedFiles.Count} Dateien konnten nicht übernommen werden.");
-                }
-            }
-
-            if (messages.Count == 0)
-            {
-                messages.Add("Es wurden keine gültigen Designs ausgewählt.");
-            }
-
-            var icon = result.FailedFiles.Count > 0 ? MessageBoxImage.Warning : MessageBoxImage.Information;
-            MessageBox.Show(string.Join(Environment.NewLine, messages), "Design-Upload", MessageBoxButton.OK, icon);
         }
 
         private void CameraSettings_Click(object sender, RoutedEventArgs e)
@@ -382,6 +235,10 @@ namespace winbooth.Views
                 case nameof(StartViewModel.SelectedTemplate1):
                 case nameof(StartViewModel.SelectedTemplate2):
                 case nameof(StartViewModel.ActiveTemplate):
+                case nameof(StartViewModel.TemplateSlot1Template):
+                case nameof(StartViewModel.TemplateSlot1Preview):
+                case nameof(StartViewModel.TemplateSlot2Template):
+                case nameof(StartViewModel.TemplateSlot2Preview):
                     Dispatcher.Invoke(UpdateTemplateButtons);
                     break;
             }
@@ -391,46 +248,37 @@ namespace winbooth.Views
         {
             TemplateSlot2.Visibility = _mainViewModel.AllowTwoTemplates ? Visibility.Visible : Visibility.Collapsed;
             SelectTemplateBtn2.IsEnabled = _mainViewModel.AllowTwoTemplates;
-            DeleteTemplateBtn2.IsEnabled = _mainViewModel.AllowTwoTemplates;
+            DeleteTemplateBtn1.Visibility = Visibility.Visible;
+            DeleteTemplateBtn2.Visibility = Visibility.Visible;
 
-            var selected1 = _mainViewModel.SelectedTemplate1;
-            if (selected1 != null && selected1.PreviewImage != null)
+            var slot1Template = _mainViewModel.TemplateSlot1Template;
+            var slot1Preview = _mainViewModel.TemplateSlot1Preview;
+            if (slot1Template != null && slot1Preview != null)
             {
-                SelectedTemplatePreview1.Source = selected1.PreviewImage;
+                SelectedTemplatePreview1.Source = slot1Preview;
                 SelectedTemplatePreview1.Visibility = Visibility.Visible;
                 PlusIcon1.Visibility = Visibility.Collapsed;
-                DeleteTemplateBtn1.Visibility = Visibility.Visible;
-                DeleteTemplateBtn1.IsEnabled = true;
-                DeleteTemplateBtn1.Opacity = 1.0;
             }
             else
             {
                 SelectedTemplatePreview1.Source = null;
                 SelectedTemplatePreview1.Visibility = Visibility.Collapsed;
                 PlusIcon1.Visibility = Visibility.Visible;
-                DeleteTemplateBtn1.Visibility = Visibility.Visible;
-                DeleteTemplateBtn1.IsEnabled = false;
-                DeleteTemplateBtn1.Opacity = 0.4;
             }
 
             var selected2 = _mainViewModel.SelectedTemplate2;
-            if (selected2 != null && selected2.PreviewImage != null)
+            var slot2Preview = selected2?.PreviewImage;
+            if (selected2 != null && slot2Preview != null)
             {
-                SelectedTemplatePreview2.Source = selected2.PreviewImage;
+                SelectedTemplatePreview2.Source = slot2Preview;
                 SelectedTemplatePreview2.Visibility = Visibility.Visible;
                 PlusIcon2.Visibility = Visibility.Collapsed;
-                DeleteTemplateBtn2.Visibility = Visibility.Visible;
-                DeleteTemplateBtn2.IsEnabled = true;
-                DeleteTemplateBtn2.Opacity = 1.0;
             }
             else
             {
                 SelectedTemplatePreview2.Source = null;
                 SelectedTemplatePreview2.Visibility = Visibility.Collapsed;
                 PlusIcon2.Visibility = _mainViewModel.AllowTwoTemplates ? Visibility.Visible : Visibility.Collapsed;
-                DeleteTemplateBtn2.Visibility = Visibility.Visible;
-                DeleteTemplateBtn2.IsEnabled = false;
-                DeleteTemplateBtn2.Opacity = 0.4;
             }
         }
 
