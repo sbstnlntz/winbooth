@@ -94,6 +94,7 @@
 			<utilities:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
 			<utilities:SelectedBorderMultiConverter x:Key="SelectedBorderMultiConverter"/>
 			<utilities:SelectedBorderBrushMultiConverter x:Key="SelectedBorderBrushMultiConverter"/>
+			<utilities:PreviewWidthFromHeightConverter x:Key="TemplatePreviewWidthConverter" Padding="6"/>
 			
 
 			<!-- Used only by the template selection buttons -->

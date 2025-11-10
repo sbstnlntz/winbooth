@@ -185,7 +185,7 @@
                         <Button Content="Backup jetzt"
                                 Style="{StaticResource AdminActionButtonStyle}"
                                 Click="BackupNow_Click"/>
-                        <Button Content="App beenden"
+                        <Button Content="Programm beenden"
                                 Style="{StaticResource AdminActionButtonStyle}"
                                 Click="ShutdownApp_Click"/>
                         <Button Content="Fotobox ausschalten"

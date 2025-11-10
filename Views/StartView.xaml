@@ -48,7 +48,11 @@
              StretchDirection="Both"
              VerticalAlignment="Top"
              HorizontalAlignment="Center">
-        <Grid Width="1280" Height="950" Margin="36,0,36,0">
+        <Grid Width="1280"
+              Height="950"
+              Margin="36,0,36,0"
+              Background="{Binding StartInstructionBrush}"
+              RenderOptions.BitmapScalingMode="HighQuality">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="1*"/>
@@ -88,11 +92,9 @@
             <Border Grid.Row="0"
                     Height="400"
                     CornerRadius="0"
-                    Background="{Binding StartInstructionBrush}"
+                    Background="Transparent"
                     Margin="0,0,0,12"
-                    RenderOptions.BitmapScalingMode="HighQuality"
-                    VerticalAlignment="Top"
-                    />
+                    VerticalAlignment="Top"/>
 
             <StackPanel Grid.Row="1"
                         Orientation="Horizontal"
@@ -119,11 +121,9 @@
             <Border Grid.Row="2"
                     Height="200"
                     CornerRadius="0"
-                    Background="{Binding WarningInfoBrush}"
-                    RenderOptions.BitmapScalingMode="HighQuality"
+                    Background="Transparent"
                     Margin="0,0,0,0"
-                    VerticalAlignment="Bottom"
-                    />
+                    VerticalAlignment="Bottom"/>
         </Grid>
 
         <!-- Right side content -->
@@ -174,10 +174,17 @@
                             Orientation="Vertical"
                             HorizontalAlignment="Stretch">
                     <Button Height="240"
+                            MaxWidth="440"
                             Margin="12,0,0,28"
                             Padding="0"
                             Background="Transparent"
                             Click="SelectTemplate1_Click">
+                        <Button.Width>
+                            <MultiBinding Converter="{StaticResource TemplatePreviewWidthConverter}">
+                                <Binding RelativeSource="{RelativeSource Self}" Path="Height"/>
+                                <Binding Path="TemplateSlot1Preview"/>
+                            </MultiBinding>
+                        </Button.Width>
                         <Button.BorderThickness>
                             <MultiBinding Converter="{StaticResource SelectedBorderMultiConverter}">
                                 <Binding Path="ActiveTemplate"/>
@@ -228,10 +235,17 @@
                     </Button>
 
                     <Button Height="240"
+                            MaxWidth="440"
                             Margin="12,0,0,0"
                             Padding="0"
                             Background="Transparent"
                             Click="SelectTemplate2_Click">
+                        <Button.Width>
+                            <MultiBinding Converter="{StaticResource TemplatePreviewWidthConverter}">
+                                <Binding RelativeSource="{RelativeSource Self}" Path="Height"/>
+                                <Binding Path="TemplateSlot2Preview"/>
+                            </MultiBinding>
+                        </Button.Width>
                         <Button.Style>
                             <Style TargetType="Button">
                                 <Setter Property="Visibility">

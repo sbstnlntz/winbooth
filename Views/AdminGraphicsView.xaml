@@ -86,114 +86,54 @@
                         VerticalAlignment="Top"
                         Click="Back_Click"/>
 
-                <Grid Grid.Row="1"
-                      Margin="0,32,0,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+                <Border Grid.Row="1"
+                        Margin="0,32,0,0"
+                        Background="#F8F8F8"
+                        CornerRadius="0"
+                        Padding="24">
+                    <StackPanel>
+                        <TextBlock Text="Hintergrund (1280 x 720)"
+                                   FontWeight="Bold"
+                                   FontSize="24"
+                                   Foreground="#222"/>
+                        <TextBlock Text="{Binding StartInstructionDescription}"
+                                   FontSize="16"
+                                   Foreground="#555"
+                                   Margin="0,8,0,20"
+                                   TextWrapping="Wrap"/>
 
-                    <Border Grid.Row="0"
-                            Background="#F8F8F8"
-                            CornerRadius="0"
-                            Padding="24"
-                            Margin="0,0,0,24"
-                            >
-                        <StackPanel>
-                            <Border Background="#D61C1C"
-                                    CornerRadius="8"
-                                    Padding="12,6"
-                                    Margin="0,0,0,12">
-                                <TextBlock Text="Funktionen (1280 x 400)"
-                                           FontWeight="Bold"
-                                           FontSize="20"
-                                           Foreground="White"/>
-                            </Border>
-                            <TextBlock Text="{Binding StartInstructionDescription}"
-                                       FontSize="16"
-                                       Foreground="#555"
-                                       Margin="0,0,0,16"
-                                       TextWrapping="Wrap"/>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
-                                <Button Grid.Column="0"
-                                        Style="{StaticResource ImagePreviewButtonStyle}"
-                                        Click="ChangeStartInstruction_Click"
-                                        ToolTip="Grafik ändern">
-                                    <Border Height="160"
-                                            CornerRadius="0"
-                                            Background="{Binding StartInstructionBrush}"
-                                            RenderOptions.BitmapScalingMode="HighQuality"
-                                            SnapsToDevicePixels="True"
-                                            />
-                                </Button>
-                                <Button Grid.Column="1"
-                                        Style="{StaticResource IconButtonStyle}"
-                                        Margin="18,0,0,0"
-                                        Click="ResetStartInstruction_Click"
-                                        IsEnabled="{Binding HasCustomStartInstruction}"
-                                        ToolTip="Standardgrafik wiederherstellen">
-                                    <TextBlock FontFamily="Segoe MDL2 Assets"
-                                               FontSize="28"
-                                               Text="&#xE74D;"/>
-                                </Button>
-                            </Grid>
-                        </StackPanel>
-                    </Border>
+                            <Button Grid.Column="0"
+                                    Style="{StaticResource ImagePreviewButtonStyle}"
+                                    Click="ChangeStartInstruction_Click"
+                                    ToolTip="Grafik auswählen oder austauschen">
+                                <Border Height="360"
+                                        CornerRadius="12"
+                                        Background="{Binding StartInstructionBrush}"
+                                        RenderOptions.BitmapScalingMode="HighQuality"
+                                        SnapsToDevicePixels="True"/>
+                            </Button>
 
-                    <Border Grid.Row="1"
-                            Background="#F8F8F8"
-                            CornerRadius="0"
-                            Padding="24"
-                            VerticalAlignment="Bottom"
-                            >
-                        <StackPanel>
-                            <TextBlock Text="Hinweis (1280 x 200)"
-                                       FontWeight="Bold"
-                                       FontSize="20"
-                                       Foreground="#222"
-                                       Margin="0,0,0,12"/>
-                            <TextBlock Text="{Binding WarningInfoDescription}"
-                                       FontSize="16"
-                                       Foreground="#555"
-                                       Margin="0,0,0,16"
-                                       TextWrapping="Wrap"/>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-
-                                <Button Grid.Column="0"
-                                        Style="{StaticResource ImagePreviewButtonStyle}"
-                                        Click="ChangeWarningInfo_Click"
-                                        ToolTip="Grafik ändern">
-                                    <Border Height="160"
-                                            CornerRadius="0"
-                                            Background="{Binding WarningInfoBrush}"
-                                            RenderOptions.BitmapScalingMode="HighQuality"
-                                            SnapsToDevicePixels="True"
-                                            />
-                                </Button>
-                                <Button Grid.Column="1"
-                                        Style="{StaticResource IconButtonStyle}"
-                                        Margin="18,0,0,0"
-                                        Click="ResetWarningInfo_Click"
-                                        IsEnabled="{Binding HasCustomWarningInfo}"
-                                        ToolTip="Standardgrafik wiederherstellen">
-                                    <TextBlock FontFamily="Segoe MDL2 Assets"
-                                               FontSize="28"
-                                               Text="&#xE74D;"/>
-                                </Button>
-                            </Grid>
-                        </StackPanel>
-                    </Border>
-                </Grid>
+                            <Button Grid.Column="1"
+                                    Style="{StaticResource IconButtonStyle}"
+                                    Margin="18,0,0,0"
+                                    Click="ResetStartInstruction_Click"
+                                    IsEnabled="{Binding HasCustomStartInstruction}"
+                                    ToolTip="Standardgrafik wiederherstellen">
+                                <TextBlock FontFamily="Segoe MDL2 Assets"
+                                           FontSize="28"
+                                           Text="&#xE74D;"/>
+                            </Button>
+                        </Grid>
+                    </StackPanel>
+                </Border>
             </Grid>
         </Border>
     </Viewbox>
 </UserControl>
+
