@@ -9,10 +9,107 @@
         <local:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
         <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <Style x:Key="UserActionButtonStyle" TargetType="Button">
-            <Setter Property="Padding" Value="14,6"/>
+            <Setter Property="Padding" Value="16,8"/>
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="Margin" Value="0,0,8,8"/>
-            <Setter Property="MinWidth" Value="140"/>
+            <Setter Property="Width" Value="220"/>
+            <Setter Property="MinHeight" Value="56"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="14"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.92"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <SolidColorBrush x:Key="DelaySliderAccentBrush" Color="#FF2196F3"/>
+        <SolidColorBrush x:Key="DelaySliderAccentDarkBrush" Color="#FF0B66CC"/>
+        <SolidColorBrush x:Key="DelaySliderTrackBrush" Color="#FFE4F1FD"/>
+        <Style x:Key="DelayTouchSliderThumbStyle" TargetType="Thumb">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Border Width="34"
+                                Height="34"
+                                CornerRadius="17"
+                                Background="{StaticResource DelaySliderAccentBrush}"
+                                BorderBrush="{StaticResource DelaySliderAccentDarkBrush}"
+                                BorderThickness="2"
+                                SnapsToDevicePixels="True"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="DelayTouchSliderRepeatButtonStyle" TargetType="RepeatButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border Background="{TemplateBinding Background}"
+                                Height="10"
+                                VerticalAlignment="Center"
+                                CornerRadius="5"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Focusable" Value="False"/>
+        </Style>
+        <Style x:Key="DelayTouchSliderStyle" TargetType="Slider">
+            <Setter Property="Height" Value="80"/>
+            <Setter Property="Margin" Value="0,6,0,20"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Slider">
+                        <Grid Height="80"
+                              Margin="0,6,0,16"
+                              ClipToBounds="False">
+                            <Track x:Name="PART_Track"
+                                   VerticalAlignment="Center"
+                                   Height="34"
+                                   Maximum="{TemplateBinding Maximum}"
+                                   Minimum="{TemplateBinding Minimum}"
+                                   Value="{TemplateBinding Value}"
+                                   IsDirectionReversed="{TemplateBinding IsDirectionReversed}"
+                                   Orientation="{TemplateBinding Orientation}">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="Slider.DecreaseLarge"
+                                                  Style="{StaticResource DelayTouchSliderRepeatButtonStyle}"
+                                                  Background="{StaticResource DelaySliderAccentBrush}"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource DelayTouchSliderThumbStyle}"/>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="Slider.IncreaseLarge"
+                                                  Style="{StaticResource DelayTouchSliderRepeatButtonStyle}"
+                                                  Background="{StaticResource DelaySliderTrackBrush}"/>
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </UserControl.Resources>
 
@@ -45,8 +142,8 @@
             <!-- Settings plus device info columns -->
             <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,18,0,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1.15*"/>
                     <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1.25*"/>
                 </Grid.ColumnDefinitions>
 
                 <!-- Left column with settings controls -->
@@ -56,14 +153,35 @@
                     <StackPanel>
 
                     <!-- Countdown duration slider -->
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,14" VerticalAlignment="Center">
-                        <TextBlock Text="Countdown" FontWeight="Bold" FontSize="22" Width="142"/>
-                        <TextBlock Text="3" FontSize="16" VerticalAlignment="Center" Width="22" HorizontalAlignment="Left"/>
-                        <Slider Minimum="3" Maximum="15" Value="{Binding PreviewDurationSeconds, Mode=TwoWay}" 
-                                TickFrequency="1" IsSnapToTickEnabled="True"
-                                Width="120" Margin="4,0"/>
-                        <TextBlock Text="15" FontSize="16" VerticalAlignment="Center" Width="26" HorizontalAlignment="Right"/>
-                        <TextBlock Text="{Binding PreviewDurationSeconds, StringFormat={}{0} Sek.}" FontSize="18" VerticalAlignment="Center" Margin="14,0"/>
+                    <StackPanel Margin="0,0,0,26">
+                        <TextBlock Text="Countdown"
+                                   FontWeight="Bold"
+                                   FontSize="22"
+                                   Margin="0,0,0,6"/>
+                        <Grid VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Slider Grid.Column="0"
+                                    Minimum="3"
+                                    Maximum="15"
+                                    TickFrequency="1"
+                                    IsSnapToTickEnabled="True"
+                                    Style="{StaticResource DelayTouchSliderStyle}"
+                                    Value="{Binding PreviewDurationSeconds, Mode=TwoWay}"
+                                    HorizontalAlignment="Stretch"/>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding PreviewDurationSeconds, StringFormat={}{0} Sek.}"
+                                       FontSize="18"
+                                       Margin="14,0,0,0"
+                                       VerticalAlignment="Center"/>
+                        </Grid>
+                        <TextBlock Text="Legt fest, wie viele Sekunden zwischen Start und Foto vergeht."
+                                   FontSize="14"
+                                   Foreground="#666"
+                                   Margin="0,4,0,12"
+                                   TextWrapping="Wrap"/>
                     </StackPanel>
 
                     <!-- Direct print toggle -->
@@ -73,25 +191,44 @@
                             <CheckBox IsChecked="{Binding Direktdruck, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0"/>
                             <TextBlock Text="Direktdruck" FontWeight="Bold" FontSize="22" VerticalAlignment="Center"/>
                         </StackPanel>
+                        <TextBlock Text="Bei aktivem Direktdruck kann jedes Foto sofort gedruckt."
+                                   FontSize="14"
+                                   Foreground="#666"
+                                   Margin="0,4,0,24"
+                                   TextWrapping="Wrap"/>
                     </StackPanel>
 
                     <!-- Gallery actions -->
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6"
+                    <StackPanel Margin="0,0,0,6"
                                 Visibility="{Binding AllowGalerie, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <CheckBox IsChecked="{Binding GalerieButton, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0"/>
-                        <TextBlock Text="Galerie" FontWeight="Bold" FontSize="22" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding GalerieButton, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                            <TextBlock Text="Galerie" FontWeight="Bold" FontSize="22" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <TextBlock Text="Zeigt im Startbildschirm einen Galerie-Button an."
+                                   FontSize="14"
+                                   Foreground="#666"
+                                   Margin="0,4,0,24"
+                                   TextWrapping="Wrap"/>
                     </StackPanel>
                     <!-- Photo filter toggle -->
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,18"
+                    <StackPanel Margin="0,0,0,18"
                                 Visibility="{Binding AllowFotoFilter, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <CheckBox IsChecked="{Binding FotoFilter, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0"/>
-                        <TextBlock Text="Foto-Filter" FontWeight="Bold" FontSize="22" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding FotoFilter, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                            <TextBlock Text="Foto-Filter" FontWeight="Bold" FontSize="22" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <TextBlock Text="Erlaubt es Gästen, vor dem Druck Filter zu aktivieren."
+                                   FontSize="14"
+                                   Foreground="#666"
+                                   Margin="0,4,0,24"
+                                   TextWrapping="Wrap"/>
                     </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
 
                 <!-- Right column with device information -->
-                <Grid Grid.Column="1" Margin="38,0,0,0">
+                <Grid Grid.Column="1" Margin="0" HorizontalAlignment="Right">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
@@ -102,226 +239,297 @@
                                   VerticalScrollBarVisibility="Auto"
                                   HorizontalScrollBarVisibility="Disabled">
                         <StackPanel>
-                    <!-- Camera summary -->
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12" VerticalAlignment="Center">
-                        <TextBlock Text="Kamera" FontWeight="Bold" FontSize="19" Width="120"/>
-                        <StackPanel Width="220" Margin="8,0,0,0">
-                            <TextBlock Text="{Binding SelectedCameraName}" FontSize="19" TextWrapping="Wrap"/>
-                            <TextBlock Text="{Binding CameraRotationSummary}" FontSize="14" Foreground="#666" Margin="0,2,0,0"/>
-                        </StackPanel>
-                        <Button Width="34" Height="34" Margin="8,0,0,0"
-                                Background="#D93030"
-                                Foreground="White"
-                                BorderBrush="#B02020"
-                                BorderThickness="2"
-                                ToolTip="Kamera 180° drehen"
-                                Click="ToggleCameraRotationUser_Click">
-                            <TextBlock Text="180°" FontSize="14" FontWeight="Bold"/>
-                        </Button>
-                        <Button Width="28" Height="28" Margin="6,0,0,0"
-                                Click="CameraSettings_Click"
-                                ToolTip="Kamera auswählen">
-                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="16"/>
-                        </Button>
-                    </StackPanel>
-
-                    <!-- Printer summary -->
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12" VerticalAlignment="Center">
-                        <TextBlock Text="Drucker" FontWeight="Bold" FontSize="19" Width="120"/>
-                        <TextBlock Text="{Binding SelectedPrinterName}" FontSize="19" Margin="8,0,0,0" Width="220" TextWrapping="Wrap"/>
-                        <Button Width="28" Height="28" Margin="6,0,0,0"
-                                Click="PrinterSettings_Click"
-                                ToolTip="Drucker auswählen">
-                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="16"/>
-                        </Button>
-                    </StackPanel>
-
-                    <!-- USB storage summary -->
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12" VerticalAlignment="Center">
-                        <TextBlock Text="USB Speicher" FontWeight="Bold" FontSize="19" Width="120"/>
-                        <TextBlock Text="{Binding UsbDriveSummary}" FontSize="19" Margin="8,0,0,0" Width="220" TextWrapping="Wrap"/>
-                        <Button Width="28" Height="28" Margin="6,0,0,0"
-                                Click="UsbSettings_Click"
-                                ToolTip="USB-Speicher auswählen">
-                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE898;" FontSize="16"/>
-                        </Button>
-                    </StackPanel>
-
-                    </StackPanel>
-                </ScrollViewer>
-
-                    <Grid Grid.Row="1"
-                          Margin="0,24,0,0">
-                        <StackPanel HorizontalAlignment="Right"
-                                    VerticalAlignment="Bottom">
-                            <TextBlock Text="Foto Design"
-                                       FontWeight="Bold"
-                                       FontSize="22"
-                                       Margin="0,0,0,10"
-                                       HorizontalAlignment="Right"/>
-                            <StackPanel Orientation="Horizontal"
-                                        HorizontalAlignment="Right">
-                            <!-- Slot 1 preview -->
-                            <Grid HorizontalAlignment="Right"
-                                  Margin="0,0,12,0">
+                            <Grid Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="160"/>
+                                    <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <Grid Width="170" Height="120">
-                                    <Rectangle Stroke="#222" StrokeThickness="2" RadiusX="7" RadiusY="7"
-                                               StrokeDashArray="4,3" Fill="White"/>
-                                    <Grid>
-                                        <Image x:Name="SelectedTemplatePreview1"
-                                               Width="150" Height="90"
-                                               Stretch="Uniform"
-                                               VerticalAlignment="Center"
-                                               HorizontalAlignment="Center"
-                                               Visibility="Collapsed"/>
-                                        <Button x:Name="SelectTemplateBtn1"
-                                                Background="Transparent"
-                                                BorderThickness="0"
-                                                Click="SelectTemplateBtn1_Click"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Stretch"/>
-                                        <TextBlock x:Name="PlusIcon1"
-                                                   Text="+" FontSize="55" FontWeight="Bold" Foreground="#FF8600"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                   IsHitTestVisible="False">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding TemplateSlot1Template}" Value="{x:Null}">
-                                                            <Setter Property="Visibility" Value="Visible"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
-                                    </Grid>
-                                </Grid>
-                                <Button x:Name="DeleteTemplateBtn1"
-                                        Grid.Column="1"
-                                        Width="40"
-                                        Height="40"
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        Background="Transparent"
-                                        BorderBrush="Transparent"
-                                        ToolTip="Auswahl löschen"
-                                        Click="DeleteTemplateBtn1_Click">
-                                    <Button.Style>
-                                        <Style TargetType="Button">
-                                            <Setter Property="IsEnabled" Value="True"/>
-                                            <Setter Property="Opacity" Value="1"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding SelectedTemplate1}" Value="{x:Null}">
-                                                    <Setter Property="IsEnabled" Value="False"/>
-                                                    <Setter Property="Opacity" Value="0.4"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Button.Style>
-                                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" FontSize="22" Foreground="#444"/>
-                                </Button>
+                                <TextBlock Grid.Column="0"
+                                           Text="Kamera"
+                                           FontWeight="Bold"
+                                           FontSize="19"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Top"/>
+                                <StackPanel Grid.Column="1"
+                                            Margin="12,0,0,0"
+                                            VerticalAlignment="Top">
+                                    <TextBlock Text="{Binding SelectedCameraName}"
+                                               FontSize="19"
+                                               TextWrapping="Wrap"/>
+                                    <TextBlock Text="{Binding CameraRotationSummary}"
+                                               FontSize="14"
+                                               Foreground="#666"
+                                               Margin="0,2,0,0"
+                                               TextWrapping="Wrap"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2"
+                                            Orientation="Horizontal"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Top">
+                                    <Button Width="34"
+                                            Height="34"
+                                            ToolTip="Kamera 180° drehen"
+                                            Margin="0,0,6,0"
+                                            Background="#D93030"
+                                            Foreground="White"
+                                            BorderBrush="#B02020"
+                                            BorderThickness="2"
+                                            VerticalAlignment="Top"
+                                            Click="ToggleCameraRotationUser_Click">
+                                        <TextBlock Text="180°" FontSize="14" FontWeight="Bold"/>
+                                    </Button>
+                                    <Button Width="34"
+                                            Height="34"
+                                            ToolTip="Kamera auswählen"
+                                            Margin="0"
+                                            VerticalAlignment="Top"
+                                            Click="CameraSettings_Click">
+                                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="16"/>
+                                    </Button>
+                                </StackPanel>
                             </Grid>
-                            <!-- Slot 2 preview -->
-                            <Grid x:Name="TemplateSlot2"
-                                  HorizontalAlignment="Right"
-                                  Margin="0,0,0,0">
-                                <Grid.Style>
-                                    <Style TargetType="Grid">
-                                        <Setter Property="Visibility" Value="Visible"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding AllowTwoTemplates}" Value="False">
-                                                <Setter Property="Visibility" Value="Collapsed"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Grid.Style>
+
+                            <Grid Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="160"/>
+                                    <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <Grid Width="170" Height="120">
-                                    <Rectangle Stroke="#222" StrokeThickness="2" RadiusX="7" RadiusY="7"
-                                               StrokeDashArray="4,3" Fill="White"/>
-                                    <Grid>
-                                        <Image x:Name="SelectedTemplatePreview2"
-                                               Width="150" Height="90"
-                                               Stretch="Uniform"
-                                               VerticalAlignment="Center"
-                                               HorizontalAlignment="Center"
-                                               Visibility="Collapsed"/>
-                                        <Button x:Name="SelectTemplateBtn2"
-                                                Background="Transparent"
-                                                BorderThickness="0"
-                                                Click="SelectTemplateBtn2_Click"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Stretch"/>
-                                        <TextBlock x:Name="PlusIcon2"
-                                                   Text="+"
-                                                   FontSize="55" FontWeight="Bold" Foreground="#FF8600"
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                   IsHitTestVisible="False">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding SelectedTemplate2}" Value="{x:Null}">
-                                                            <Setter Property="Visibility" Value="Visible"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
-                                    </Grid>
-                                </Grid>
-                                <Button x:Name="DeleteTemplateBtn2"
-                                        Grid.Column="1"
-                                        Width="40"
-                                        Height="40"
-                                        Margin="6,0,0,0"
-                                        VerticalAlignment="Center"
-                                        Background="Transparent"
-                                        BorderBrush="Transparent"
-                                        ToolTip="Auswahl löschen"
-                                        Click="DeleteTemplateBtn2_Click">
-                                    <Button.Style>
-                                        <Style TargetType="Button">
-                                            <Setter Property="IsEnabled" Value="True"/>
-                                            <Setter Property="Opacity" Value="1"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding AllowTwoTemplates}" Value="False">
-                                                    <Setter Property="IsEnabled" Value="False"/>
-                                                    <Setter Property="Opacity" Value="0.4"/>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding SelectedTemplate2}" Value="{x:Null}">
-                                                    <Setter Property="IsEnabled" Value="False"/>
-                                                    <Setter Property="Opacity" Value="0.4"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Button.Style>
-                                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" FontSize="22" Foreground="#444"/>
-                                </Button>
+                                <TextBlock Grid.Column="0"
+                                           Text="Drucker"
+                                           FontWeight="Bold"
+                                           FontSize="19"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Top"/>
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding SelectedPrinterName}"
+                                           FontSize="19"
+                                           Margin="12,0,0,0"
+                                           TextWrapping="Wrap"
+                                           VerticalAlignment="Top"/>
+                                <StackPanel Grid.Column="2"
+                                            Orientation="Horizontal"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Top">
+                                    <Button Width="34"
+                                            Height="34"
+                                            ToolTip="Drucker auswählen"
+                                            Margin="0"
+                                            VerticalAlignment="Top"
+                                            Click="PrinterSettings_Click">
+                                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="16"/>
+                                    </Button>
+                                </StackPanel>
                             </Grid>
-                            </StackPanel>
-                        </StackPanel>
-                    </Grid>
 
-                    <StackPanel Grid.Row="2"
+                            <Grid Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="160"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           Text="USB Speicher"
+                                           FontWeight="Bold"
+                                           FontSize="19"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Top"/>
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding UsbDriveSummary}"
+                                           FontSize="19"
+                                           Margin="12,0,0,0"
+                                           TextWrapping="Wrap"
+                                           VerticalAlignment="Top"/>
+                                <StackPanel Grid.Column="2"
+                                            Orientation="Horizontal"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Top">
+                                    <Button Width="34"
+                                            Height="34"
+                                            ToolTip="USB-Speicher auswählen"
+                                            Margin="0"
+                                            VerticalAlignment="Top"
+                                            Click="UsbSettings_Click">
+                                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE898;" FontSize="16"/>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <StackPanel Grid.Row="1"
                                 HorizontalAlignment="Right"
-                                Margin="0,24,0,0">
+                                Margin="0,18,0,18">
                         <Button Content="FOTOBOX ausschalten"
                                 Style="{StaticResource UserActionButtonStyle}"
-                                Width="220"
                                 Background="#D93030"
                                 BorderBrush="#A32222"
                                 Foreground="White"
                                 Click="ShutdownSystem_Click"/>
                     </StackPanel>
+
+                    <Grid Grid.Row="2"
+                          Margin="0,12,0,12">
+                        <StackPanel HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom">
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Right">
+                                <!-- Slot 1 -->
+                                <Grid HorizontalAlignment="Right"
+                                      Margin="0,0,12,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Width="260" Height="190">
+                                        <Rectangle Stroke="#222" StrokeThickness="2" RadiusX="7" RadiusY="7"
+                                                   StrokeDashArray="4,3" Fill="White"/>
+                                        <Grid>
+                                            <Image x:Name="SelectedTemplatePreview1"
+                                                   Width="220" Height="150"
+                                                   Stretch="Uniform"
+                                                   VerticalAlignment="Center"
+                                                   HorizontalAlignment="Center"
+                                                   Visibility="Collapsed"/>
+                                            <Button x:Name="SelectTemplateBtn1"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Click="SelectTemplateBtn1_Click"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"/>
+                                            <TextBlock x:Name="PlusIcon1"
+                                                       Text="+"
+                                                       FontSize="55"
+                                                       FontWeight="Bold"
+                                                       Foreground="#FF8600"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       IsHitTestVisible="False">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding TemplateSlot1Template}" Value="{x:Null}">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Grid>
+                                    </Grid>
+                                    <Button x:Name="DeleteTemplateBtn1"
+                                            Grid.Column="1"
+                                            Width="40"
+                                            Height="40"
+                                            Margin="6,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Background="Transparent"
+                                            BorderBrush="Transparent"
+                                            ToolTip="Design löschen"
+                                            Click="DeleteTemplateBtn1_Click">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="IsEnabled" Value="True"/>
+                                                <Setter Property="Opacity" Value="1"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SelectedTemplate1}" Value="{x:Null}">
+                                                        <Setter Property="IsEnabled" Value="False"/>
+                                                        <Setter Property="Opacity" Value="0.4"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" FontSize="22" Foreground="#444"/>
+                                    </Button>
+                                </Grid>
+                                <!-- Slot 2 -->
+                                <Grid x:Name="TemplateSlot2"
+                                      HorizontalAlignment="Right">
+                                    <Grid.Style>
+                                        <Style TargetType="Grid">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding AllowTwoTemplates}" Value="False">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Grid.Style>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Width="260" Height="190">
+                                        <Rectangle Stroke="#222" StrokeThickness="2" RadiusX="7" RadiusY="7"
+                                                   StrokeDashArray="4,3" Fill="White"/>
+                                        <Grid>
+                                            <Image x:Name="SelectedTemplatePreview2"
+                                                   Width="220" Height="150"
+                                                   Stretch="Uniform"
+                                                   VerticalAlignment="Center"
+                                                   HorizontalAlignment="Center"
+                                                   Visibility="Collapsed"/>
+                                            <Button x:Name="SelectTemplateBtn2"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Click="SelectTemplateBtn2_Click"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"/>
+                                            <TextBlock x:Name="PlusIcon2"
+                                                       Text="+"
+                                                       FontSize="55"
+                                                       FontWeight="Bold"
+                                                       Foreground="#FF8600"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       IsHitTestVisible="False">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding SelectedTemplate2}" Value="{x:Null}">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Grid>
+                                    </Grid>
+                                    <Button x:Name="DeleteTemplateBtn2"
+                                            Grid.Column="1"
+                                            Width="40"
+                                            Height="40"
+                                            Margin="6,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Background="Transparent"
+                                            BorderBrush="Transparent"
+                                            ToolTip="Design löschen"
+                                            Click="DeleteTemplateBtn2_Click">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="IsEnabled" Value="True"/>
+                                                <Setter Property="Opacity" Value="1"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding AllowTwoTemplates}" Value="False">
+                                                        <Setter Property="IsEnabled" Value="False"/>
+                                                        <Setter Property="Opacity" Value="0.4"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding SelectedTemplate2}" Value="{x:Null}">
+                                                        <Setter Property="IsEnabled" Value="False"/>
+                                                        <Setter Property="Opacity" Value="0.4"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74D;" FontSize="22" Foreground="#444"/>
+                                    </Button>
+                                </Grid>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
 
                 </Grid>
 
@@ -331,6 +539,3 @@
     </Border>
     </Viewbox>
 </UserControl>
-
-
-

@@ -42,8 +42,8 @@
             <!-- Main area arranged in two columns -->
             <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,18,0,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1.15*"/>
                     <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1.25*"/>
                 </Grid.ColumnDefinitions>
 
                 <!-- Left column with settings controls -->
@@ -63,37 +63,43 @@
                                     <TextBlock Text="{Binding CurrentGalleryDisplayName}" FontSize="18" FontWeight="Bold"/>
                                 </Border>
                             </StackPanel>
-                            <CheckBox Content="Direktdruck"
-                                      FontSize="22"
+                            <CheckBox FontSize="22"
                                       Margin="0,0,0,8"
-                                      IsChecked="{Binding AllowDirektdruck, Mode=TwoWay}"/>
-                            <CheckBox Content="Galerie"
-                                      FontSize="22"
+                                      IsChecked="{Binding AllowDirektdruck, Mode=TwoWay}">
+                                <TextBlock Text="Direktdruck" Margin="10,0,0,0"/>
+                            </CheckBox>
+                            <CheckBox FontSize="22"
                                       Margin="0,0,0,8"
-                                      IsChecked="{Binding AllowGalerie, Mode=TwoWay}"/>
-                            <CheckBox Content="Foto-Filter"
-                                      FontSize="22"
+                                      IsChecked="{Binding AllowGalerie, Mode=TwoWay}">
+                                <TextBlock Text="Galerie" Margin="10,0,0,0"/>
+                            </CheckBox>
+                            <CheckBox FontSize="22"
                                       Margin="0,0,0,8"
-                                      IsChecked="{Binding AllowFotoFilter, Mode=TwoWay}"/>
-                            <CheckBox Content="2 Designs"
-                                      FontSize="22"
+                                      IsChecked="{Binding AllowFotoFilter, Mode=TwoWay}">
+                                <TextBlock Text="Foto-Filter" Margin="10,0,0,0"/>
+                            </CheckBox>
+                            <CheckBox FontSize="22"
                                       Margin="0,0,0,8"
-                                      IsChecked="{Binding AllowTwoTemplates, Mode=TwoWay}"/>
-                            <Button Content="Verzögerungen"
-                                    Style="{StaticResource AdminActionButtonStyle}"
-                                    HorizontalAlignment="Left"
-                                    Margin="0,0,0,12"
-                                    Click="OpenDelaySettings_Click"/>
-                            <Button Content="Designs/Templates"
-                                    Style="{StaticResource AdminActionButtonStyle}"
-                                    Margin="0,0,0,8"
-                                    HorizontalAlignment="Left"
-                                    Click="OpenDefaultTemplate_Click"/>
-                            <Button Content="Hintergrundgrafik bearbeiten"
-                                    Style="{StaticResource AdminActionButtonStyle}"
-                                    Margin="0,0,0,8"
-                                    HorizontalAlignment="Left"
-                                    Click="OpenGraphicsManager_Click"/>
+                                      IsChecked="{Binding AllowTwoTemplates, Mode=TwoWay}">
+                                <TextBlock Text="2 Designs" Margin="10,0,0,0"/>
+                            </CheckBox>
+                            <StackPanel Margin="0,12,0,12">
+                                <Button Content="Verzögerungen"
+                                        Style="{StaticResource AdminActionButtonStyle}"
+                                        HorizontalAlignment="Left"
+                                        Margin="0,0,0,12"
+                                        Click="OpenDelaySettings_Click"/>
+                                <Button Content="Designs/Templates"
+                                        Style="{StaticResource AdminActionButtonStyle}"
+                                        Margin="0,0,0,12"
+                                        HorizontalAlignment="Left"
+                                        Click="OpenDefaultTemplate_Click"/>
+                                <Button Content="Hintergrundgrafik"
+                                        Style="{StaticResource AdminActionButtonStyle}"
+                                        Margin="0,0,0,12"
+                                        HorizontalAlignment="Left"
+                                        Click="OpenGraphicsManager_Click"/>
+                            </StackPanel>
                         </StackPanel>
                     </ScrollViewer>
 
@@ -182,7 +188,7 @@
                 </Grid>
 
                 <!-- Right column with device information and stats -->
-                <Grid Grid.Column="1" Margin="38,0,0,0">
+                <Grid Grid.Column="1" Margin="20,0,0,0" HorizontalAlignment="Right">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
@@ -190,17 +196,19 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0" VerticalAlignment="Top">
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12" VerticalAlignment="Center">
-                            <TextBlock Text="Kamera" FontWeight="Bold" FontSize="19" Width="120"/>
-                            <StackPanel Width="220" Margin="8,0,0,0">
+                    <StackPanel Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Right">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="Kamera" FontWeight="Bold" FontSize="19" Width="120" TextAlignment="Right"/>
+                            <StackPanel Width="220" Margin="8,0,0,0" HorizontalAlignment="Right">
                                 <TextBlock Text="{Binding AllowedCamerasSummary}"
                                            FontSize="19"
+                                           TextAlignment="Right"
                                            TextWrapping="Wrap"/>
                                 <TextBlock Text="{Binding CameraRotationSummary}"
                                            FontSize="14"
                                            Foreground="#666"
-                                           Margin="0,2,0,0"/>
+                                           Margin="0,2,0,0"
+                                           TextAlignment="Right"/>
                             </StackPanel>
                             <Button Width="34"
                                     Height="34"
@@ -221,12 +229,13 @@
                                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="16"/>
                             </Button>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12" VerticalAlignment="Center">
-                            <TextBlock Text="Drucker" FontWeight="Bold" FontSize="19" Width="120"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="Drucker" FontWeight="Bold" FontSize="19" Width="120" TextAlignment="Right"/>
                             <TextBlock Text="{Binding AllowedPrintersSummary}"
                                        FontSize="19"
                                        Margin="8,0,0,0"
                                        Width="220"
+                                       TextAlignment="Right"
                                        TextWrapping="Wrap"/>
                             <Button Width="28"
                                     Height="28"
@@ -236,12 +245,13 @@
                                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="16"/>
                             </Button>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12" VerticalAlignment="Center">
-                            <TextBlock Text="USB Speicher" FontWeight="Bold" FontSize="19" Width="120"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <TextBlock Text="USB Speicher" FontWeight="Bold" FontSize="19" Width="120" TextAlignment="Right"/>
                             <TextBlock Text="{Binding UsbDriveSummary}"
                                        FontSize="19"
                                        Margin="8,0,0,0"
                                        Width="220"
+                                       TextAlignment="Right"
                                        TextWrapping="Wrap"/>
                             <Button Width="28"
                                     Height="28"
@@ -283,11 +293,6 @@
                           Margin="0,24,0,0">
                         <StackPanel HorizontalAlignment="Right"
                                     VerticalAlignment="Bottom">
-                            <TextBlock Text="Foto Design"
-                                       FontWeight="Bold"
-                                       FontSize="22"
-                                       Margin="0,0,0,10"
-                                       HorizontalAlignment="Right"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                 <!-- Slot 1 -->
                                 <Grid HorizontalAlignment="Right"
@@ -296,11 +301,11 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                <Grid Width="170" Height="120">
+                                <Grid Width="260" Height="190">
                                     <Rectangle Stroke="#222" StrokeThickness="2" RadiusX="7" RadiusY="7"
                                                StrokeDashArray="4,3" Fill="White"/>
                                     <Grid>
-                                        <Image Width="150" Height="90"
+                                        <Image Width="220" Height="150"
                                                Stretch="Uniform"
                                                VerticalAlignment="Center"
                                                HorizontalAlignment="Center">
@@ -383,11 +388,11 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-                                <Grid Width="170" Height="120">
+                                <Grid Width="260" Height="190">
                                     <Rectangle Stroke="#222" StrokeThickness="2" RadiusX="7" RadiusY="7"
                                                StrokeDashArray="4,3" Fill="White"/>
                                     <Grid>
-                                        <Image Width="150" Height="90"
+                                        <Image Width="220" Height="150"
                                                Stretch="Uniform"
                                                VerticalAlignment="Center"
                                                HorizontalAlignment="Center">
