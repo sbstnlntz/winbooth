@@ -360,7 +360,7 @@
 
                     <StackPanel Grid.Row="1"
                                 HorizontalAlignment="Right"
-                                Margin="0,18,0,18">
+                                Margin="0,32,0,64">
                         <Button Content="FOTOBOX ausschalten"
                                 Style="{StaticResource UserActionButtonStyle}"
                                 Background="#D93030"
@@ -370,14 +370,13 @@
                     </StackPanel>
 
                     <Grid Grid.Row="2"
-                          Margin="0,12,0,12">
+                          Margin="0,32,0,12">
                         <StackPanel HorizontalAlignment="Right"
                                     VerticalAlignment="Bottom">
                             <StackPanel Orientation="Horizontal"
                                         HorizontalAlignment="Right">
                                 <!-- Slot 1 -->
-                                <Grid HorizontalAlignment="Right"
-                                      Margin="0,0,12,0">
+                                <Grid HorizontalAlignment="Right">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
@@ -446,7 +445,8 @@
                                 </Grid>
                                 <!-- Slot 2 -->
                                 <Grid x:Name="TemplateSlot2"
-                                      HorizontalAlignment="Right">
+                                      HorizontalAlignment="Right"
+                                      Margin="12,0,0,0">
                                     <Grid.Style>
                                         <Style TargetType="Grid">
                                             <Setter Property="Visibility" Value="Visible"/>

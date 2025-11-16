@@ -43,13 +43,6 @@
                             Margin="12,0,0,0"
                             DockPanel.Dock="Right"
                             Click="Close_Click"/>
-                    <Button Content="Eigenes Design hochladen"
-                            Width="240"
-                            Height="46"
-                            Margin="12,0,0,0"
-                            HorizontalAlignment="Right"
-                            DockPanel.Dock="Right"
-                            Click="UploadTemplate_Click"/>
                     <TextBlock Text="Design auswählen"
                                FontSize="26"
                                FontWeight="Bold"

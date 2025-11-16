@@ -134,6 +134,7 @@ namespace winbooth.ViewModels
         public int EventCollagesCreated => _statsSnapshot?.EventCollagesCreated ?? 0;
         public int TotalCollagesPrinted => _statsSnapshot?.TotalCollagesPrinted ?? 0;
         public int EventCollagesPrinted => _statsSnapshot?.EventCollagesPrinted ?? 0;
+        public int TotalEvents => _statsSnapshot?.TotalEvents ?? 0;
         internal static string GetTemplatesRootPath() => TemplateStorage.TemplatesRootPath;
 
         internal static string GetDefaultTemplatesRootPath() => TemplateStorage.DefaultTemplatesRootPath;
@@ -364,6 +365,7 @@ namespace winbooth.ViewModels
             OnPropertyChanged(nameof(EventCollagesCreated));
             OnPropertyChanged(nameof(TotalCollagesPrinted));
             OnPropertyChanged(nameof(EventCollagesPrinted));
+            OnPropertyChanged(nameof(TotalEvents));
         }
 
         private string _selectedCameraName;

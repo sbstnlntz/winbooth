@@ -18,7 +18,7 @@ namespace winbooth.ViewModels
             "Fotobox");
         private static readonly string[] CustomGraphicExtensions = { ".png", ".jpg", ".jpeg" };
 
-        private static readonly Uri DefaultStartInstructionUri = new("pack://application:,,,/winbooth;component/Assets/start_instructions.png", UriKind.Absolute);
+        private static readonly Uri DefaultStartInstructionUri = new("pack://application:,,,/winbooth;component/Assets/winbooth_background.png", UriKind.Absolute);
         private static readonly Uri DefaultWarningInfoUri = new("pack://application:,,,/winbooth;component/Assets/warning_hint.png", UriKind.Absolute);
         private const string CustomStartInstructionFilePrefix = "start_instruction_custom";
         private const string CustomWarningInfoFilePrefix = "warning_hint_custom";

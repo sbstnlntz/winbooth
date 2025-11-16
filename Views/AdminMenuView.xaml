@@ -7,10 +7,38 @@
     <UserControl.Resources>
         <utilities:NullToBoolConverter x:Key="NullToBoolConverter"/>
         <Style x:Key="AdminActionButtonStyle" TargetType="Button">
-            <Setter Property="Padding" Value="14,6"/>
+            <Setter Property="Padding" Value="16,8"/>
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="Margin" Value="0,0,8,8"/>
             <Setter Property="Width" Value="220"/>
+            <Setter Property="MinHeight" Value="56"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="14"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.92"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </UserControl.Resources>
     <Viewbox Stretch="Uniform" StretchDirection="Both">
@@ -87,16 +115,16 @@
                                 <Button Content="Verzögerungen"
                                         Style="{StaticResource AdminActionButtonStyle}"
                                         HorizontalAlignment="Left"
-                                        Margin="0,0,0,12"
+                                        Margin="0,0,0,6"
                                         Click="OpenDelaySettings_Click"/>
-                                <Button Content="Designs/Templates"
+                                <Button Content="Standard Desings"
                                         Style="{StaticResource AdminActionButtonStyle}"
-                                        Margin="0,0,0,12"
+                                        Margin="0,0,0,6"
                                         HorizontalAlignment="Left"
                                         Click="OpenDefaultTemplate_Click"/>
                                 <Button Content="Hintergrundgrafik"
                                         Style="{StaticResource AdminActionButtonStyle}"
-                                        Margin="0,0,0,12"
+                                        Margin="0,0,0,6"
                                         HorizontalAlignment="Left"
                                         Click="OpenGraphicsManager_Click"/>
                             </StackPanel>
@@ -107,7 +135,7 @@
                     <Border Grid.Row="1"
                             Margin="0,16,0,0"
                             Padding="10"
-                            Width="300"
+                            Width="420"
                             Background="#F9F9F9"
                             BorderBrush="#E0E0E0"
                             BorderThickness="1"
@@ -123,165 +151,270 @@
                                        FontSize="12"
                                        Foreground="#555"
                                        Margin="0,0,0,6"/>
-                            <Grid>
+                            <Grid Margin="0,4,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
+                                <Grid Grid.Column="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
 
-                                <TextBlock Grid.Row="0" Grid.Column="1"
-                                           Text="Gesamt"
-                                           FontWeight="Bold"
-                                           FontSize="12"
-                                           Margin="8,0,0,2"/>
-                                <TextBlock Grid.Row="0" Grid.Column="2"
-                                           Text="Event"
-                                           FontWeight="Bold"
-                                           FontSize="12"
-                                           Margin="16,0,0,2"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1"
+                                               Text="Gesamt"
+                                               FontWeight="Bold"
+                                               FontSize="12"
+                                               Margin="8,0,0,2"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="2"
+                                               Text="Event"
+                                               FontWeight="Bold"
+                                               FontSize="12"
+                                               Margin="16,0,0,2"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="3"
+                                               Text="Events"
+                                               FontWeight="Bold"
+                                               FontSize="12"
+                                               Margin="16,0,0,2"/>
 
-                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Einzelfotos" FontSize="12"/>
-                                <TextBlock Grid.Row="1" Grid.Column="1"
-                                           Text="{Binding TotalSinglePhotos}"
-                                           FontSize="16"
-                                           FontWeight="Bold"
-                                           Margin="8,0,0,0"/>
-                                <TextBlock Grid.Row="1" Grid.Column="2"
-                                           Text="{Binding EventSinglePhotos}"
-                                           FontSize="16"
-                                           FontWeight="Bold"
-                                           Margin="16,0,0,0"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Einzelfotos" FontSize="12"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1"
+                                               Text="{Binding TotalSinglePhotos}"
+                                               FontSize="16"
+                                               FontWeight="Bold"
+                                               Margin="8,0,0,0"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="2"
+                                               Text="{Binding EventSinglePhotos}"
+                                               FontSize="16"
+                                               FontWeight="Bold"
+                                               Margin="16,0,0,0"/>
 
-                                <TextBlock Grid.Row="2" Grid.Column="0" Text="Collagen erstellt" FontSize="12" Margin="0,4,0,0"/>
-                                <TextBlock Grid.Row="2" Grid.Column="1"
-                                           Text="{Binding TotalCollagesCreated}"
-                                           FontSize="16"
-                                           FontWeight="Bold"
-                                           Margin="8,4,0,0"/>
-                                <TextBlock Grid.Row="2" Grid.Column="2"
-                                           Text="{Binding EventCollagesCreated}"
-                                           FontSize="16"
-                                           FontWeight="Bold"
-                                           Margin="16,4,0,0"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Collagen erstellt" FontSize="12" Margin="0,4,0,0"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="1"
+                                               Text="{Binding TotalCollagesCreated}"
+                                               FontSize="16"
+                                               FontWeight="Bold"
+                                               Margin="8,4,0,0"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="2"
+                                               Text="{Binding EventCollagesCreated}"
+                                               FontSize="16"
+                                               FontWeight="Bold"
+                                               Margin="16,4,0,0"/>
 
-                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Collagen gedruckt" FontSize="12" Margin="0,4,0,0"/>
-                                <TextBlock Grid.Row="3" Grid.Column="1"
-                                           Text="{Binding TotalCollagesPrinted}"
-                                           FontSize="16"
-                                           FontWeight="Bold"
-                                           Margin="8,4,0,0"/>
-                                <TextBlock Grid.Row="3" Grid.Column="2"
-                                           Text="{Binding EventCollagesPrinted}"
-                                           FontSize="16"
-                                           FontWeight="Bold"
-                                           Margin="16,4,0,0"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Collagen gedruckt" FontSize="12" Margin="0,4,0,0"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="1"
+                                               Text="{Binding TotalCollagesPrinted}"
+                                               FontSize="16"
+                                               FontWeight="Bold"
+                                               Margin="8,4,0,0"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="2"
+                                               Text="{Binding EventCollagesPrinted}"
+                                               FontSize="16"
+                                               FontWeight="Bold"
+                                               Margin="16,4,0,0"/>
+                                    <TextBlock Grid.Row="1"
+                                               Grid.Column="3"
+                                               Grid.RowSpan="3"
+                                               Text="{Binding TotalEvents}"
+                                               FontSize="20"
+                                               FontWeight="Bold"
+                                               Margin="16,4,0,0"
+                                               VerticalAlignment="Center"/>
+                                </Grid>
+                                <Button Grid.Column="1"
+                                        Width="54"
+                                        Height="54"
+                                        Margin="16,0,0,0"
+                                        Background="#D93030"
+                                        BorderBrush="#A32222"
+                                        Foreground="White"
+                                        Cursor="Hand"
+                                        ToolTip="Statistiken zurücksetzen"
+                                        Click="ResetStatistics_Click">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="2"
+                                                    CornerRadius="12">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                    <TextBlock FontFamily="Segoe MDL2 Assets"
+                                               Text="&#xE117;"
+                                               FontSize="24"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                </Button>
                             </Grid>
                         </StackPanel>
                     </Border>
                 </Grid>
 
                 <!-- Right column with device information and stats -->
-                <Grid Grid.Column="1" Margin="20,0,0,0" HorizontalAlignment="Right">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+                <Grid Grid.Column="1" Margin="0" HorizontalAlignment="Right" MinWidth="624">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Right">
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="Kamera" FontWeight="Bold" FontSize="19" Width="120" TextAlignment="Right"/>
-                            <StackPanel Width="220" Margin="8,0,0,0" HorizontalAlignment="Right">
+                    <StackPanel Grid.Row="0" VerticalAlignment="Top">
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0"
+                                       Text="Kamera"
+                                       FontWeight="Bold"
+                                       FontSize="19"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Top"/>
+                            <StackPanel Grid.Column="1"
+                                        Margin="12,0,0,0"
+                                        VerticalAlignment="Top">
                                 <TextBlock Text="{Binding AllowedCamerasSummary}"
                                            FontSize="19"
-                                           TextAlignment="Right"
                                            TextWrapping="Wrap"/>
                                 <TextBlock Text="{Binding CameraRotationSummary}"
                                            FontSize="14"
                                            Foreground="#666"
                                            Margin="0,2,0,0"
-                                           TextAlignment="Right"/>
+                                           TextWrapping="Wrap"/>
                             </StackPanel>
-                            <Button Width="34"
-                                    Height="34"
-                                    ToolTip="Kamera 180° drehen"
-                                    Margin="6,0,0,0"
-                                    Background="#D93030"
-                                    Foreground="White"
-                                    BorderBrush="#B02020"
-                                    BorderThickness="2"
-                                    Click="ToggleCameraRotation_Click">
-                                <TextBlock Text="180°" FontSize="14" FontWeight="Bold"/>
-                            </Button>
-                            <Button Width="28"
-                                    Height="28"
-                                    ToolTip="Kamera-Auswahl"
-                                    Margin="6,0,0,0"
-                                    Click="CameraSettingsAdmin_Click">
-                                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="16"/>
-                            </Button>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="Drucker" FontWeight="Bold" FontSize="19" Width="120" TextAlignment="Right"/>
-                            <TextBlock Text="{Binding AllowedPrintersSummary}"
+                            <StackPanel Grid.Column="2"
+                                        Orientation="Horizontal"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top">
+                                <Button Width="34"
+                                        Height="34"
+                                        ToolTip="Kamera 180° drehen"
+                                        Margin="0,0,6,0"
+                                        Background="#D93030"
+                                        Foreground="White"
+                                        BorderBrush="#B02020"
+                                        BorderThickness="2"
+                                        VerticalAlignment="Top"
+                                        Click="ToggleCameraRotation_Click">
+                                    <TextBlock Text="180°" FontSize="14" FontWeight="Bold"/>
+                                </Button>
+                                <Button Width="34"
+                                        Height="34"
+                                        ToolTip="Kamera-Auswahl"
+                                        Margin="0"
+                                        VerticalAlignment="Top"
+                                        Click="CameraSettingsAdmin_Click">
+                                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="16"/>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0"
+                                       Text="Drucker"
+                                       FontWeight="Bold"
                                        FontSize="19"
-                                       Margin="8,0,0,0"
-                                       Width="220"
-                                       TextAlignment="Right"
-                                       TextWrapping="Wrap"/>
-                            <Button Width="28"
-                                    Height="28"
-                                    ToolTip="Drucker-Auswahl"
-                                    Margin="6,0,0,0"
-                                    Click="PrinterSettingsAdmin_Click">
-                                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="16"/>
-                            </Button>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <TextBlock Text="USB Speicher" FontWeight="Bold" FontSize="19" Width="120" TextAlignment="Right"/>
-                            <TextBlock Text="{Binding UsbDriveSummary}"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Top"/>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding AllowedPrintersSummary}"
                                        FontSize="19"
-                                       Margin="8,0,0,0"
-                                       Width="220"
-                                       TextAlignment="Right"
-                                       TextWrapping="Wrap"/>
-                            <Button Width="28"
-                                    Height="28"
-                                    ToolTip="USB-Speicher auswählen"
-                                    Margin="6,0,0,0"
-                                    Click="UsbSettingsAdmin_Click">
-                                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE898;" FontSize="16"/>
-                            </Button>
-                        </StackPanel>
+                                       Margin="12,0,0,0"
+                                       TextWrapping="Wrap"
+                                       VerticalAlignment="Top"/>
+                            <StackPanel Grid.Column="2"
+                                        Orientation="Horizontal"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top">
+                                <Button Width="34"
+                                        Height="34"
+                                        ToolTip="Drucker-Auswahl"
+                                        Margin="0"
+                                        VerticalAlignment="Top"
+                                        Click="PrinterSettingsAdmin_Click">
+                                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" FontSize="16"/>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0"
+                                       Text="USB Speicher"
+                                       FontWeight="Bold"
+                                       FontSize="19"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Top"/>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding UsbDriveSummary}"
+                                       FontSize="19"
+                                       Margin="12,0,0,0"
+                                       TextWrapping="Wrap"
+                                       VerticalAlignment="Top"/>
+                            <StackPanel Grid.Column="2"
+                                        Orientation="Horizontal"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top">
+                                <Button Width="34"
+                                        Height="34"
+                                        ToolTip="USB-Speicher auswählen"
+                                        Margin="0"
+                                        VerticalAlignment="Top"
+                                        Click="UsbSettingsAdmin_Click">
+                                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE898;" FontSize="16"/>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
                     </StackPanel>
 
                     
-                    <StackPanel Grid.Row="2" HorizontalAlignment="Right" Margin="0,24,0,0">
+                    <StackPanel Grid.Row="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Margin="0,0,0,0">
                         <Button Content="Neues Event"
                                 Style="{StaticResource AdminActionButtonStyle}"
+                                Margin="0,4,0,4"
                                 Background="#2E8B57"
                                 BorderBrush="#1F5D3A"
                                 Foreground="White"
                                 Click="NewEvent_Click"/>
                         <Button Content="Backup"
                                 Style="{StaticResource AdminActionButtonStyle}"
+                                Margin="0,4,0,4"
                                 Click="OpenArchive_Click"/>
                         <Button Content="WINBOOTH beenden"
                                 Style="{StaticResource AdminActionButtonStyle}"
+                                Margin="0,4,0,4"
                                 Background="#D93030"
                                 BorderBrush="#A32222"
                                 Foreground="White"
                                 Click="ShutdownApp_Click"/>
                         <Button Content="FOTOBOX ausschalten"
                                 Style="{StaticResource AdminActionButtonStyle}"
+                                Margin="0,4,0,4"
                                 Background="#D93030"
                                 BorderBrush="#A32222"
                                 Foreground="White"
@@ -290,7 +423,7 @@
 
                     <!-- Bottom row: template selection -->
                     <Grid Grid.Row="3"
-                          Margin="0,24,0,0">
+                          Margin="0,24,0,12">
                         <StackPanel HorizontalAlignment="Right"
                                     VerticalAlignment="Bottom">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">

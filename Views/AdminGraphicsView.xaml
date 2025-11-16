@@ -92,7 +92,7 @@
                         CornerRadius="0"
                         Padding="24">
                     <StackPanel>
-                        <TextBlock Text="Hintergrund (1280 x 720)"
+                        <TextBlock Text="Hintergrundgrafik"
                                    FontWeight="Bold"
                                    FontSize="24"
                                    Foreground="#222"/>

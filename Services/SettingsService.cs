@@ -680,9 +680,6 @@ namespace winbooth.Services
             model.DirektdruckState = true;
             model.GalerieButtonState = true;
             model.FotoFilterState = true;
-            model.SelectedTemplate1Name = string.Empty;
-            model.SelectedTemplate2Name = string.Empty;
-            model.ActiveTemplateName = string.Empty;
         }
 
         private static int ClampDelay(int seconds)

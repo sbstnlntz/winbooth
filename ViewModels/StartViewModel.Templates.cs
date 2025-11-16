@@ -865,9 +865,34 @@ namespace winbooth.ViewModels
             try { snapshot = SettingsService.CaptureSnapshot(); } catch { }
             LoadPendingTemplateSelections(snapshot);
             LoadAdminAndUserSettingsFromStorage(snapshot);
-            ClearManualTemplateSelections();
+            ApplySavedTemplateSelections();
             EnsureSelectedTemplatesValid();
+            RestoreDeviceSelections(snapshot);
             RefreshStatistics();
+        }
+
+        private void RestoreDeviceSelections(SettingsService.SettingsSnapshot snapshot)
+        {
+            var savedCamera = snapshot?.SelectedCameraName;
+            if (!string.IsNullOrWhiteSpace(savedCamera))
+            {
+                SelectedCameraName = savedCamera;
+            }
+
+            var savedPrinter = snapshot?.SelectedPrinterName;
+            if (!string.IsNullOrWhiteSpace(savedPrinter))
+            {
+                SelectedPrinterName = savedPrinter;
+            }
+
+            var savedUsb = snapshot?.UsbDrivePath;
+            if (!string.IsNullOrWhiteSpace(savedUsb))
+            {
+                SelectedUsbDrivePath = savedUsb;
+            }
+
+            EnsureSelectedCameraValid();
+            EnsureSelectedPrinterValid();
         }
 
         public void ClearManualTemplateSelections()

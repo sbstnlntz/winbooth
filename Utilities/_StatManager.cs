@@ -20,6 +20,7 @@ namespace winbooth.Utilities
             public int EventCollagesCreated { get; init; }
             public int TotalCollagesPrinted { get; init; }
             public int EventCollagesPrinted { get; init; }
+            public int TotalEvents { get; init; }
         }
 
         private sealed class StatsModel
@@ -50,6 +51,7 @@ namespace winbooth.Utilities
             WriteIndented = true
         };
 
+        private const string DefaultEventKey = "_default";
         private static readonly object ModelLock = new();
         private static StatsModel _modelCache = LoadModelFromDisk();
         private static StatsModel _pendingSnapshot;
@@ -96,7 +98,8 @@ namespace winbooth.Utilities
                     TotalCollagesCreated = model.TotalCollagesCreated,
                     EventCollagesCreated = stats?.CollagesCreated ?? 0,
                     TotalCollagesPrinted = model.TotalCollagesPrinted,
-                    EventCollagesPrinted = stats?.CollagesPrinted ?? 0
+                    EventCollagesPrinted = stats?.CollagesPrinted ?? 0,
+                    TotalEvents = CountTrackedEvents(model)
                 };
             }
         }
@@ -310,7 +313,7 @@ namespace winbooth.Utilities
         private static string NormalizeGalleryName(string galleryName)
         {
             var trimmed = (galleryName ?? string.Empty).Trim();
-            return string.IsNullOrWhiteSpace(trimmed) ? "_default" : trimmed;
+            return string.IsNullOrWhiteSpace(trimmed) ? DefaultEventKey : trimmed;
         }
 
         private static EventStats GetOrCreateEventStats(StatsModel model, string galleryName)
@@ -328,6 +331,20 @@ namespace winbooth.Utilities
         {
             var key = NormalizeGalleryName(galleryName);
             return model.Events.TryGetValue(key, out var stats) ? stats : null;
+        }
+
+        private static int CountTrackedEvents(StatsModel model)
+        {
+            if (model?.Events == null || model.Events.Count == 0)
+                return 0;
+
+            var count = 0;
+            foreach (var key in model.Events.Keys)
+            {
+                if (!string.Equals(key, DefaultEventKey, StringComparison.OrdinalIgnoreCase))
+                    count++;
+            }
+            return count;
         }
 
         private static Dictionary<string, EventStats> CreateEventDictionary(Dictionary<string, EventStats> source = null)

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Threading.Tasks;
+using Microsoft.Win32;
 using winbooth.ViewModels;
 
 namespace winbooth.Views
@@ -38,7 +39,7 @@ namespace winbooth.Views
         }
 
         private async void SelectTemplateBtn1_Click(object sender, RoutedEventArgs e)
-            => await SelectTemplateFromLibraryAsync(slotIndex: 1);
+            => await HandleTemplateSelectionAsync(slotIndex: 1);
 
         private void DeleteTemplateBtn1_Click(object sender, RoutedEventArgs e)
         {
@@ -54,7 +55,7 @@ namespace winbooth.Views
         }
 
         private async void SelectTemplateBtn2_Click(object sender, RoutedEventArgs e)
-            => await SelectTemplateFromLibraryAsync(slotIndex: 2);
+            => await HandleTemplateSelectionAsync(slotIndex: 2);
 
         private void DeleteTemplateBtn2_Click(object sender, RoutedEventArgs e)
         {
@@ -64,7 +65,7 @@ namespace winbooth.Views
             UpdateTemplateButtons();
         }
 
-        private async Task SelectTemplateFromLibraryAsync(int slotIndex)
+        private async Task HandleTemplateSelectionAsync(int slotIndex)
         {
             if (slotIndex == 2 && !_mainViewModel.AllowTwoTemplates)
             {
@@ -73,6 +74,41 @@ namespace winbooth.Views
                 return;
             }
 
+            TemplateSourceChoice choice;
+            try
+            {
+                var owner = Window.GetWindow(this);
+                var sourceDialog = new TemplateSourceChoiceWindow
+                {
+                    Owner = owner,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner
+                };
+
+                var result = sourceDialog.ShowDialog();
+                if (result != true || sourceDialog.Choice == TemplateSourceChoice.None)
+                    return;
+
+                choice = sourceDialog.Choice;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Die Design-Auswahl konnte nicht geöffnet werden:\n{ex.Message}",
+                    "Design-Auswahl", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (choice == TemplateSourceChoice.Usb)
+            {
+                await SelectTemplateFromUsbAsync(slotIndex);
+            }
+            else if (choice == TemplateSourceChoice.Standard)
+            {
+                await SelectTemplateFromStandardLibraryAsync(slotIndex);
+            }
+        }
+
+        private async Task SelectTemplateFromStandardLibraryAsync(int slotIndex)
+        {
             var templates = _mainViewModel.GetTemplateLibraryTemplates();
             if (templates == null || templates.Count == 0)
             {
@@ -91,6 +127,41 @@ namespace winbooth.Views
             {
                 await ImportTemplateFromLibraryAsync(dialog.SelectedTemplate.ZipPath, slotIndex);
             }
+        }
+
+        private async Task SelectTemplateFromUsbAsync(int slotIndex)
+        {
+            var usbPath = _mainViewModel.SelectedUsbDrivePath;
+            if (string.IsNullOrWhiteSpace(usbPath) || !Directory.Exists(usbPath))
+            {
+                MessageBox.Show("Bitte zuerst rechts einen USB-Speicher auswählen. Es können nur Designs von diesem USB-Stick geladen werden.",
+                    "USB erforderlich", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var owner = Window.GetWindow(this);
+            var dialog = new OpenFileDialog
+            {
+                Filter = "Design-Pakete (*.zip)|*.zip",
+                CheckFileExists = true,
+                Multiselect = false,
+                InitialDirectory = usbPath,
+                Title = "Eigenes Design vom USB-Stick auswählen"
+            };
+
+            if (dialog.ShowDialog(owner) != true)
+                return;
+
+            var selectedPath = Path.GetFullPath(dialog.FileName);
+            var usbRoot = Path.GetFullPath(usbPath);
+            if (!selectedPath.StartsWith(usbRoot, StringComparison.OrdinalIgnoreCase))
+            {
+                MessageBox.Show("Es dürfen ausschließlich Designs vom ausgewählten USB-Stick geladen werden.",
+                    "Ungültiger Speicherort", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            await ImportTemplateFromLibraryAsync(selectedPath, slotIndex);
         }
 
         private async Task ImportTemplateFromLibraryAsync(string sourceZipPath, int slotIndex)

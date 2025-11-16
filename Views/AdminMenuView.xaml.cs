@@ -8,9 +8,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using winbooth.Services;
-using winbooth.ViewModels;
 using Microsoft.Win32;
+using winbooth.Services;
+using winbooth.Utilities;
+using winbooth.ViewModels;
 using Forms = System.Windows.Forms;
 
 namespace winbooth.Views
@@ -122,6 +123,35 @@ namespace winbooth.Views
             };
 
             window.ShowDialog();
+        }
+
+        private void ResetStatistics_Click(object sender, RoutedEventArgs e)
+        {
+            var confirm = MessageBox.Show(
+                "Sollen wirklich alle Statistiken zurückgesetzt werden?",
+                "Statistiken zurücksetzen",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (confirm != MessageBoxResult.Yes)
+                return;
+
+            try
+            {
+                StatManager.ResetStatistics();
+                if (DataContext is StartViewModel vm)
+                {
+                    vm.RefreshStatistics();
+                }
+
+                MessageBox.Show("Statistiken wurden zurückgesetzt.", "Statistiken",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Statistiken konnten nicht zurückgesetzt werden:\n{ex.Message}", "Statistiken",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private async void AdminSelectTemplateBtn1_Click(object sender, RoutedEventArgs e)
