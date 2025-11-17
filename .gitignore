@@ -5,6 +5,7 @@ publish/
 *.msi
 
 .vs/
+.vscode/
 bin/
 dist/
 obj/
