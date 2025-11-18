@@ -63,6 +63,7 @@ namespace winbooth.ViewModels
         private bool _disposed;
         private const int SnapshotFailureAlertThreshold = 3;
         private const int StatsFailureAlertThreshold = 3;
+        private const string ShotsFolderName = "shots";
 
         private static readonly BitmapImage DefaultTemplatePreviewImage = LoadBitmapImage(new Uri("pack://application:,,,/winbooth;component/Assets/template_placeholder.png", UriKind.Absolute));
         private static readonly TemplateStorageService TemplateStorage = TemplateStorageService.Instance;
@@ -417,7 +418,7 @@ namespace winbooth.ViewModels
                 try { SettingsService.SaveUsbDrivePath(normalized); } catch { }
 
                 ScheduleUsbSync();
-                TriggerAutomaticUsbBackup();
+                TriggerAutomaticLocalBackup();
             }
         }
 
@@ -487,6 +488,9 @@ namespace winbooth.ViewModels
             if (string.IsNullOrWhiteSpace(sourceDir) || string.IsNullOrWhiteSpace(targetDir))
                 return;
 
+            if (IsShotsDirectory(sourceDir))
+                return;
+
             Directory.CreateDirectory(targetDir);
 
             foreach (var file in Directory.GetFiles(sourceDir))
@@ -504,42 +508,55 @@ namespace winbooth.ViewModels
                 var name = Path.GetFileName(dir);
                 if (string.IsNullOrEmpty(name))
                     continue;
+                if (string.Equals(name, ShotsFolderName, StringComparison.OrdinalIgnoreCase))
+                    continue;
 
                 var childTarget = Path.Combine(targetDir, name);
                 MirrorDirectory(dir, childTarget, token);
             }
         }
 
-        private void TriggerAutomaticUsbBackup()
+        private static bool IsShotsDirectory(string directoryPath)
+        {
+            if (string.IsNullOrWhiteSpace(directoryPath))
+                return false;
+
+            var trimmed = directoryPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            var name = Path.GetFileName(trimmed);
+
+            return !string.IsNullOrEmpty(name) &&
+                string.Equals(name, ShotsFolderName, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsShotRelativePath(string relativePath)
+        {
+            if (string.IsNullOrWhiteSpace(relativePath))
+                return false;
+
+            var normalized = relativePath
+                .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)
+                .TrimStart(Path.DirectorySeparatorChar);
+
+            if (string.IsNullOrEmpty(normalized))
+                return false;
+
+            if (string.Equals(normalized, ShotsFolderName, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return normalized.StartsWith($"{ShotsFolderName}{Path.DirectorySeparatorChar}", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private void TriggerAutomaticLocalBackup()
         {
             var gallery = _galleryName?.Trim();
-            var usbPath = _selectedUsbDrivePath;
-
-            if (string.IsNullOrWhiteSpace(gallery) || string.IsNullOrEmpty(usbPath))
+            if (string.IsNullOrWhiteSpace(gallery))
                 return;
 
             EnqueueUsbJob("Backup-Erstellung", token =>
             {
                 token.ThrowIfCancellationRequested();
-                var backupPath = BackupService.CreateBackup(gallery);
-                token.ThrowIfCancellationRequested();
-                CopyBackupToUsb(backupPath, usbPath, token);
+                BackupService.CreateBackup(gallery);
             }, UsbJobPriority.Low);
-        }
-
-        private static void CopyBackupToUsb(string backupPath, string usbRoot, CancellationToken token)
-        {
-            if (string.IsNullOrWhiteSpace(backupPath) || string.IsNullOrWhiteSpace(usbRoot))
-                return;
-
-            token.ThrowIfCancellationRequested();
-
-            var targetDir = Path.Combine(usbRoot, "Fotobox", "Backups");
-            Directory.CreateDirectory(targetDir);
-            var destination = Path.Combine(targetDir, Path.GetFileName(backupPath) ?? "backup.zip");
-
-            token.ThrowIfCancellationRequested();
-            File.Copy(backupPath, destination, true);
         }
 
         private string GetGalleryDirectory()

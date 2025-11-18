@@ -946,6 +946,9 @@ namespace winbooth.ViewModels
                 return;
 
             var relative = GetRelativePathWithinGallery(galleryDir, sourceFile);
+            if (IsShotRelativePath(relative))
+                return;
+
             var destination = Path.Combine(targetRoot, relative ?? Path.GetFileName(sourceFile));
             var destinationDir = Path.GetDirectoryName(destination);
             if (!string.IsNullOrEmpty(destinationDir))
